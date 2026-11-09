@@ -6,3 +6,22 @@ node_modules/
 __pycache__/
 
 .venv/
+
+# Cached provider responses
+data/financials/
+
+# API usage ledger and expiring provider cache
+data/api_cache/
+data/api_usage.jsonl
+
+# Local installers and backups
+*.pkg
+*.py.bak
+
+# Local credentials and runtime data
+.env
+.env.*
+!.env.example
+data/financials/
+__pycache__/
+.pytest_cache/

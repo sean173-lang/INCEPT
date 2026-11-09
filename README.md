@@ -209,3 +209,231 @@ Corporate lawyers, M&A professionals, compliance researchers, and legal operatio
 ## Disclaimer
 
 LEGALFLOW is an educational and experimental legal technology project. Its output is not legal advice, a legal opinion, a certified corporate investigation, or a substitute for professional due diligence. Information may be incomplete, outdated, or inaccurate. A qualified reviewer must verify material findings against reliable primary sources before acting on them.
+
+### Legal evidence verification
+
+`scripts/evidence_validator.py` runs offline before the AI analysis. Registry
+adapters retain original API responses so normalized identity, incorporation,
+UK officer appointment, and filing dates can be checked against their source.
+German provider IDs are checked separately from legal registration numbers and
+register courts. Web results receive identity, hostname provenance, publication
+age, and unverified allegation/litigation annotations. Conflicting identities,
+invalid URLs, future publication dates, and empty excerpts are excluded from
+analysis. Missing and outdated dates remain explicit verification gaps.
+
+The current registry-and-search workflow yields **Undetermined** overall risk:
+absence of adverse search results does not establish low risk. Reports are rendered deterministically from validation results, with one final
+risk assessment and readable evidence gaps. OpenAI prioritizes an allowlisted
+set of follow-up investigations; model-written conclusions are not published. Host classification does not authenticate page content;
+search excerpts cannot verify court findings, sanctions, or whether litigation
+is ongoing. Publication dates are not event dates. The default freshness window
+is 365 days and can be configured through `validate_evidence(max_age_days=...)`.
+Name and registration comparisons are conservative heuristics, not independent
+identity certification. Additional original legal documents and verified search
+coverage are required before implementing stronger risk classifications.
+
+Run the offline mocked test suite without API credits:
+
+```sh
+python -m unittest discover -s tests -v
+```
+
+Register references include the legal registration number, register authority,
+provider identifier, and recorded retrieval timestamp. German records identify
+OpenRegister separately as the data provider. No register document URLs are
+constructed. Older inputs without retrieval metadata explicitly say it is not
+available; analysis time is never substituted. Technical evidence-gap codes
+remain in structured validation output and are translated only for display.
+Malformed or conflicting model output falls back to the default investigation
+order and cannot alter report findings, sources, or the final risk category.
+
+### Phase 1: financial and transaction due diligence
+
+The existing UK/German pipeline now produces corporate structure, financial
+analysis, legal and regulatory findings, evidence-linked issues, document
+requests, transaction considerations, and sources/limitations. Financial
+indicators and missing information are distinguished from verified legal
+findings. Overall coverage remains incomplete and the deterministic final
+classification remains authoritative. OpenAI only prioritizes approved
+follow-up actions; it cannot invent report figures or legal conclusions.
+
+Financial retrieval is **off by default**. No financial or document API calls
+were made during implementation or testing. Normal research still uses the
+existing register, Tavily and OpenAI integrations and their usual charges.
+
+```sh
+# Existing workflow, no additional financial retrieval:
+python -m scripts.legalflow_agent
+
+# Explicit opt-in: Germany costs 10 OpenRegister credits for financials;
+# UK retrieves one page containing at most five accounts filings:
+python -m scripts.legalflow_agent --financials
+
+# UK only: additionally retrieve at most one document, maximum 5 MB:
+python -m scripts.legalflow_agent --financials --download-accounts
+
+# Offline tests:
+python -m unittest discover -s tests -v
+```
+
+German financial retrieval prefers `client.company.get_financials_v1` if the
+installed SDK supports it; otherwise it uses the documented Bearer-authenticated
+REST endpoint. The active development interpreter has no OpenRegister SDK.
+The SDK can be installed separately as `openregister-sdk`; existing company
+lookup still uses the SDK as before. The financial adapter disables automatic
+SDK retries and never falls back after an SDK request failure, avoiding repeat
+credit consumption. Missing data, access errors and quota failures are recorded
+as unavailable, not interpreted as adverse findings.
+
+OpenRegister indicators are joined to report dates and consolidation scope by
+report ID. Provider estimates are excluded. Revenue, earnings, assets, equity,
+liabilities, cash and other supported figures are retained when returned.
+Currency and scale must be explicitly supplied: the published financial schema
+does not currently document these fields, so ordinary responses can show
+reported numbers with unknown units while monetary calculations remain
+unavailable. Do not silently label these figures as EUR or infer units from
+registered capital. Underlying report references are retained when supplied.
+
+UK retrieval uses an accounts-category filing-history query, the returned
+`document_metadata` link, advertised resource formats, and the official Document
+API. One bounded stream is downloaded only with `--download-accounts`. Storage
+redirects receive no Companies House credentials. Document bytes are returned in
+`financial_data.document_content` for programmatic callers, not sent to OpenAI
+or automatically saved to disk. Reports retain document references. PDF-only,
+ZIP, malformed HTML, unsupported taxonomies/transforms, conflicting facts and
+unmatched entity contexts require manual extraction; no OCR/LLM guessing occurs.
+The extractor supports a limited exact UK GAAP/FRC concept and namespace list.
+Unresolved XBRL dimensions/scope block comparisons across periods.
+
+The financial analyzer uses Decimal arithmetic. Ratios are equity/assets,
+liabilities/assets, current assets/current liabilities and net income/revenue.
+Each calculation retains its formula and explicit unavailable reason. Zero or
+negative denominators, invalid dates and incompatible or missing units block
+calculations. Comparable periods require known matching scope and similar,
+non-overlapping durations; short years and duplicate/restated periods block
+trend calculations. Absolute changes use normalized currency units; percentages
+require a positive base. Negative equity, losses, liquidity ratios below one
+and declines are review triggers, not findings of insolvency or wrongdoing.
+Accounting policy changes and audit opinions still require professional review.
+
+Each issue includes a description, supporting evidence, source, potential legal
+significance, recommended follow-up action and verification status. Document
+requests cover signed accounts, management information, funding, security,
+ownership and legal records. Transaction considerations are conditional review
+prompts rather than transaction-specific legal advice.
+
+API documentation checked on 2026-11-09 (documentation only, no authenticated calls):
+
+- [OpenRegister financial endpoint and SDK example](https://docs.openregister.de/endpoint/company-financials)
+- [OpenRegister credit pricing](https://docs.openregister.de/pricing): financials cost 10 credits; published Pro overage is EUR 0.01/credit (EUR 0.10 per financial request at that rate). Account entitlement and actual billing were not queried.
+- [OpenRegister authentication](https://docs.openregister.de/authentication)
+- [OpenRegister financial coverage](https://docs.openregister.de/sources/bundesanzeiger): availability depends on published company accounts.
+- [Companies House filing history](https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/reference/filing-history/list)
+- [Document API metadata and retrieval](https://developer-specs.company-information.service.gov.uk/document-api/reference)
+- [Companies House free public API data](https://www.gov.uk/guidance/searching-the-companies-house-register)
+
+Limits: no company-specific financial availability has been confirmed live;
+small-company/abridged accounts can omit profit and loss figures. One filing
+page is not complete history, and retrieving one UK document does not guarantee
+multiple comparable periods. Unknown units, scope and dates remain explicit.
+The current report cannot establish comprehensive legal or financial clearance.
+
+### Diagnosing OpenRegister financial failures
+
+Financial failures now print a fixed, credential-safe terminal diagnostic and
+return `error_code`, `http_status`, `failure_stage`, `transport` (when selected),
+and `plan_access`. Exception text, HTTP response bodies, headers, redirect URLs
+and API credentials are never printed by the financial adapter. No automatic
+retry or REST fallback follows an SDK request failure.
+
+Diagnostics distinguish authentication (401), permissions/possible entitlement
+(403), missing company/resource or ambiguous route (404), quota/rate limiting
+(429), billing/credits (402), invalid operations, provider errors, network
+failures/timeouts, SDK incompatibility and unsupported JSON/schema responses.
+An explicit route-not-found machine code can identify an invalid endpoint;
+an ordinary 404 cannot establish either an invalid route or absence of filings.
+A successful empty financial response is recorded separately from a failed
+request and does not prove that no statements exist.
+
+The prior generic message discarded exception details, so the cause of the
+2026-11-09 Descartes failure cannot be recovered from its report. The documented
+SDK accepts `get_financials_v1(company_id=...)`, and REST uses
+`GET /v1/company/{company_id}/financials` with Bearer authentication. The active
+development interpreter has no installed SDK, so it cannot establish which SDK
+version the live test used. Account plan access has not been verified; public
+pricing lists the endpoint at 10 credits, but does not establish entitlement for
+a particular API key. A dedicated single financial request after explicit user
+approval is required to confirm the live outcome. Do not rerun the whole
+research workflow merely to diagnose this endpoint: that would incur additional
+register, research and model calls.
+
+### Interpreting financial 404 responses and choosing a positive control
+
+Financial 404 classification now uses `scripts/financial_errors.py` for both
+REST responses and SDK exception bodies (or the SDK's already-received response).
+It distinguishes an explicitly missing company, missing financial dataset,
+missing route/endpoint, and unknown cause. Specific code/message compatibility
+aliases are matched exactly in recognized JSON envelope fields. Generic `404`,
+`Not Found`, unrecognized text, malformed bodies and conflicting signals do not
+establish a cause. Provider text and unknown codes are never printed verbatim.
+
+The public [financial endpoint reference](https://docs.openregister.de/endpoint/company-financials)
+reviewed on 2026-11-09 provides the success schema but no exhaustive 404 code or
+message catalogue. The classifier's explicit aliases are conservative
+compatibility rules tested with synthetic fixtures, not documented guarantees
+about provider error vocabulary. Extend them when verified provider responses
+or further official documentation establish new precise meanings.
+
+Structured financial data and report output keep these independent dimensions:
+
+- API request outcome (`request_status`): failed versus succeeded.
+- Provider data availability (`financial_data_status`): unknown, explicitly unavailable through provider, figures returned, or no figures returned by a successful response.
+- Independent publication status (`publication_status`): unknown in this API workflow. Neither a provider 404 nor an empty successful response proves that no figures were published.
+- Specific 404 cause and classification basis: preserved through financial analysis.
+
+The existing Descartes 404 report did not retain a specific provider error body,
+so its cause remains unknown. A provider coverage gap is a plausible hypothesis
+given the successful company profile lookup, but the current evidence cannot
+exclude identifier or routing issues. It does not establish missing filings.
+Do not rerun authenticated requests without separate explicit approval.
+
+Volkswagen AG is a suitable *candidate* positive control because it publishes
+annual financial statements and identifies itself as HRB 100484 at the
+Braunschweig Local Court, domiciled in Wolfsburg. See its own
+[2025 annual-report basis of presentation](https://annualreport2025.volkswagen-group.com/notes/basis-of-presentation.html)
+and [standalone 2025 accounts](https://www.volkswagen-group.com/en/publications/more/annual-financial-statements-of-volkswagen-aktiengesellschaft-as-at-31-12-2025-3214/download?disposition=attachment).
+Group IFRS statements and parent-company HGB accounts must remain distinct;
+group figures use EUR millions in the cited presentation. Do not transfer those
+units to API indicators without confirming their representation. OpenRegister
+coverage and the correct provider company ID have not been verified; do not
+construct an ID from the HRB number.
+
+Recommended live verification, separately approved in advance: resolve or reuse
+a verified OpenRegister ID for Volkswagen AG, then issue one financial request
+without retries and inspect only safe error classifications, status, field
+names/counts, and parser compatibility. Financial requests are documented at
+10 credits each; any ID search/details requests require separate authorization
+and their own credit allowance. Compare a positive control with Descartes only
+after authorization, rather than assuming both have equal provider coverage.
+
+Tavily research now performs one bounded exact-name query, including the legal
+registration number and register court when supplied, plus jurisdiction and a
+single legal topic. The OpenRegister provider ID is not substituted for a legal
+registration number. Query and coverage notes are retained in structured results.
+No risk-keyword OR chain or extra paid searches are added. The evidence validator
+continues to exclude unrelated sources. A single narrow query can miss relevant
+material and is not comprehensive sanctions, insolvency or litigation screening.
+
+### API usage monitoring and cost protection
+
+The central usage tracker now protects OpenRegister, Tavily, OpenAI and Companies
+House operations. Search, company details and Tavily results use an expiring cache;
+the existing financial cache is preserved. Use `--dev` for synthetic responses
+without external calls, and `--approve-api` to authorize live paid cache misses.
+Hard credit/search limits cannot be overridden by approval. Monetary prices are
+unknown unless reliable per-operation upper bounds are configured; finite money
+caps block unknown-cost calls. Estimates are never presented as confirmed billing.
+
+See [configuration, CLI examples, ledger format and limitations](docs/api_usage.md).
+Run the complete offline suite with `python -m unittest discover -s tests -v`.
+Tests use temporary cache directories and block socket connections.
