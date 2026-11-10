@@ -10,7 +10,7 @@
 
 It is designed for corporate lawyers, M&A teams, and legal operations professionals who need an initial, source-aware overview of a company before conducting a full legal review.
 
-> **Project status (9 November 2026):** Four API integrations have been tested, and an end-to-end German company research report has been generated. The application remains a prototype: independent evidence verification, a web interface, and n8n orchestration are not yet implemented.
+> **Project status (10 November 2026):** The development prototype includes FastAPI company verification, local reference retrieval, bounded research and deterministic reporting orchestrated by n8n. The 29-node synthetic workflow passed end to end in execution 9. Live-provider research and production deployment remain separately gated.
 
 ## The Problem
 
@@ -64,7 +64,7 @@ House             (company ID)
        reports/
 ```
 
-**Important:** An evidence verification layer is planned, but it is **not currently an implemented stage** of this workflow.
+**Current implementation:** Evidence consistency checks are implemented. The CLI diagram above describes the earlier pipeline; the Phase 1 and Phase 2 sections below document the current n8n/FastAPI development workflow. Provider-record consistency is not independent legal certification.
 
 ## Project Structure
 
@@ -437,3 +437,42 @@ caps block unknown-cost calls. Estimates are never presented as confirmed billin
 See [configuration, CLI examples, ledger format and limitations](docs/api_usage.md).
 Run the complete offline suite with `python -m unittest discover -s tests -v`.
 Tests use temporary cache directories and block socket connections.
+
+### Phase 1 HTTP services for n8n
+
+A minimal FastAPI facade is now available at `scripts.http_service:app` for
+jurisdiction-aware company search, detail-based identity verification and
+verified-identity research. n8n remains the orchestrator; this service does not
+execute the full CLI pipeline or any autonomous loop. Development mode is the
+default and uses synthetic fixtures without external requests. Live mode requires
+a service token; paid cache misses additionally require server-side approval and
+budget capacity. Incoming request bodies cannot override these controls.
+
+```sh
+python -m pip install -r requirements-service.txt
+python -m uvicorn scripts.http_service:app --host 127.0.0.1 --port 8000 --workers 1
+```
+
+See [Phase 1 service contracts, launch settings, n8n configuration and limits](docs/phase1_service.md).
+This section describes the Phase 1 service boundary. The Phase 2 section below
+adds local retrieval and bounded n8n research; durable runs remain future work.
+
+### Phase 2 local RAG and bounded research
+
+The FastAPI service now includes offline legal-reference retrieval, a two-action
+allowlisted research planner and structured source-linked demo reports. n8n owns
+the tool loop after successful company verification; unresolved identities remain
+on manual review. Phase 2 is restricted to development fixtures even if live
+provider approval is configured. No financial endpoints or paid models are used.
+
+See [Phase 2 endpoints, corpus, workflow and demo instructions](docs/phase2_research.md).
+The local corpus contains eight explicitly labeled reference paraphrases with
+official source links and honest date metadata. It is background guidance, not
+company-specific evidence. Final risk remains Undetermined; source attribution,
+confidence scope and missing information are explicit.
+
+Private reports, provider caches, raw execution records and workflow backups are
+excluded from Git. Workflow JSON exports are sanitized review artifacts with no
+credential bindings, webhook identifiers or pinned execution data. See
+[validated execution evidence](docs/workflow_validation.md) for the synthetic
+end-to-end result; its JSON summary contains checks only, not raw execution data.

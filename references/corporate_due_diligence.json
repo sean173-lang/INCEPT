@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "id": "de-gmbhg-8",
+      "title": "GmbHG section 8: registration supporting documents",
+      "jurisdiction": "Germany",
+      "topics": [
+        "corporate_identity"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/gmbhg/__8.html",
+      "locator": "Section 8, paragraphs 1 and 4",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "Registration identity shareholder directors authority Gesellschaftsvertrag Anmeldung",
+      "text": "GmbHG section 8 identifies documents accompanying a registration application, including constitutional documents, evidence of director appointments and a shareholder list. The application also states a domestic business address and the nature and extent of directors’ representation powers. Due diligence should reconcile the register record with underlying documents; a company-name match alone does not establish identity or signing authority."
+    },
+    {
+      "id": "de-hgb-325",
+      "title": "HGB section 325: financial disclosure",
+      "jurisdiction": "Germany",
+      "topics": [
+        "financial_disclosures"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/hgb/__325.html",
+      "locator": "Section 325, paragraphs 1 and 1a",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "financial accounts disclosure annual statements Jahresabschluss Offenlegung financial_disclosures",
+      "text": "HGB section 325 addresses disclosure of specified corporate accounting documents through the Unternehmensregister. The documents required depend on applicable preparation duties and related provisions. For diligence, request the relevant annual statements and accompanying reports and check reporting periods, amendments and applicable exemptions. A failed third-party financial API lookup does not establish non-publication or non-compliance."
+    },
+    {
+      "id": "de-zpo-322",
+      "title": "ZPO section 322: scope of substantive finality",
+      "jurisdiction": "Germany",
+      "topics": [
+        "litigation"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/zpo/__322.html",
+      "locator": "Section 322, paragraph 1",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "litigation judgment claim Rechtskraft Urteil Rechtsstreit pending dismissed",
+      "text": "ZPO section 322 limits the substantive finality of judgments to the claim decided. Diligence should distinguish allegations, pending claims and decisions, and obtain the actual judgment and current procedural information. A search excerpt is not a judgment and cannot establish whether proceedings are ongoing or resolved."
+    },
+    {
+      "id": "uk-register",
+      "title": "Companies House register research guidance",
+      "jurisdiction": "UK",
+      "topics": [
+        "corporate_identity"
+      ],
+      "source_url": "https://www.gov.uk/guidance/searching-the-companies-house-register",
+      "locator": "Get information about a company",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "corporate identity company number register registration officers incorporation",
+      "text": "Companies House provides public company information and filing history through its register and API. Its guidance lists company information available for research, including status, registered address, company type and filing dates. Diligence should reconcile the selected company number with the detail record and relevant filings. A search candidate is not independently certified legal identity."
+    },
+    {
+      "id": "uk-ca441",
+      "title": "Companies Act 2006 section 441: filing accounts",
+      "jurisdiction": "UK",
+      "topics": [
+        "financial_disclosures"
+      ],
+      "source_url": "https://www.legislation.gov.uk/ukpga/2006/46/section/441",
+      "locator": "Section 441; Part 15 Chapter 10",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "financial accounts annual reports filing registrar disclosures financial_disclosures",
+      "text": "Section 441 concerns directors’ duty to deliver accounts and reports to the registrar for each financial year. The applicable documents and requirements must be checked against the relevant provisions and exemptions. Request signed accounts and reconcile them to filed records, periods and reporting scope. Missing provider figures do not by themselves establish a breach of filing obligations."
+    },
+    {
+      "id": "uk-preaction",
+      "title": "Civil Procedure Rules: pre-action conduct",
+      "jurisdiction": "UK",
+      "topics": [
+        "litigation"
+      ],
+      "source_url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/pd_pre-action_conduct",
+      "locator": "Introduction and paragraphs 3, 6 and 8",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "litigation claims proceedings pre-action dispute settlement allegations",
+      "text": "The Practice Direction on Pre-Action Conduct describes conduct expected before civil proceedings, including information exchange and consideration of settlement. Pre-action correspondence and allegations must be distinguished from issued proceedings and adjudicated findings. A diligence review should request correspondence, claim documents, decisions and confirmation of current case status rather than infer a judgment from a search result."
+    },
+    {
+      "id": "eu-merger",
+      "title": "EU Merger Regulation: notification framework",
+      "jurisdiction": "EU",
+      "topics": [
+        "regulatory_risks"
+      ],
+      "source_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32004R0139",
+      "locator": "Council Regulation (EC) No 139/2004; Articles 1, 4 and 7",
+      "document_date": "2004-01-20",
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "regulatory risks merger acquisition concentration notification competition turnover EU",
+      "text": "The EU Merger Regulation establishes a framework for review of qualifying concentrations, including jurisdiction, notification and implementation restrictions. Transaction-specific assessment requires the parties, control changes, turnover and applicable rules; company registration alone cannot determine whether clearance is needed. Treat merger-control applicability as a question for targeted review, not a finding that the company violated competition law."
+    },
+    {
+      "id": "uk-cma",
+      "title": "CMA guidance: tell the CMA about a merger",
+      "jurisdiction": "UK",
+      "topics": [
+        "regulatory_risks"
+      ],
+      "source_url": "https://www.gov.uk/guidance/tell-the-cma-about-your-merger",
+      "locator": "Merger notification overview",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "regulatory merger acquisition competition CMA notification UK risk",
+      "text": "CMA guidance describes the UK merger notification regime as voluntary. That does not establish that a particular transaction is outside review or free of intervention risk. Diligence should assess the transaction facts and current jurisdictional rules and seek appropriate advice about notification and process. Do not infer clearance from the absence of a notification record."
+    }
+  ]
+}

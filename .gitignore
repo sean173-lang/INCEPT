@@ -1,27 +1,27 @@
+# Credentials and local configuration
 .env
 .env.*
 !.env.example
+
+# Generated files and dependencies
 .DS_Store
 node_modules/
 __pycache__/
-
-.venv/
-
-# Cached provider responses
-data/financials/
-
-# API usage ledger and expiring provider cache
-data/api_cache/
-data/api_usage.jsonl
-
-# Local installers and backups
-*.pkg
-*.py.bak
-
-# Local credentials and runtime data
-.env
-.env.*
-!.env.example
-data/financials/
-__pycache__/
 .pytest_cache/
+.venv/
+*.pkg
+*.log
+
+# Local installers, private backups and runtime stores
+*.py.bak
+*.backup
+*.sqlite
+*.sqlite3
+*.db
+/private_backups/
+/backups/
+/.n8n/
+
+# Research outputs, provider caches, usage logs and raw executions
+/reports/
+/data/

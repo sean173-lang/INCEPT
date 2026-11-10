@@ -36,11 +36,11 @@ def _api_request(endpoint, params=None):
         return response.json()
 
     except requests.exceptions.HTTPError as error:
-        print(f"Companies House API error: {error}")
+        print(f"Companies House API error: HTTP {getattr(error.response, 'status_code', 'unknown')}")
         raise
 
     except requests.exceptions.RequestException as error:
-        print(f"Connection error: {error}")
+        print(f"Companies House connection error: {type(error).__name__}")
         raise
 
 

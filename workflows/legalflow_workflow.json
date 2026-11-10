@@ -1,9 +1,9 @@
 {
-  "name": "LEGALFLOW – Autonomous M&A Due Diligence Agent",
+  "name": "LEGALFLOW \u2013 Autonomous M&A Due Diligence Agent",
   "nodes": [
     {
       "parameters": {
-        "formTitle": "LEGALFLOW – Corporate Due Diligence",
+        "formTitle": "LEGALFLOW \u2013 Corporate Due Diligence",
         "formDescription": "AI-powered corporate research and preliminary M&A due diligence.",
         "formFields": {
           "values": [
@@ -163,5 +163,6 @@
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
-  }
+  },
+  "active": false
 }

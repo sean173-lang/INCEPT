@@ -12,6 +12,7 @@ import os
 import threading
 import time
 import uuid
+from contextvars import ContextVar
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -227,10 +228,14 @@ class UsageTracker:
 
 
 _runtime = None
+_request_runtime = ContextVar('legalflow_usage_tracker', default=None)
 
 
 def get_tracker():
     global _runtime
+    contextual = _request_runtime.get()
+    if contextual is not None:
+        return contextual
     if _runtime is None:
         _runtime = UsageTracker(cache_dir='data/api_cache', ledger_path='data/api_usage.jsonl')
     return _runtime
@@ -238,12 +243,11 @@ def get_tracker():
 
 @contextmanager
 def use_tracker(tracker):
-    global _runtime
-    previous, _runtime = _runtime, tracker
+    token = _request_runtime.set(tracker)
     try:
         yield tracker
     finally:
-        _runtime = previous
+        _request_runtime.reset(token)
 
 
 class RegistryRecord:
