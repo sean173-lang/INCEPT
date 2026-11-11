@@ -19,9 +19,9 @@ class SafeWorkflowExportTests(OfflineTestCase):
             self.assertIs(document.get('active'),False)
             inspect(document)
 
-    def test_only_export_is_canonical_37_node_workflow(self):
+    def test_canonical_and_separate_ai_development_exports(self):
         root=Path(__file__).resolve().parent.parent
-        self.assertEqual(len(list((root/'workflows').glob('*.json'))),1)
+        self.assertEqual({p.name for p in (root/'workflows').glob('*.json')},{'incept_live_documents_v2.json','incept_ai_synthesis_dev.json'})
         workflow=json.loads((root/'workflows/incept_live_documents_v2.json').read_text())
         self.assertEqual(len(workflow['nodes']),37)
         for node in workflow['nodes']:

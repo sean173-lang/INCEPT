@@ -6,7 +6,7 @@ Based on the supplied requirements; the original course brief/rubric has not bee
 |---|---|
 | n8n primary orchestration | Real execution 28: approved-message intake, read-only Google checks, local API and legal-source research |
 | Three real external integrations | Gmail, Google Sheets and Google Calendar verified in recorded runs; no new calls during cleanup |
-| LLM/model-based synthesis | **Not implemented in the active path.** A locally available student example board describes LLM-written reports, but it is not a grading rubric. Confirm the requirement before submission. |
+| LLM/model-based synthesis | **Callable optional OpenAI synthesis implemented; offline mocks tested. No live model execution verified.** A student example board describes LLM-written reports, but is not the grading rubric. Confirm the formal requirement. [Scope](docs/ai_synthesis.md) |
 | Autonomous research → synthesis → structured report | Bounded official BGB source selection/check plus local RAG/report assembly; not general autonomous legal advice |
 | German/UK corporate research | Preserved adapters and cache-only intake helper, offline routing/matching tests; unknown identity requires review |
 | Counterparty research | Recorded isolated execution 26 with one fresh UK profile; separate automated typed counterparties are not yet in canonical workflow |

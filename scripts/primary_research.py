@@ -60,6 +60,7 @@ class DeadlineAnalysis(Schema):
 
 
 class PrimaryResearchResult(Schema):
+    receipt_id: str|None=None
     status: Literal['verified','partially_verified','unavailable','not_applicable']
     source_url: str
     retrieved_at: str

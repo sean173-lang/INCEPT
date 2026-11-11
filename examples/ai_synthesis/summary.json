@@ -1,0 +1,30 @@
+{
+  "individual": {
+    "status": "completed",
+    "execution_mode": "mock",
+    "model_used": false,
+    "live_request": false,
+    "reason": "validated_preliminary_ai_synthesis"
+  },
+  "germany_company": {
+    "status": "completed",
+    "execution_mode": "mock",
+    "model_used": false,
+    "live_request": false,
+    "reason": "validated_preliminary_ai_synthesis"
+  },
+  "uk_company": {
+    "status": "completed",
+    "execution_mode": "mock",
+    "model_used": false,
+    "live_request": false,
+    "reason": "validated_preliminary_ai_synthesis"
+  },
+  "ambiguous": {
+    "status": "unavailable",
+    "execution_mode": "mock",
+    "model_used": false,
+    "live_request": false,
+    "reason": "insufficient_client_identity"
+  }
+}
