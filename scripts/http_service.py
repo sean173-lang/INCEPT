@@ -1,6 +1,7 @@
 """Minimal Phase 1 FastAPI facade. n8n owns sequencing, approvals and branches."""
 import hmac
 import os
+from pathlib import Path
 
 import requests
 from fastapi import Depends, FastAPI
@@ -121,20 +122,23 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
     @app.post('/v1/onboarding/preview', response_model=OnboardingBundle,
               dependencies=[Depends(authorize)], responses={**errors,503:{'model':ErrorResponse}})
     def onboarding_preview(request: OnboardingRequest):
-        if not development:
-            raise ServiceError(403,'development_required','Onboarding preview accepts synthetic development intakes only.')
+        if not development and request.synthetic_data:
+            raise ServiceError(403,'synthetic_fixture_blocked','Live services do not accept synthetic intake fixtures.')
         return onboarding.preview(request)
+
+    @app.post('/v1/onboarding/assessment', response_model=OnboardingBundle,
+              dependencies=[Depends(authorize)], responses={**errors,503:{'model':ErrorResponse}})
+    def onboarding_assessment(request: OnboardingRequest):
+        if not development and request.synthetic_data:
+            raise ServiceError(403,'synthetic_fixture_blocked','Live services do not accept synthetic intake fixtures.')
+        return onboarding.assess(request)
 
     @app.post('/v1/onboarding/extract',dependencies=[Depends(authorize)],responses=errors)
     def extract_natural_inquiry(request: EmailInquiry):
-        if not development:
-            raise ServiceError(403,'development_required','Natural intake extraction supports synthetic development only.')
         return extractor.run(request)
 
     @app.post('/v1/onboarding/payment-research/verify',dependencies=[Depends(authorize)],responses=errors)
     def payment_research(request: PaymentSourceRequest):
-        if not development:
-            raise ServiceError(403,'development_required','Payment source checks support synthetic development only.')
         try:
             return verify_payment_source(request)
         except ValueError:
@@ -143,8 +147,8 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
     @app.post('/v1/onboarding/synthesis', response_model=SynthesisResponse,
               dependencies=[Depends(authorize)], responses=errors)
     def mandate_synthesis(request: SynthesisRequest):
-        if not development:
-            raise ServiceError(403,'development_required','AI synthesis currently supports synthetic intake only.')
+        if not development and request.bundle.synthetic_data:
+            raise ServiceError(403,'synthetic_fixture_blocked','Live services do not accept synthetic intake fixtures.')
         return synthesis.run(request)
 
     @app.post('/v1/onboarding/corporate-intelligence',response_model=CorporateResult,
@@ -205,6 +209,11 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
 
 def app_from_environment():
     """Fail-closed opt-ins; never edit .env or let HTTP callers change policy."""
+    # The local launcher and n8n process use the repository's ignored .env;
+    # load it before constructing any provider clients. Existing process values
+    # take precedence, and no credential is returned by this function.
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parents[1] / '.env', override=False)
     mode = os.getenv('LEGALFLOW_SERVICE_MODE', 'development')
     if mode not in ('development', 'live'):
         raise ValueError('LEGALFLOW_SERVICE_MODE must be development or live')

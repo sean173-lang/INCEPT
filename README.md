@@ -88,7 +88,9 @@ The loopback example is not production authentication. `scripts.http_service:app
 
 [Import and binding instructions](docs/incept_live_documents_v2.md). Existing local workflows are not changed by code publication. Import as a separate inactive copy, bind existing compatible project credentials and configure only the dedicated synthetic account. A new live run or email requires explicit authorization; do not send another message merely to replay a prior test. [5–7 minute safe demo](docs/demo_script.md).
 
-A separate [40-node AI development export](workflows/incept_ai_synthesis_dev.json) adds optional synthesis and validation after evidence assembly. It is inactive, manual-only and not imported into the running instance. Defaults produce an explicit unavailable/fallback response. Follow the [AI setup, billing gates and limitations](docs/ai_synthesis.md); importing an export does not authorize Google or model requests.
+A separate [40-node AI development export](workflows/incept_ai_synthesis_dev.json) adds synthesis and validation after evidence assembly. It is inactive and manual-only. Follow the [AI runtime setup and limitations](docs/ai_synthesis.md); importing an export does not configure Google or n8n credentials.
+
+The Gmail workspace's **Analyze** action adds the source-exact v2 synthesis request after its selected-message and official-source checks. It uses the authenticated FastAPI endpoint, duplicate-request ledger and fallback validator; it does not generate documents. The loopback service on port 8003 must expose `/v1/onboarding/synthesis` and receive a valid service-key binding from n8n.
 
 ## Samples, documents and safeguards
 

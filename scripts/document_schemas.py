@@ -18,16 +18,15 @@ class DraftText(Schema):
 class Representative(DraftText):
     name: str=Field(min_length=3,max_length=200)
     role: str=Field(min_length=3,max_length=150)
-    authority_status: Literal['unknown','asserted','synthetic_evidence_checked']='unknown'
+    authority_status: Literal['unknown','asserted','evidence_checked']='unknown'
     evidence_reference: str|None=Field(default=None,max_length=400)
     @model_validator(mode='after')
     def evidence(self):
-        if self.authority_status=='synthetic_evidence_checked' and not self.evidence_reference:raise ValueError('Synthetic authority checks require evidence reference')
+        if self.authority_status=='evidence_checked' and not self.evidence_reference:raise ValueError('Evidence checks require a reference')
         return self
 
 class DocumentFirmPolicy(DraftText):
     policy_id: str=Field(min_length=3,max_length=100)
-    supplied_for_demo_review: Literal[True]=True
     net_hourly_rate: str=Field(pattern=r'^\d{1,5}(?:\.\d{1,2})?$')
     billing_method: Literal['actual_minutes','specified_increment','unknown']='unknown'
     billing_increment_minutes: int|None=Field(default=None,ge=1,le=60)
@@ -37,7 +36,7 @@ class DocumentFirmPolicy(DraftText):
     other_professionals_terms: str|None=Field(default=None,max_length=600)
     tax_identifier: str|None=Field(default=None,max_length=80)
     payment_instructions: str|None=Field(default=None,max_length=500)
-    vat_configuration_confirmed_for_demo: bool=False
+    vat_configuration_confirmed: bool=False
     @model_validator(mode='after')
     def increment(self):
         if self.billing_method=='specified_increment' and self.billing_increment_minutes is None:raise ValueError('Explicit increment required')

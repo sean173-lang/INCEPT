@@ -17,6 +17,81 @@
       "text": "Durch den Dienstvertrag wird derjenige, welcher Dienste zusagt, zur Leistung der versprochenen Dienste, der andere Teil zur Gewährung der vereinbarten Vergütung verpflichtet."
     },
     {
+      "id": "payment-bgb-614",
+      "title": "BGB §614",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__614.html",
+      "locator": "BGB §614",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "payment invoice remuneration services performance maturity time periods",
+      "text": "Die Vergütung ist nach der Leistung der Dienste zu entrichten. Ist die Vergütung nach Zeitabschnitten bemessen, so ist sie nach dem Ablauf der einzelnen Zeitabschnitte zu entrichten."
+    },
+    {
+      "id": "payment-bgb-631",
+      "title": "BGB §631",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__631.html",
+      "locator": "BGB §631(1) and (2)",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "work contract Werkvertrag promised result remuneration work performance",
+      "text": "(1) Durch den Werkvertrag wird der Unternehmer zur Herstellung des versprochenen Werkes, der Besteller zur Entrichtung der vereinbarten Vergütung verpflichtet. (2) Gegenstand des Werkvertrags kann sowohl die Herstellung oder Veränderung einer Sache als auch ein anderer durch Arbeit oder Dienstleistung herbeizuführender Erfolg sein."
+    },
+    {
+      "id": "payment-bgb-640",
+      "title": "BGB §640",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__640.html",
+      "locator": "BGB §640(1) and (2), first two sentences; consumer notice requirement",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "work contract acceptance Abnahme completion acceptance requirements",
+      "text": "(1) Der Besteller ist verpflichtet, das vertragsmäßig hergestellte Werk abzunehmen, sofern nicht nach der Beschaffenheit des Werkes die Abnahme ausgeschlossen ist. Wegen unwesentlicher Mängel kann die Abnahme nicht verweigert werden. (2) Als abgenommen gilt ein Werk auch, wenn der Unternehmer dem Besteller nach Fertigstellung des Werks eine angemessene Frist zur Abnahme gesetzt hat und der Besteller die Abnahme nicht innerhalb dieser Frist unter Angabe mindestens eines Mangels verweigert hat. Ist der Besteller ein Verbraucher, so treten die Rechtsfolgen des Satzes 1 nur dann ein, wenn der Unternehmer den Besteller zusammen mit der Aufforderung zur Abnahme auf die Folgen einer nicht erklärten oder ohne Angabe von Mängeln verweigerten Abnahme hingewiesen hat; der Hinweis muss in Textform erfolgen."
+    },
+    {
+      "id": "payment-bgb-633",
+      "title": "BGB §633",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__633.html",
+      "locator": "BGB §633(2), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "work contract defective work agreed quality defect incomplete performance",
+      "text": "Das Werk ist frei von Sachmängeln, wenn es die vereinbarte Beschaffenheit hat."
+    },
+    {
+      "id": "payment-bgb-634",
+      "title": "BGB §634",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__634.html",
+      "locator": "BGB §634, opening clause and no. 1",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "work defects remedies supplementary performance Nacherfüllung",
+      "text": "Ist das Werk mangelhaft, kann der Besteller, wenn die Voraussetzungen der folgenden Vorschriften vorliegen und soweit nicht ein anderes bestimmt ist, nach § 635 Nacherfüllung verlangen."
+    },
+    {
       "id": "payment-bgb-320",
       "title": "BGB §320",
       "jurisdiction": "Germany",
@@ -24,12 +99,27 @@
         "mandate_intake"
       ],
       "source_url": "https://www.gesetze-im-internet.de/bgb/__320.html",
-      "locator": "BGB §320(1), first sentence",
+      "locator": "BGB §320(1) and (2)",
       "document_date": null,
       "reviewed_at": "2026-11-11",
       "content_kind": "official_statutory_excerpt_not_case_finding",
       "keywords": "payment invoice remuneration services performance dispute contract maturity",
-      "text": "Wer aus einem gegenseitigen Vertrag verpflichtet ist, kann die ihm obliegende Leistung bis zur Bewirkung der Gegenleistung verweigern, es sei denn, dass er vorzuleisten verpflichtet ist."
+      "text": "(1) Wer aus einem gegenseitigen Vertrag verpflichtet ist, kann die ihm obliegende Leistung bis zur Bewirkung der Gegenleistung verweigern, es sei denn, dass er vorzuleisten verpflichtet ist. Hat die Leistung an mehrere zu erfolgen, so kann dem einzelnen der ihm gebührende Teil bis zur Bewirkung der ganzen Gegenleistung verweigert werden. Die Vorschrift des § 273 Abs. 3 findet keine Anwendung. (2) Ist von der einen Seite teilweise geleistet worden, so kann die Gegenleistung insoweit nicht verweigert werden, als die Verweigerung nach den Umständen, insbesondere wegen verhältnismäßiger Geringfügigkeit des rückständigen Teils, gegen Treu und Glauben verstoßen würde."
+    },
+    {
+      "id": "payment-bgb-632a",
+      "title": "BGB §632a",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__632a.html",
+      "locator": "BGB §632a(1), first two sentences and proof-of-performance sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "work contract progress payment partial performance contractually owed services value evidence burden of proof",
+      "text": "(1) Der Unternehmer kann von dem Besteller eine Abschlagszahlung in Höhe des Wertes der von ihm erbrachten und nach dem Vertrag geschuldeten Leistungen verlangen. Sind die erbrachten Leistungen nicht vertragsgemäß, kann der Besteller die Zahlung eines angemessenen Teils des Abschlags verweigern. Die Beweislast für die vertragsgemäße Leistung verbleibt bis zur Abnahme beim Unternehmer. § 641 Abs. 3 gilt entsprechend. Die Leistungen sind durch eine Aufstellung nachzuweisen, die eine rasche und sichere Beurteilung der Leistungen ermöglichen muss."
     },
     {
       "id": "payment-bgb-641",
@@ -39,12 +129,132 @@
         "mandate_intake"
       ],
       "source_url": "https://www.gesetze-im-internet.de/bgb/__641.html",
-      "locator": "BGB §641(1), first sentence",
+      "locator": "BGB §641(1), sentences 1 and 2; §641(3)",
       "document_date": null,
       "reviewed_at": "2026-11-11",
       "content_kind": "official_statutory_excerpt_not_case_finding",
       "keywords": "payment invoice remuneration services performance dispute contract maturity",
-      "text": "Die Vergütung ist bei der Abnahme des Werkes zu entrichten."
+      "text": "(1) Die Vergütung ist bei der Abnahme des Werkes zu entrichten. Ist das Werk in Teilen abzunehmen und die Vergütung für die einzelnen Teile bestimmt, so ist die Vergütung für jeden Teil bei dessen Abnahme zu entrichten. (3) Kann der Besteller die Beseitigung eines Mangels verlangen, so kann er nach der Fälligkeit die Zahlung eines angemessenen Teils der Vergütung verweigern; angemessen ist in der Regel das Doppelte der für die Beseitigung des Mangels erforderlichen Kosten."
+    },
+    {
+      "id": "payment-bgb-433",
+      "title": "BGB §433",
+      "jurisdiction": "Germany",
+      "topics": [
+        "contract_performance"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__433.html",
+      "locator": "BGB §433(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_candidate_not_applicability_or_case_finding",
+      "keywords": "Kaufvertrag Kaufpreis Lieferung Verspätung Mangel Schadensersatz Nacherfüllung Rücktritt Frist Fälligkeit",
+      "text": "Durch den Kaufvertrag wird der Verkäufer einer Sache verpflichtet, dem Käufer die Sache zu übergeben und das Eigentum an der Sache zu verschaffen. Der Verkäufer hat dem Käufer die Sache frei von Sach- und Rechtsmängeln zu verschaffen."
+    },
+    {
+      "id": "payment-bgb-434",
+      "title": "BGB §434",
+      "jurisdiction": "Germany",
+      "topics": [
+        "contract_performance"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__434.html",
+      "locator": "BGB §434(1)",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_candidate_not_applicability_or_case_finding",
+      "keywords": "Kaufvertrag Kaufpreis Lieferung Verspätung Mangel Schadensersatz Nacherfüllung Rücktritt Frist Fälligkeit",
+      "text": "Die Sache ist frei von Sachmängeln, wenn sie bei Gefahrübergang den subjektiven Anforderungen, den objektiven Anforderungen und den Montageanforderungen dieser Vorschrift entspricht."
+    },
+    {
+      "id": "payment-bgb-437",
+      "title": "BGB §437",
+      "jurisdiction": "Germany",
+      "topics": [
+        "contract_performance"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__437.html",
+      "locator": "BGB §437, opening clause",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_candidate_not_applicability_or_case_finding",
+      "keywords": "Kaufvertrag Kaufpreis Lieferung Verspätung Mangel Schadensersatz Nacherfüllung Rücktritt Frist Fälligkeit",
+      "text": "Ist die Sache mangelhaft, kann der Käufer, wenn die Voraussetzungen der folgenden Vorschriften vorliegen und soweit nicht ein anderes bestimmt ist,"
+    },
+    {
+      "id": "payment-bgb-439",
+      "title": "BGB §439",
+      "jurisdiction": "Germany",
+      "topics": [
+        "contract_performance"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__439.html",
+      "locator": "BGB §439(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_candidate_not_applicability_or_case_finding",
+      "keywords": "Kaufvertrag Kaufpreis Lieferung Verspätung Mangel Schadensersatz Nacherfüllung Rücktritt Frist Fälligkeit",
+      "text": "Der Käufer kann als Nacherfüllung nach seiner Wahl die Beseitigung des Mangels oder die Lieferung einer mangelfreien Sache verlangen."
+    },
+    {
+      "id": "payment-bgb-280",
+      "title": "BGB §280",
+      "jurisdiction": "Germany",
+      "topics": [
+        "contract_performance"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__280.html",
+      "locator": "BGB §280(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_candidate_not_applicability_or_case_finding",
+      "keywords": "Kaufvertrag Kaufpreis Lieferung Verspätung Mangel Schadensersatz Nacherfüllung Rücktritt Frist Fälligkeit",
+      "text": "Verletzt der Schuldner eine Pflicht aus dem Schuldverhältnis, so kann der Gläubiger Ersatz des hierdurch entstehenden Schadens verlangen."
+    },
+    {
+      "id": "payment-bgb-281",
+      "title": "BGB §281",
+      "jurisdiction": "Germany",
+      "topics": [
+        "contract_performance"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__281.html",
+      "locator": "BGB §281(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_candidate_not_applicability_or_case_finding",
+      "keywords": "Kaufvertrag Kaufpreis Lieferung Verspätung Mangel Schadensersatz Nacherfüllung Rücktritt Frist Fälligkeit",
+      "text": "Soweit der Schuldner die fällige Leistung nicht oder nicht wie geschuldet erbringt, kann der Gläubiger unter den Voraussetzungen des § 280 Abs. 1 Schadensersatz statt der Leistung verlangen, wenn er dem Schuldner erfolglos eine angemessene Frist zur Leistung oder Nacherfüllung bestimmt hat."
+    },
+    {
+      "id": "payment-bgb-286",
+      "title": "BGB §286",
+      "jurisdiction": "Germany",
+      "topics": [
+        "contract_performance"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__286.html",
+      "locator": "BGB §286(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_candidate_not_applicability_or_case_finding",
+      "keywords": "Kaufvertrag Kaufpreis Lieferung Verspätung Mangel Schadensersatz Nacherfüllung Rücktritt Frist Fälligkeit",
+      "text": "Leistet der Schuldner auf eine Mahnung des Gläubigers nicht, die nach dem Eintritt der Fälligkeit erfolgt, so kommt er durch die Mahnung in Verzug."
+    },
+    {
+      "id": "payment-bgb-323",
+      "title": "BGB §323",
+      "jurisdiction": "Germany",
+      "topics": [
+        "contract_performance"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__323.html",
+      "locator": "BGB §323(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_candidate_not_applicability_or_case_finding",
+      "keywords": "Kaufvertrag Kaufpreis Lieferung Verspätung Mangel Schadensersatz Nacherfüllung Rücktritt Frist Fälligkeit",
+      "text": "Erbringt bei einem gegenseitigen Vertrag der Schuldner eine fällige Leistung nicht oder nicht vertragsgemäß, so kann der Gläubiger, wenn er dem Schuldner erfolglos eine angemessene Frist zur Leistung oder Nacherfüllung bestimmt hat, vom Vertrag zurücktreten."
     }
   ]
 }

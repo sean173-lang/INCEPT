@@ -1,9 +1,9 @@
-"""Fixture-only intake contracts; no caller can approve actions or spend credits."""
+"""Intake and document contracts; no caller can approve actions or spend credits."""
 from datetime import date
 from decimal import Decimal
 from typing import Literal
 from scripts.review_warnings import ReviewWarning
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, ValidationInfo, field_validator, model_validator
 from scripts.service_schemas import Schema
 from scripts.document_schemas import DocumentOptions,DocumentIssue,Status
 
@@ -11,17 +11,18 @@ from scripts.document_schemas import DocumentOptions,DocumentIssue,Status
 class IntakeText(Schema):
     @field_validator('*',mode='before',check_fields=False)
     @classmethod
-    def no_controls(cls,value):
+    def no_controls(cls,value,info:ValidationInfo):
         if isinstance(value,str):
-            if any(ord(c)<32 or ord(c)==127 for c in value):raise ValueError('Control characters are not permitted')
+            allowed={'\n','\r','\t'} if info.field_name in ('summary','requested_scope') else set()
+            if any((ord(c)<32 and c not in allowed) or ord(c)==127 for c in value):raise ValueError('Control characters are not permitted')
             return value.strip()
         return value
 
 
 class ClientInput(IntakeText):
-    name: str=Field(min_length=3,max_length=200)
-    address: str=Field(min_length=5,max_length=400)
-    email: str=Field(max_length=200,pattern=r'^[^\s@]+@[^\s@]+\.invalid$')
+    name: str|None=Field(default=None,min_length=3,max_length=200)
+    address: str|None=Field(default=None,max_length=400)
+    email: str|None=Field(default=None,max_length=200,pattern=r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
     jurisdiction: Literal['Germany','United Kingdom','UK','unknown','unsupported']='Germany'
     client_type: Literal['individual','company','unknown']='unknown'
     registration_number: str|None=Field(default=None,max_length=80)
@@ -31,12 +32,12 @@ class ClientInput(IntakeText):
 
 
 class FirmInput(ClientInput):
-    lawyer_name: str=Field(min_length=3,max_length=150)
+    lawyer_name: str|None=Field(default=None,min_length=3,max_length=150)
 
 
 class MatterInput(IntakeText):
     title: str=Field(min_length=3,max_length=200)
-    summary: str=Field(min_length=10,max_length=3000)
+    summary: str=Field(min_length=10,max_length=6000)
     requested_scope: str=Field(min_length=5,max_length=1000)
     opposing_parties: list[str]=Field(default_factory=list,max_length=10)
     claimed_deadline: str|None=Field(default=None,max_length=10)
@@ -59,7 +60,8 @@ class MatterInput(IntakeText):
 
 
 class FeeInput(IntakeText):
-    net_hourly_rate: str=Field(pattern=r'^\d{1,5}(?:\.\d{1,2})?$',max_length=8)
+    net_hourly_rate: str|None=Field(default=None,pattern=r'^\d{1,5}(?:\.\d{1,2})?$',max_length=8)
+    proposed_advance_hours: str|None=Field(default=None,pattern=r'^\d{1,4}(?:\.\d{1,2})?$',max_length=8)
     currency: Literal['EUR']='EUR'
     vat_mode: Literal['unknown','taxable','exempt']
     vat_percent: str|None=Field(default=None,pattern=r'^\d{1,3}(?:\.\d{1,2})?$')
@@ -67,7 +69,11 @@ class FeeInput(IntakeText):
 
     @model_validator(mode='after')
     def amounts(self):
+        if self.net_hourly_rate is None:
+            if self.proposed_advance_hours is not None or self.vat_mode!='unknown' or self.vat_percent is not None or self.vat_basis is not None:raise ValueError('Rate and tax treatment require supplied fee information')
+            return self
         if Decimal(self.net_hourly_rate)<=0:raise ValueError('Hourly rate must be positive')
+        if self.proposed_advance_hours is not None and Decimal(self.proposed_advance_hours)<=0:raise ValueError('Advance hours must be positive')
         if self.vat_mode=='taxable':
             if self.vat_percent is None or not 0<Decimal(self.vat_percent)<=100 or not self.vat_basis:
                 raise ValueError('Explicit positive VAT percentage and supplied treatment basis required')
@@ -80,28 +86,24 @@ class FeeInput(IntakeText):
 
 class OnboardingRequest(IntakeText):
     document_options: DocumentOptions|None=None
-    synthetic_data: Literal[True]
+    synthetic_data: bool=False
     idempotency_key: str=Field(min_length=8,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
     client: ClientInput
-    firm: FirmInput
+    firm: FirmInput|None=None
     matter: MatterInput
-    fees: FeeInput
-    draft_date: str=Field(min_length=10,max_length=10)
-
-    @field_validator('synthetic_data',mode='before')
-    @classmethod
-    def explicit_synthetic(cls,value):
-        if value is not True:raise ValueError('Explicit synthetic-data acknowledgement required')
-        return value
+    fees: FeeInput|None=None
+    draft_date: str|None=Field(default=None,min_length=10,max_length=10)
 
     @field_validator('draft_date')
     @classmethod
-    def iso_date(cls,value):date.fromisoformat(value);return value
+    def iso_date(cls,value):
+        if value is not None:date.fromisoformat(value)
+        return value
 
 
 class ClientRecord(ClientInput):
     client_id: str
-    synthetic_data: Literal[True]=True
+    synthetic_data: bool=False
 
 
 class MatterRecord(MatterInput):
@@ -128,15 +130,15 @@ class DraftDocument(Schema):
 
 
 class AdvanceCalculation(Schema):
-    hours: Literal['5']='5'
-    net_hourly_rate: str
+    hours: str|None=None
+    net_hourly_rate: str|None=None
     currency: Literal['EUR']='EUR'
     net_fee: str
     vat_mode: Literal['unknown','taxable','exempt']
     vat_percent: str|None
     vat_amount: str|None
     gross_total: str|None
-    tax_status: Literal['supplied_demo_treatment_unverified']='supplied_demo_treatment_unverified'
+    tax_status: Literal['supplied_treatment_unverified','not_calculated','supplied_demo_treatment_unverified']='not_calculated'
     work_performed: Literal[False]=False
 
 
@@ -148,7 +150,7 @@ class AssessmentFinding(Schema):
 
 class AssessmentSource(Schema):
     source_id: str
-    kind: Literal['synthetic_intake','legal_reference','corporate_record','public_search_lead']
+    kind: Literal['intake','synthetic_intake','legal_reference','corporate_record','public_search_lead']
     locator: str
     content: str
     url: str|None=None
@@ -158,7 +160,7 @@ class AssessmentSource(Schema):
 
 class MandateAssessment(Schema):
     review_warnings: list[ReviewWarning] = Field(default_factory=list)
-    title: str='DEMO Mandate Assessment Report'
+    title: str='Preliminary Mandate Assessment'
     conclusion: Literal['lawyer_review_required']='lawyer_review_required'
     confidence: Literal['insufficient_for_legal_conclusions']='insufficient_for_legal_conclusions'
     factual_findings: list[AssessmentFinding]
@@ -187,11 +189,11 @@ class ProposedAction(Schema):
 class OnboardingBundle(Schema):
     document_generation_context: DocumentOptions|None=None
     schema_version: Literal[1]=1
-    synthetic_data: Literal[True]=True
+    synthetic_data: bool=False
     status: Literal['preview_pending_lawyer_approval']='preview_pending_lawyer_approval'
     client: ClientRecord
     matter: MatterRecord
-    advance: AdvanceCalculation
+    advance: AdvanceCalculation|None=None
     documents: list[DraftDocument]
     assessment: MandateAssessment
     proposed_actions: list[ProposedAction]

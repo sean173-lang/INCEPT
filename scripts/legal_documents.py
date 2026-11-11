@@ -73,7 +73,7 @@ def variables(ctx,rules):
     representative=''
     if ctx.client.client_type=='company':
         rep=o.representative
-        representative=('**Vertreten durch:** '+text(rep.name)+', '+text(rep.role)+'  \n**Befugnisnachweis:** '+supplied(rep.evidence_reference,'NACHWEIS DER VERTRETUNGSBEFUGNIS')+' (Status: '+('synthetischer Nachweis im Demo geprüft; keine reale Bestätigung' if rep.authority_status=='synthetic_evidence_checked' else 'anwaltlich ungeprüft')+')') if rep else '**Vertreten durch:** [NAME, FUNKTION UND BEFUGNISNACHWEIS – ERFORDERLICH]'
+        representative=('**Vertreten durch:** '+text(rep.name)+', '+text(rep.role)+'  \n**Befugnisnachweis:** '+supplied(rep.evidence_reference,'NACHWEIS DER VERTRETUNGSBEFUGNIS')+' (Status: '+('angegebener Nachweis, anwaltliche Prüfung ausstehend' if rep.authority_status=='evidence_checked' else 'anwaltlich ungeprüft')+')') if rep else '**Vertreten durch:** [NAME, FUNKTION UND BEFUGNISNACHWEIS – ERFORDERLICH]'
     authority=('Vorgesehene Vollmachtserklärung (noch nicht abgegeben): Die oben bezeichnete Mandantschaft bevollmächtigt die genannte Kanzlei, handelnd durch die benannte Rechtsanwältin beziehungsweise den benannten Rechtsanwalt, ausschließlich zur außergerichtlichen Beratung und Vertretung in der unter Ziffer 2 bezeichneten Angelegenheit. Vor Erteilung und Verwendung ist die Erklärung anwaltlich freizugeben.' if o.representation_scope=='out_of_court' else
       '[UMFANG DER VERTRETUNG – ERFORDERLICH]. Für gerichtliche Vertretung oder einen nicht festgelegten Umfang enthält dieses Muster noch keine freigegebene Ermächtigung.')
     if f.vat_mode=='taxable':
@@ -109,7 +109,7 @@ def required_checks(kind,ctx):
     if not ctx.matter.opposing_parties:items.append(issue('opponents','matter.opposing_parties','Gegenpartei/Beteiligte für Mandat und Konfliktprüfung ergänzen.'))
     if ctx.client.client_type=='company':
         if o.representative is None:items.append(issue('representative','document_options.representative','Person, Funktion und Befugnisnachweis fehlen.',sources=['bgb-164','bgb-167'] if kind=='vollmacht' else []))
-        elif o.representative.authority_status!='synthetic_evidence_checked':items.append(issue('authority_unverified','document_options.representative.authority_status','Vertretungsbefugnis wurde nicht anhand eines Nachweises geprüft.','review',['bgb-164'] if kind=='vollmacht' else []))
+        elif o.representative.authority_status!='evidence_checked':items.append(issue('authority_unverified','document_options.representative.authority_status','Vertretungsbefugnis wurde nicht anhand eines Nachweises geprüft.','review',['bgb-164'] if kind=='vollmacht' else []))
     if ctx.client.client_type=='company' and o.representative and not o.representative.evidence_reference:
         items.append(issue('representative_evidence','document_options.representative.evidence_reference','Befugnisnachweis der benannten Person fehlt.',sources=['bgb-164'] if kind=='vollmacht' else []))
     if kind=='fee_agreement' and not o.place:items.append(issue('place','document_options.place','Ort der vorgesehenen Erklärung ergänzen.'))
@@ -130,7 +130,7 @@ def required_checks(kind,ctx):
                 if p.billing_method=='unknown':items.append(issue('billing_method','document_options.firm_policy.billing_method','Keine Abrechnungseinheit oder Methode festgelegt.'))
                 if p.billing_method=='specified_increment':items.append(issue('rounding_method','document_options.firm_policy.billing_method','Rundungsverfahren und rechtliche Zulässigkeit gesondert prüfen.','review',['rvg-3a']))
         if ctx.request.fees.vat_mode=='unknown':items.append(issue('vat_unknown','fees.vat_mode','Steuerbehandlung und Bruttoentgelt sind offen.',sources=['ustg-14'] if kind=='advance_invoice' else ['ustg-12','ustg-19']))
-        elif not p or not p.vat_configuration_confirmed_for_demo:items.append(issue('vat_unconfirmed','document_options.firm_policy.vat_configuration_confirmed_for_demo','Übernommene Steuerannahme ist nicht ausdrücklich für den Demo-Fall bestätigt.','review',['ustg-12','ustg-19']))
+        elif not p or not p.vat_configuration_confirmed:items.append(issue('vat_unconfirmed','document_options.firm_policy.vat_configuration_confirmed','Übernommene Steuerannahme ist nicht ausdrücklich bestätigt.','review',['ustg-12','ustg-19']))
     if kind=='advance_invoice':
         if o.payment_received_date and date.fromisoformat(o.payment_received_date)>date.fromisoformat(ctx.request.draft_date):items.append(issue('future_receipt','document_options.payment_received_date','Ein künftiges Datum darf nicht als bereits erfolgte Vereinnahmung dargestellt werden.','error',['ustg-14','ustg-13']))
         for field,value in [('invoice_issue_date',o.invoice_issue_date),('invoice_number',o.invoice_number),('firm_policy.tax_identifier',p.tax_identifier if p else None)]:
@@ -147,7 +147,7 @@ def validate_document(kind,body,ctx,rules=None):
         if text(expected_value) not in body:items.append(issue('identity_'+field,field,'Partei oder Mandatsreferenz fehlt oder wurde verändert.','error'))
     if any(getattr(ctx.client,key)!=value for key,value in ctx.request.client.model_dump().items()) or ctx.matter.client_id!=ctx.client.client_id or any(getattr(ctx.matter,key)!=value for key,value in ctx.request.matter.model_dump().items()):items.append(issue('context_mismatch','document_context','Client-/Matter-Daten stimmen nicht mit dem validierten Intake überein.','error'))
     from scripts.onboarding import advance
-    if ctx.advance!=advance(ctx.request.fees):items.append(issue('arithmetic_mismatch','advance','Berechnungen weichen von Decimal-Ausgangsdaten ab.','error'))
+    if ctx.advance!=advance(ctx.request.fees,synthetic=ctx.request.synthetic_data):items.append(issue('arithmetic_mismatch','advance','Berechnungen weichen von Decimal-Ausgangsdaten ab.','error'))
     if kind=='fee_agreement' and NOTICE not in body:items.append(issue('mandatory_notice','content_markdown','Kostenerstattungshinweis fehlt.','error',['rvg-3a']))
     if kind=='vollmacht' and ('Vorgesehener Stundensatz' in body or 'Hinweis zur Kostenerstattung' in body):items.append(issue('fee_in_power','content_markdown','Vergütungsvereinbarung darf nicht Teil der Vollmacht sein.','error',['rvg-3a']))
     return items
@@ -172,7 +172,7 @@ def generate_documents(request,client,matter,fee):
         refs=rules.select(kind);body=rules.template(kind).substitute(variables(ctx,rules));items=validate_document(kind,body,ctx,rules)
         errors=any(i.severity=='error' for i in items);missing=[i.field for i in items if i.severity=='missing']
         status='GENERATION_FAILED' if errors else 'NOT_READY_FOR_ISSUANCE' if kind=='advance_invoice' else 'MISSING_INFORMATION' if missing else 'LEGAL_REVIEW_REQUIRED' if any(i.severity=='review' for i in items) else 'DRAFT_COMPLETE_FOR_LAWYER_REVIEW'
-        if errors:body='# DEMO — Dokumenterzeugung abgebrochen\n\nWidersprüchliche Mandats-, Parteien- oder Vergütungsdaten verhindern einen konsistenten Entwurf. Anwaltliche Klärung erforderlich; keine Freigabe oder externe Handlung.'
+        if errors:body='# Dokumenterzeugung abgebrochen\n\nWidersprüchliche Mandats-, Parteien- oder Vergütungsdaten verhindern einen konsistenten Entwurf. Anwaltliche Klärung erforderlich; keine Freigabe oder externe Handlung.'
         docs.append(DraftDocument(document_version=2,kind=kind,template_id='de-'+kind,template_version=rules.manifest['version'],source_version=rules.version,completeness_status=status,validation_issues=items,missing_information=missing,lawyer_review_questions=[i.description for i in items if i.severity=='review']+['Vorlage und Einzelfall professionell prüfen; automatische Validierung ist keine Rechtsfreigabe.'],legal_source_ids=[r['id'] for r in refs],content_markdown=body))
     if all(d.completeness_status!='GENERATION_FAILED' for d in docs) and cross_validate(docs,ctx):
         raise ValueError('Cross-document validation failed')

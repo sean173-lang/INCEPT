@@ -51,6 +51,19 @@ class OnboardingTests(OfflineTestCase):
         self.assertEqual(bundle['paid_api_calls'],0);self.assertFalse(bundle['external_actions_executed'])
         self.assertEqual(self.counts(),[1,1,1])
 
+    def test_assessment_endpoint_skips_document_engine_until_optional_preview(self):
+        with patch('scripts.legal_documents.generate_documents') as generate:
+            assessment=self.client.post('/v1/onboarding/assessment',json=self.body)
+            self.assertEqual(assessment.status_code,200,assessment.text)
+            self.assertEqual(assessment.json()['documents'],[])
+            self.assertEqual(assessment.json()['paid_api_calls'],0)
+            generate.assert_not_called()
+        self.assertFalse(self.db.exists())
+        drafts=self.post().json()
+        self.assertEqual(len(drafts['documents']),3)
+        self.assertEqual(drafts['client']['client_id'],assessment.json()['client']['client_id'])
+        self.assertEqual(drafts['matter']['matter_id'],assessment.json()['matter']['matter_id'])
+
     def test_duplicate_same_payload_reuses_records_and_survives_restart(self):
         first=self.post();second=self.post();self.assertEqual(first.json(),second.json())
         self.assertEqual(self.counts(),[1,1,1])

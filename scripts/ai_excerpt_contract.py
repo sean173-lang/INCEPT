@@ -17,7 +17,6 @@ REASON_SECTIONS=('preliminary_legal_issues','source_supported_analysis','missing
 
 
 class ExcerptSelection(Schema):
-    source_id: str
     excerpt_id: str
 
 
@@ -70,7 +69,7 @@ def canonical(value):return json.dumps(value,sort_keys=True,ensure_ascii=False,s
 
 def build_excerpts(packet):
     """Exact spans only; coverage/guidance can support questions, never case facts."""
-    result={};c=packet['context'];sources=packet['sources']
+    result={};identities={};c=packet['context'];sources=packet['sources']
     def add(id,phrase,category,sections,role,classification=None):
         if not isinstance(phrase,str) or not 12<=len(phrase)<=900 or phrase not in sources[id]['content']:return
         s=sources[id];status=classification or s['classification']
@@ -78,12 +77,14 @@ def build_excerpts(packet):
             eligible=packet['issue_support'].get(category,{}).get('evidence',[])
             if not any(e['source_id']==id and e['quote']==phrase and e['status']==status for e in eligible):return
         digest=hashlib.sha256(s['content'].encode()).hexdigest()
-        key='excerpt:'+hashlib.sha256(canonical([c['client_id'],c['matter_id'],id,digest,phrase,status,category,sections,role]).encode()).hexdigest()[:32]
+        identity=hashlib.sha256(canonical([c['client_id'],c['matter_id'],id,digest,phrase,status,category,sections,role]).encode()).hexdigest()
+        if identity in identities:return
+        key=f'E{len(result)+1:03d}'
         record=ExcerptRecord(source_id=id,excerpt_id=key,text=phrase,classification=status,issue_category=category,
             allowed_sections=sections,role=role,jurisdiction=c['governing_law'],source_sha256=digest,
             provenance={k:v for k,v in s.items() if k not in ('content','classification')}).model_dump()
         if key in result and result[key]!=record:raise ValueError('Excerpt identity collision')
-        result[key]=record
+        result[key]=record;identities[identity]=key
         if len(result)>160:raise ValueError('Evidence excerpt catalogue exceeds bounded scope')
     for id,s in sources.items():
         category='mandate_intake';role='case_context';sections=['reasoning'];value=None
@@ -98,9 +99,11 @@ def build_excerpts(packet):
         elif id=='synthesis:intake:matter':
             role='client_alleged_matter';value=json.loads(s['content']);sections=['mandate_summary','factual_background','reasoning']
             for key in ('summary','title','scope'):
-                phrase=value[key];add(id,phrase,category,sections,role)
-                # Sentence excerpts remain original contiguous spans, not summaries.
-                for sentence in re.split(r'(?<=[.!?])\s+',phrase):add(id,sentence,category,sections,role)
+                phrase=value[key]
+                # Never give a multi-sentence client email the appearance of one
+                # concise model-authored factual summary. Keep only exact spans.
+                sentences=re.split(r'(?<=[.!?])\s+',phrase) if key=='summary' else [phrase]
+                for sentence in sentences:add(id,sentence,category,sections,role)
         elif id in ('synthesis:intake:coverage','synthesis:corporate:coverage'):
             value=json.loads(s['content']);role='coverage_limitation';category='missing_evidence'
             for key in ('missing_information','missing_evidence','discrepancies','limitations'):
@@ -134,7 +137,7 @@ def expand_selection(proposal,packet):
     catalog=packet['excerpts'];proof={}
     def resolve(selection,section):
         record=catalog.get(selection.excerpt_id)
-        if not record or record['source_id']!=selection.source_id:raise ValueError('Fabricated or mismatched excerpt selection')
+        if not record:raise ValueError('Fabricated or mismatched excerpt selection')
         if section not in record['allowed_sections']:raise ValueError('Excerpt cannot support this section or role')
         return record
     data=proposal.model_dump(exclude={'contract_version'})
@@ -151,9 +154,8 @@ def expand_selection(proposal,packet):
     for field in REASON_SECTIONS:
         expanded=[]
         for item in getattr(proposal,field):
-            entries=[resolve(ref,'reasoning') for ref in item.evidence_references]
-            pairs=[(e['source_id'],e['excerpt_id']) for e in entries]
-            if len(set(pairs))!=len(pairs):raise ValueError('Duplicate excerpt citation')
+            unique={ref.excerpt_id:ref for ref in item.evidence_references}
+            entries=[resolve(ref,'reasoning') for ref in unique.values()]
             ids=list(dict.fromkeys(e['source_id'] for e in entries))
             expanded.append({**item.model_dump(exclude={'evidence_references'}),'source_ids':ids,
                 'evidence_quotes':[{'source_id':e['source_id'],'quote':e['text']} for e in entries],

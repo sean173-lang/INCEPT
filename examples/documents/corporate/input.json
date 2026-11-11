@@ -31,7 +31,8 @@
     "currency": "EUR",
     "vat_mode": "taxable",
     "vat_percent": "19",
-    "vat_basis": "Ausdrücklich bestätigte synthetische Rechenkonfiguration: inländische steuerpflichtige anwaltliche Leistung, 19 Prozent; keine Feststellung für ein reales Mandat."
+    "vat_basis": "Ausdrücklich bestätigte synthetische Rechenkonfiguration: inländische steuerpflichtige anwaltliche Leistung, 19 Prozent; keine Feststellung für ein reales Mandat.",
+    "proposed_advance_hours": "5"
   },
   "draft_date": "2026-11-11",
   "document_options": {
@@ -50,12 +51,12 @@
       "expenses_terms": "Auslagen werden nur nach vorheriger gesonderter Vereinbarung angesetzt; in diesem Entwurf ist keine Auslagenpauschale vereinbart.",
       "payment_terms": "Synthetische Kanzleiregel zur Prüfung: Zahlung binnen 14 Kalendertagen nach Zugang einer ordnungsgemäßen, gesondert freigegebenen Abrechnung. Dieser Entwurf löst keine Zahlungsfrist aus.",
       "other_professionals_terms": "Für andere Berufsträger sind keine Stundensätze vereinbart. Ein Einsatz mit zusätzlichen Kosten bedarf einer gesonderten Vereinbarung.",
-      "vat_configuration_confirmed_for_demo": true
+      "vat_configuration_confirmed": true
     },
     "representative": {
       "name": "DEMO Jonas Nebel (fiktiv)",
       "role": "Geschäftsführer (synthetisch)",
-      "authority_status": "synthetic_evidence_checked",
+      "authority_status": "evidence_checked",
       "evidence_reference": "DEMO-GESCHAEFTSFUEHRUNGSBESCHLUSS-2026-11-11: ausdrücklich synthetische Einzelvertretungs- und Mandatsfreigabe; keine echte Register- oder Urkundenprüfung."
     }
   }

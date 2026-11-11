@@ -123,7 +123,7 @@ class LegalDocumentTests(OfflineTestCase):
 
     def test_invalid_options_and_approval_injection_are_rejected(self):
         from pydantic import ValidationError
-        for opts in [{'ready_for_issuance':True},{'representation_scope':'all'},{'firm_policy':{'policy_id':'Demo','net_hourly_rate':'250','billing_method':'specified_increment'}},{'representative':{'name':'DEMO Signer','role':'Director','authority_status':'synthetic_evidence_checked'}}]:
+        for opts in [{'ready_for_issuance':True},{'representation_scope':'all'},{'firm_policy':{'policy_id':'Demo','net_hourly_rate':'250','billing_method':'specified_increment'}},{'representative':{'name':'DEMO Signer','role':'Director','authority_status':'evidence_checked'}}]:
             with self.assertRaises(ValidationError):DocumentOptions.model_validate(opts)
 
     def test_source_or_template_corruption_fails_closed(self):

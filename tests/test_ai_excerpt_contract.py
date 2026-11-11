@@ -38,6 +38,9 @@ class ExcerptContractTests(OfflineTestCase):
  def test_stable_ids_case_bound_and_modified_catalog_rejected(self):
   packet=self.packet();self.assertEqual(build_excerpts(packet),packet['excerpts'])
   reversed_packet=copy.deepcopy(packet);reversed_packet['sources']=dict(reversed(list(packet['sources'].items())));self.assertEqual(build_excerpts(reversed_packet),packet['excerpts'])
+  matter=json.loads(packet['sources']['synthesis:intake:matter']['content'])['summary']
+  if len(matter)>len(matter.split('. ')):
+   self.assertFalse(any(e['text']==matter and 'mandate_summary' in e['allowed_sections'] for e in packet['excerpts'].values()))
   proposal=self.proposal(packet);bad=copy.deepcopy(packet);bad['excerpts'][proposal['mandate_summary']['excerpt_id']]['text']='Fabricated claim'
   with self.assertRaises(ValueError):expand_selection(ExcerptSynthesis.model_validate(proposal),bad)
  def test_fabricated_excerpt_wrong_source_and_wrong_role_rejected(self):
@@ -60,6 +63,15 @@ class ExcerptContractTests(OfflineTestCase):
   packet=self.packet();raw=self.proposal(packet)
   bad=copy.deepcopy(raw);item=bad['source_supported_analysis'][0];item['evidence_references']=item['evidence_references'][1:]
   with self.assertRaises(ValueError):expand_selection(ExcerptSynthesis.model_validate(bad),packet)
+ def test_german_conditional_analysis_is_supported_without_weakening_deadline_guards(self):
+  packet=self.packet();raw=self.proposal(packet)
+  self.assertIn('clear professional German',__import__('scripts.ai_synthesis',fromlist=['system_prompt']).system_prompt('2.0'))
+  item=raw['source_supported_analysis'][0]
+  item['statement']='Wenn der Vertrag einen konkreten Erfolg verspricht, könnte die Abnahme nach den belegten Vertragsbedingungen für die Fälligkeit entscheidend sein.'
+  expanded,_=expand_selection(ExcerptSynthesis.model_validate(raw),packet)
+  self.assertEqual(expanded.source_supported_analysis[0].statement,item['statement'])
+  bad=copy.deepcopy(raw);bad['source_supported_analysis'][0]['statement']='Wenn der Vertrag gilt, könnte die Vergütung innerhalb von zwei Wochen fällig werden.'
+  with self.assertRaisesRegex(ValueError,'deadline period forbidden'):expand_selection(ExcerptSynthesis.model_validate(bad),packet)
   bad=copy.deepcopy(raw);bad['source_supported_analysis'][0].update(statement='If payment is disputed, the company may deliberately evade creditors.',issue_category='creditor_evasion_allegation')
   with self.assertRaises(ValueError):expand_selection(ExcerptSynthesis.model_validate(bad),packet)
  def test_approval_and_issue_states_remain_prohibited(self):

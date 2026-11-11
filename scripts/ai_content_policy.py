@@ -89,7 +89,7 @@ def support_for(packet):
 
 
 def genuine_review_request(text):
-    return text.endswith('?') and bool(re.match(r'^(?:Should|What|Which|How|Is|Are|Does|Do|Would|Could|Can|Ist|Sind|Soll|Sollte|Welche\w*|Wie|Muss|Müssen|Bedarf|Erfordert)\b',text,re.I))
+    return text.endswith('?') and bool(re.match(r'^(?:Should|What|Which|How|Is|Are|Does|Do|Would|Could|Can|[Ww]\w*|Ob|Ist|Sind|Seid|Bist|Soll\w*|Kann\w*|Könn\w*|Muss\w*|Müss\w*|Darf\w*|Wär\w*|Besteht|Bestehen|Liegt|Liegen|Gibt|Lässt|Lassen|Handelt|Erfüllt|Kommt|Verlangt|Bedarf|Erfordert|Unter welchen|Inwiefern)\b',text,re.I))
 
 
 def check_approval_language(text):

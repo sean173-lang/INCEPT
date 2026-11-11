@@ -16,8 +16,9 @@ function accounting(attempt) {
  base.billing_confirmed=false;
 }
 function fallback(reason,attempt=null) {
- accounting(attempt);
- base.ai_synthesis={status:'unavailable',model_used:false,execution_mode:['mock','live'].includes(attempt?.execution_mode)?attempt.execution_mode:'disabled',live_request:attempt?.live_request??null,reason};
+ const observed=attempt??body??null;
+ accounting(observed);
+ base.ai_synthesis={status:'unavailable',model_used:false,execution_mode:['mock','live'].includes(observed?.execution_mode)?observed.execution_mode:'disabled',live_request:observed?.live_request??null,model:observed?.model??null,contract_version:observed?.contract_version??null,cache_hit:observed?.cache_hit??false,reason,usage:observed?.usage??null,input_token_upper_bound:observed?.input_token_upper_bound??0,output_token_limit:observed?.output_token_limit??0,cost_display:observed?.cost_display??'Cost unknown',billing_confirmed:false};
  base.bundle.assessment.content_markdown+='\n## AI analysis unavailable\n\nDeterministic assessment retained; no usable AI analysis is claimed. Lawyer review required.\n';
  base.uncertainty=[...new Set([...(base.uncertainty||[]),'AI analysis unavailable: '+reason])];
  const notices={evidence_provenance_rejected:'Evidence provenance could not be validated against server records; do not rely on supplied source classifications until lawyer review.',approval_or_issuance_language_rejected:'AI output implied approval or issuance and was rejected; all actions remain pending lawyer approval.',unsupported_issue_or_adverse_content_rejected:'AI output contained an unsupported issue or allegation and was rejected; no new adverse finding is verified.'};
@@ -56,7 +57,7 @@ if(body.contract_version==='2.0') {
   if(!Array.isArray(refs)||refs.length!==values.length)return fallback('invalid_factual_selection_proof');
   for(let i=0;i<refs.length;i++) {
    const ref=refs[i],item=values[i],e=ref&&catalog[ref.excerpt_id];
-   if(!e||e.excerpt_id!==ref.excerpt_id||e.source_id!==ref.source_id||!Array.isArray(e.allowed_sections)||!e.allowed_sections.includes(field)||typeof e.role!=='string'||typeof e.jurisdiction!=='string'||!e.provenance||!/^[a-f0-9]{64}$/.test(e.source_sha256)||typeof e.text!=='string'||!sources.get(e.source_id)?.content.includes(e.text)||item.statement!==e.text||item.evidence_status!==e.classification||item.issue_category!==e.issue_category||item.assertion_type!=='source_excerpt'||JSON.stringify(item.source_ids)!==JSON.stringify([e.source_id])||item.evidence_quotes.length!==1||item.evidence_quotes[0].source_id!==e.source_id||item.evidence_quotes[0].quote!==e.text)return fallback('factual_excerpt_selection_mismatch');
+   if(!e||e.excerpt_id!==ref.excerpt_id||!Array.isArray(e.allowed_sections)||!e.allowed_sections.includes(field)||typeof e.role!=='string'||typeof e.jurisdiction!=='string'||!e.provenance||!/^[a-f0-9]{64}$/.test(e.source_sha256)||typeof e.text!=='string'||!sources.get(e.source_id)?.content.includes(e.text)||item.statement!==e.text||item.evidence_status!==e.classification||item.issue_category!==e.issue_category||item.assertion_type!=='source_excerpt'||JSON.stringify(item.source_ids)!==JSON.stringify([e.source_id])||item.evidence_quotes.length!==1||item.evidence_quotes[0].source_id!==e.source_id||item.evidence_quotes[0].quote!==e.text)return fallback('factual_excerpt_selection_mismatch');
   }
  }
 } else if(body.contract_version!==undefined&&body.contract_version!=='1.0')return fallback('unsupported_synthesis_contract_version');
@@ -64,7 +65,7 @@ if(typeof body.assessment.content_markdown!=='string' || !body.assessment.conten
 // Only the assessment is replaceable. Documents, amounts and actions stay untouched.
 base.bundle.assessment=body.assessment;
 accounting(body);
-base.ai_synthesis={status:body.status,model_used:body.model_used,live_request:body.live_request,execution_mode:body.execution_mode,model:body.model,reason:body.reason,contract_version:body.contract_version||'1.0',cache_hit:body.cache_hit,evidence_fingerprint:body.evidence_fingerprint};
+base.ai_synthesis={status:body.status,model_used:body.model_used,live_request:body.live_request,execution_mode:body.execution_mode,model:body.model,reason:body.reason,contract_version:body.contract_version||'1.0',cache_hit:body.cache_hit,evidence_fingerprint:body.evidence_fingerprint,usage:body.usage??null,input_token_upper_bound:body.input_token_upper_bound??0,output_token_limit:body.output_token_limit??0,cost_display:body.cost_display??'Cost unknown',billing_confirmed:false};
 base.ai_analysis=a;
 base.all_external_actions_pending_lawyer_approval=true;
 return [{json:base}];
