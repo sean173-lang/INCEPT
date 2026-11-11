@@ -152,6 +152,7 @@ pending lawyer approval. Cached corporate records are not treated as current.
 - [Architecture](docs/architecture.md)
 - [Corporate integration and four scenarios](docs/incept_corporate_intelligence.md)
 - [Primary-source verification](docs/incept_primary_source_research.md)
+- [Live document-engine checkpoint: execution 28](docs/incept_live_documents_v2.md)
 - [German legal document generation v2](docs/legal_document_generation.md)
 - [Document quality audit](docs/legal_document_quality_audit.md)
 - [Project 3 checklist](PROJECT3_SUBMISSION_CHECKLIST.md)

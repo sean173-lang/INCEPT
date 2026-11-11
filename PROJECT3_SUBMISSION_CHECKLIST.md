@@ -35,3 +35,8 @@ Validation after this overhaul: **314 offline tests passed**, including **19 doc
 
 
 Actual document-engine HTTP checkpoint: both synthetic scenarios passed on the updated port-8003 service; failed-document states cannot approve matters or issue documents. Final suite: **315 tests passed**. See [sanitized HTTP evidence](docs/legal_document_http_validation.json). Template/legal approval and valid issuance data remain unresolved. No new n8n execution or external action was performed.
+
+
+## Live document v2 checkpoint before Gradio
+
+Actual n8n execution **28** verified real approved-message intake, read-only Google checks, official German legal-source retrieval and FastAPI template v2.0.0 generation. All three drafts remained pending professional approval; representative authority was asserted only, and the advance was NOT_READY_FOR_ISSUANCE. See [sanitized checkpoint](docs/incept_live_documents_v2.md). The reproducible export removes account/credential/spreadsheet bindings and does not include the one-email sender. This checkpoint does not activate workflows, rerun APIs or start Gradio.
