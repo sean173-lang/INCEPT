@@ -1,15 +1,13 @@
 """Integrated read-only development intake; no fixture fallback or side-effect nodes."""
 import copy
-import json
-from pathlib import Path
 import uuid
 from scripts.intake_workflow import VALIDATE_INPUT, VALIDATE_BUNDLE
 
-MAILBOX='ironhackproject3@gmail.com'
+MAILBOX='project-demo@example.invalid'
 SUBJECT='[INCEPT DEMO APPROVED] Fictional intake v1'
 QUERY='in:inbox from:('+MAILBOX+') to:('+MAILBOX+') subject:"INCEPT DEMO APPROVED" subject:"Fictional intake v1" -in:trash -in:spam'
-# ID observed in the prior successful read-only Google metadata execution, never guessed.
-SHEET_ID='13VtnuqeRefycBjpJtRygFeeK7CcgrFDY2YER20I1Ix0'
+# Internal builder/test placeholder; canonical export requires local account bindings.
+SHEET_ID='DEMO_SHEET_DEFAULT_001'
 
 SEARCH_CHECK=r'''
 const r=$input.first().json;
@@ -30,7 +28,7 @@ const headers=b.payload?.headers;
 if(!Array.isArray(headers) || !Array.isArray(b.labelIds) || !b.labelIds.includes('INBOX') || b.labelIds.some(x=>['SPAM','TRASH','DRAFT'].includes(x))) return stop('message_not_approved_inbox_inquiry');
 function header(name) {const values=headers.filter(h=>h.name?.toLowerCase()===name);return values.length===1?values[0].value:null;}
 function address(value) {if(typeof value!=='string'||/[\r\n]/.test(value))return null;const match=value.match(/^(?:[^<>]*<)?([A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+)>?$/);return match?.[1].toLowerCase();}
-if(address(header('from'))!=='ironhackproject3@gmail.com' || address(header('to'))!=='ironhackproject3@gmail.com' || header('subject')!=='[INCEPT DEMO APPROVED] Fictional intake v1') return stop('sender_recipient_or_exact_approval_subject_mismatch');
+if(address(header('from'))!=='project-demo@example.invalid' || address(header('to'))!=='project-demo@example.invalid' || header('subject')!=='[INCEPT DEMO APPROVED] Fictional intake v1') return stop('sender_recipient_or_exact_approval_subject_mismatch');
 if(typeof b.sizeEstimate!=='number' || b.sizeEstimate>65536 || !/^\d+$/.test(b.internalDate||'')) return stop('message_size_or_date_requires_review');
 return [{json:{state:'approved_demo_metadata',message_id:b.id,internal_date:b.internalDate,ready:true}}];
 '''
@@ -85,7 +83,7 @@ let matches=[],status,certainty;
 if(columns.has('idempotency_key')) {matches=rows.filter(r=>r.idempotency_key===intake.idempotency_key);status=matches.length?'existing_matter_key_candidates':'no_key_match_in_bounded_range';certainty='key_match_not_independent_verification';}
 else if(columns.has('client_name') && columns.has('matter_id')) {matches=rows.filter(r=>r.client_name===intake.client.name && r.matter_id);status=matches.length?'existing_matter_candidates_by_client_name':'no_client_name_match_in_bounded_range';certainty='name_only_candidates_require_lawyer_review';}
 else {status=rows.length?'unsupported_matter_lookup_columns':'empty_bounded_sheet_range';certainty='matter_existence_undetermined';}
-return [{json:{ready:true,state:'read_only_lookup_complete',spreadsheet_id:'13VtnuqeRefycBjpJtRygFeeK7CcgrFDY2YER20I1Ix0',range:'A1:Z101',rows_read:rows.length,candidate_count:matches.length,lookup_status:status,certainty,
+return [{json:{ready:true,state:'read_only_lookup_complete',spreadsheet_id:'DEMO_SHEET_DEFAULT_001',range:'A1:Z101',rows_read:rows.length,candidate_count:matches.length,lookup_status:status,certainty,
  limitation:'Read-only bounded search is not proof of absence; no row created or updated.'}}];
 '''
 CALENDAR_CHECK=r'''
@@ -230,8 +228,3 @@ def bind_credentials(metadata):
             if credential.get('type')!=kind or not credential.get('id') or not credential.get('name'):raise ValueError('Compatible existing OAuth metadata required')
             node['credentials']={kind:{'id':credential['id'],'name':credential['name']}}
     return result
-
-
-if __name__=='__main__':
-    root=Path(__file__).resolve().parent.parent
-    (root/'workflows/incept_autonomous_intake_dev.json').write_text(json.dumps(build_workflow(),indent=2)+'\n')

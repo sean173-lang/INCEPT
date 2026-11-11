@@ -1,0 +1,757 @@
+{
+  "version": "2026-11-11.1",
+  "source_hierarchy": [
+    "primary_legal_sources",
+    "controlled_unapproved_templates",
+    "validated_mandate_data",
+    "optional_assistance_not_used"
+  ],
+  "documents": [
+    {
+      "id": "bgb-164",
+      "title": "BGB § 164",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__164.html",
+      "locator": "BGB-164",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.150633+00:00",
+      "text": "Handeln im Namen des Vertretenen und im Rahmen der Vertretungsmacht; Parteien und Angelegenheit eindeutig bestimmen.",
+      "keywords": "bgb-164 Handeln im Namen des Vertretenen und im Rahmen der Vertretungsmacht; Parteien und Angelegenheit eindeutig bestimmen.",
+      "document_types": [
+        "vollmacht"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "fb1cfc902a12d3f291fa743bbcd71df24bec5db6261759332603b337bc5b3406",
+      "snapshot_path": "snapshots/bgb-164.txt",
+      "snapshot_sha256": "32514f9a5a0dc97932c417cce6081a838fdfbb58e524ed88394736aaf6a637e9",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-165",
+      "title": "BGB § 165",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__165.html",
+      "locator": "BGB-165",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.154834+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 165 Beschränkt geschäftsfähiger Vertreter Die Wirksamkeit einer von oder gegenüber einem Vertreter abgegebenen Willenserklärung wird nicht dadurch beeinträchtigt, dass der Vertreter in der Geschäftsfähigkeit beschränkt ist. ",
+      "keywords": "bgb-165  Bürgerliches Gesetzbuch (BGB) § 165 Beschränkt geschäftsfähiger Vertreter Die Wirksamkeit einer von oder gegenüber einem Vertreter abgegebenen Willenserklärung wird nicht dadurch beeinträchtigt, dass der Vertreter in der Geschäftsfähigkeit beschränkt ist. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "821895b5ddc2ad75f51010aa9bad45528e5c8442376a0212ad3cee23dc2bd5e5",
+      "snapshot_path": "snapshots/bgb-165.txt",
+      "snapshot_sha256": "3d4aaf4140914bb364ae04732c3e336ce3dcc3e647ccb0e93969e3e31dbe1601",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-166",
+      "title": "BGB § 166",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__166.html",
+      "locator": "BGB-166",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.154815+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 166 Willensmängel; Wissenszurechnung (1) Soweit die rechtlichen Folgen einer Willenserklärung durch Willensmängel oder durch die Kenntnis oder das Kennenmüssen gewisser Umstände beeinflusst werden, kommt nicht die Person des Vertretenen, sondern die des Vertreters in Betracht. (2) Hat im Falle einer durch Rechtsgeschäft erteilten Vertretungsmacht (Vollmacht) der Vertreter nach bestimmten Weisungen des Vollmachtgebers gehandelt, so kann sich dieser in Ansehung solcher Umstände, die er selbst kannte, nicht auf die Unkenntnis des Vertreters berufen. Dasselbe gilt von Umständen, die der Vollmachtgeber kennen musste, sofern das Kennenmüssen der Kenntnis gleichsteht. ",
+      "keywords": "bgb-166  Bürgerliches Gesetzbuch (BGB) § 166 Willensmängel; Wissenszurechnung (1) Soweit die rechtlichen Folgen einer Willenserklärung durch Willensmängel oder durch die Kenntnis oder das Kennenmüssen gewisser Umstände beeinflusst werden, kommt nicht die Person des Vertretenen, sondern die des Vertreters in Betracht. (2) Hat im Falle einer durch Rechtsgeschäft erteilten Vertretungsmacht (Vollmacht) der Vertreter nach bestimmten Weisungen des Vollmachtgebers gehandelt, so kann sich dieser in Ansehung solcher Umstände, die er selbst kannte, nicht auf die Unkenntnis des Vertreters berufen. Dasselbe gilt von Umständen, die der Vollmachtgeber kennen musste, sofern das Kennenmüssen der Kenntnis gleichsteht. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "287770c14adca495901ecaa94b6f36ddcf8498d043b7e673122c776ed150739f",
+      "snapshot_path": "snapshots/bgb-166.txt",
+      "snapshot_sha256": "2cfa9a6cc0cdff8ab0b3507bfccd0341d678132d0d171a536f266f5e41e1e0e0",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-167",
+      "title": "BGB § 167",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__167.html",
+      "locator": "BGB-167",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.150380+00:00",
+      "text": "Erteilung durch Erklärung gegenüber dem Bevollmächtigten oder dem Dritten. Keine pauschale Behauptung einer Unterschriftspflicht; besondere Verwendung und Formfragen gesondert prüfen.",
+      "keywords": "bgb-167 Erteilung durch Erklärung gegenüber dem Bevollmächtigten oder dem Dritten. Keine pauschale Behauptung einer Unterschriftspflicht; besondere Verwendung und Formfragen gesondert prüfen.",
+      "document_types": [
+        "vollmacht"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "983b9751037126fa34c676e1c5674036dc33fae8f579c456880c294b7a7806b9",
+      "snapshot_path": "snapshots/bgb-167.txt",
+      "snapshot_sha256": "ecea8699c30d0bb653086658aff670cc440756224544d3abac0450f51dc1a05b",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-168",
+      "title": "BGB § 168",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__168.html",
+      "locator": "BGB-168",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.150404+00:00",
+      "text": "Erlöschen und Widerruf hängen auch vom zugrunde liegenden Rechtsverhältnis ab. Keine ungeprüfte Unwiderruflichkeit vorsehen.",
+      "keywords": "bgb-168 Erlöschen und Widerruf hängen auch vom zugrunde liegenden Rechtsverhältnis ab. Keine ungeprüfte Unwiderruflichkeit vorsehen.",
+      "document_types": [
+        "vollmacht"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "66304fd239111118f210577e0eda8d45a1bae11f776ddb27c3e6f359f67a3235",
+      "snapshot_path": "snapshots/bgb-168.txt",
+      "snapshot_sha256": "b431c98f64ecf2c4404cf6d14e572ce4ec662c36bfbf69d359344435a8aa7559",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-169",
+      "title": "BGB § 169",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__169.html",
+      "locator": "BGB-169",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.245564+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 169 Vollmacht des Beauftragten und des geschäftsführenden Gesellschafters Soweit nach den §§ 674, 729 die erloschene Vollmacht eines Beauftragten oder eines geschäftsführenden Gesellschafters als fortbestehend gilt, wirkt sie nicht zugunsten eines Dritten, der bei der Vornahme eines Rechtsgeschäfts das Erlöschen kennt oder kennen muss. ",
+      "keywords": "bgb-169  Bürgerliches Gesetzbuch (BGB) § 169 Vollmacht des Beauftragten und des geschäftsführenden Gesellschafters Soweit nach den §§ 674, 729 die erloschene Vollmacht eines Beauftragten oder eines geschäftsführenden Gesellschafters als fortbestehend gilt, wirkt sie nicht zugunsten eines Dritten, der bei der Vornahme eines Rechtsgeschäfts das Erlöschen kennt oder kennen muss. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "f533aec4bfe538bc7f6fd6fdb1376739769c4f0a2811ceee4f25310d319c5c84",
+      "snapshot_path": "snapshots/bgb-169.txt",
+      "snapshot_sha256": "9789e2ce793c36bd27b615853c65d238e5a3e228089eae4f94994ab36c3da0f3",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-170",
+      "title": "BGB § 170",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__170.html",
+      "locator": "BGB-170",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.248920+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 170 Wirkungsdauer der Vollmacht Wird die Vollmacht durch Erklärung gegenüber einem Dritten erteilt, so bleibt sie diesem gegenüber in Kraft, bis ihm das Erlöschen von dem Vollmachtgeber angezeigt wird. ",
+      "keywords": "bgb-170  Bürgerliches Gesetzbuch (BGB) § 170 Wirkungsdauer der Vollmacht Wird die Vollmacht durch Erklärung gegenüber einem Dritten erteilt, so bleibt sie diesem gegenüber in Kraft, bis ihm das Erlöschen von dem Vollmachtgeber angezeigt wird. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "d1af2b8780fd1c74bfd2531ec15f58e7f17f2c2f9d4cbbb084792ce03da6eda7",
+      "snapshot_path": "snapshots/bgb-170.txt",
+      "snapshot_sha256": "e9a3f6bb5d52b5ca717a30b6b9e058dbf2a7f7194aff05c0febb01f1ab873f91",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-171",
+      "title": "BGB § 171",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__171.html",
+      "locator": "BGB-171",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.248904+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 171 Wirkungsdauer bei Kundgebung (1) Hat jemand durch besondere Mitteilung an einen Dritten oder durch öffentliche Bekanntmachung kundgegeben, dass er einen anderen bevollmächtigt habe, so ist dieser auf Grund der Kundgebung im ersteren Falle dem Dritten gegenüber, im letzteren Falle jedem Dritten gegenüber zur Vertretung befugt. (2) Die Vertretungsmacht bleibt bestehen, bis die Kundgebung in derselben Weise, wie sie erfolgt ist, widerrufen wird. ",
+      "keywords": "bgb-171  Bürgerliches Gesetzbuch (BGB) § 171 Wirkungsdauer bei Kundgebung (1) Hat jemand durch besondere Mitteilung an einen Dritten oder durch öffentliche Bekanntmachung kundgegeben, dass er einen anderen bevollmächtigt habe, so ist dieser auf Grund der Kundgebung im ersteren Falle dem Dritten gegenüber, im letzteren Falle jedem Dritten gegenüber zur Vertretung befugt. (2) Die Vertretungsmacht bleibt bestehen, bis die Kundgebung in derselben Weise, wie sie erfolgt ist, widerrufen wird. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "2b7fd90ebd529b756b58f3e328bb20005428c57376434f52f649c99f75f949e5",
+      "snapshot_path": "snapshots/bgb-171.txt",
+      "snapshot_sha256": "8220d38771e56915d8ca98219482a6abbbe694917205a8617fb788ee2f35173d",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-172",
+      "title": "BGB § 172",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__172.html",
+      "locator": "BGB-172",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.244777+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 172 Vollmachtsurkunde (1) Der besonderen Mitteilung einer Bevollmächtigung durch den Vollmachtgeber steht es gleich, wenn dieser dem Vertreter eine Vollmachtsurkunde ausgehändigt hat und der Vertreter sie dem Dritten vorlegt. (2) Die Vertretungsmacht bleibt bestehen, bis die Vollmachtsurkunde dem Vollmachtgeber zurückgegeben oder für kraftlos erklärt wird. ",
+      "keywords": "bgb-172  Bürgerliches Gesetzbuch (BGB) § 172 Vollmachtsurkunde (1) Der besonderen Mitteilung einer Bevollmächtigung durch den Vollmachtgeber steht es gleich, wenn dieser dem Vertreter eine Vollmachtsurkunde ausgehändigt hat und der Vertreter sie dem Dritten vorlegt. (2) Die Vertretungsmacht bleibt bestehen, bis die Vollmachtsurkunde dem Vollmachtgeber zurückgegeben oder für kraftlos erklärt wird. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "3c2b4b02bb95769bd7429b3a00675512eb295129ce81139b3d0c38920e514246",
+      "snapshot_path": "snapshots/bgb-172.txt",
+      "snapshot_sha256": "e95d243c81f7209cb82dea25a91a18256c66bcba5f3d2226a114e018b021217c",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-173",
+      "title": "BGB § 173",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__173.html",
+      "locator": "BGB-173",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.250760+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 173 Wirkungsdauer bei Kenntnis und fahrlässiger Unkenntnis Die Vorschriften des § 170, des § 171 Abs. 2 und des § 172 Abs. 2 finden keine Anwendung, wenn der Dritte das Erlöschen der Vertretungsmacht bei der Vornahme des Rechtsgeschäfts kennt oder kennen muss. ",
+      "keywords": "bgb-173  Bürgerliches Gesetzbuch (BGB) § 173 Wirkungsdauer bei Kenntnis und fahrlässiger Unkenntnis Die Vorschriften des § 170, des § 171 Abs. 2 und des § 172 Abs. 2 finden keine Anwendung, wenn der Dritte das Erlöschen der Vertretungsmacht bei der Vornahme des Rechtsgeschäfts kennt oder kennen muss. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "27ba525eb558c0a8e77f429e0260fa85e4bac5d9e15708e7dcbc54575143bbea",
+      "snapshot_path": "snapshots/bgb-173.txt",
+      "snapshot_sha256": "a37a50c46ca20bbe2532c0308e1b997cdc270b03f018c322e620101e4c846d06",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-174",
+      "title": "BGB § 174",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__174.html",
+      "locator": "BGB-174",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.352488+00:00",
+      "text": "Bei einseitigen Rechtsgeschäften kann fehlende Vollmachtsurkunde zur Zurückweisung führen; Voraussetzungen und Ausnahmen vor Verwendung prüfen.",
+      "keywords": "bgb-174 Bei einseitigen Rechtsgeschäften kann fehlende Vollmachtsurkunde zur Zurückweisung führen; Voraussetzungen und Ausnahmen vor Verwendung prüfen.",
+      "document_types": [
+        "vollmacht"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "756addb93f08e04d46a3176071ddf222fbcfd34a1fa8671019e1343c71833075",
+      "snapshot_path": "snapshots/bgb-174.txt",
+      "snapshot_sha256": "8c843ea9d79ba1f5846d96eded495997be9eba53498d11b8dfdbbf29eb8ee766",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-175",
+      "title": "BGB § 175",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__175.html",
+      "locator": "BGB-175",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.351272+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 175 Rückgabe der Vollmachtsurkunde Nach dem Erlöschen der Vollmacht hat der Bevollmächtigte die Vollmachtsurkunde dem Vollmachtgeber zurückzugeben; ein Zurückbehaltungsrecht steht ihm nicht zu. ",
+      "keywords": "bgb-175  Bürgerliches Gesetzbuch (BGB) § 175 Rückgabe der Vollmachtsurkunde Nach dem Erlöschen der Vollmacht hat der Bevollmächtigte die Vollmachtsurkunde dem Vollmachtgeber zurückzugeben; ein Zurückbehaltungsrecht steht ihm nicht zu. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "ab3e1b3d2a2bb33c2d0410b7f949d793aecbdc2997008594bccc173d59af7a94",
+      "snapshot_path": "snapshots/bgb-175.txt",
+      "snapshot_sha256": "030daebe4f5ac179176711742b249af6e43277e676bf8110cc67ec7a3764cd6f",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-176",
+      "title": "BGB § 176",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__176.html",
+      "locator": "BGB-176",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.357724+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 176 Kraftloserklärung der Vollmachtsurkunde (1) Der Vollmachtgeber kann die Vollmachtsurkunde durch eine öffentliche Bekanntmachung für kraftlos erklären; die Kraftloserklärung muss nach den für die öffentliche Zustellung einer Ladung geltenden Vorschriften der Zivilprozessordnung veröffentlicht werden. Mit dem Ablauf eines Monats nach der letzten Einrückung in die öffentlichen Blätter wird die Kraftloserklärung wirksam. (2) Zuständig für die Bewilligung der Veröffentlichung ist sowohl das Amtsgericht, in dessen Bezirk der Vollmachtgeber seinen allgemeinen Gerichtsstand hat, als das Amtsgericht, welches für die Klage auf Rückgabe der Urkunde, abgesehen von dem Wert des Streitgegenstands, zuständig sein würde. (3) Die Kraftloserklärung ist unwirksam, wenn der Vollmachtgeber die Vollmacht nicht widerrufen kann. ",
+      "keywords": "bgb-176  Bürgerliches Gesetzbuch (BGB) § 176 Kraftloserklärung der Vollmachtsurkunde (1) Der Vollmachtgeber kann die Vollmachtsurkunde durch eine öffentliche Bekanntmachung für kraftlos erklären; die Kraftloserklärung muss nach den für die öffentliche Zustellung einer Ladung geltenden Vorschriften der Zivilprozessordnung veröffentlicht werden. Mit dem Ablauf eines Monats nach der letzten Einrückung in die öffentlichen Blätter wird die Kraftloserklärung wirksam. (2) Zuständig für die Bewilligung der Veröffentlichung ist sowohl das Amtsgericht, in dessen Bezirk der Vollmachtgeber seinen allgemeinen Gerichtsstand hat, als das Amtsgericht, welches für die Klage auf Rückgabe der Urkunde, abgesehen von dem Wert des Streitgegenstands, zuständig sein würde. (3) Die Kraftloserklärung ist unwirksam, wenn der Vollmachtgeber die Vollmacht nicht widerrufen kann. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "759971e327e7db359c2d60ef9507e52f06de5bc5564286dbaa52bc7ba339bb6d",
+      "snapshot_path": "snapshots/bgb-176.txt",
+      "snapshot_sha256": "f01ba84b45a3d58b2875be8e043a73c999e422d7cb1c7408034a869750eac095",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-177",
+      "title": "BGB § 177",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__177.html",
+      "locator": "BGB-177",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.356643+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 177 Vertragsschluss durch Vertreter ohne Vertretungsmacht (1) Schließt jemand ohne Vertretungsmacht im Namen eines anderen einen Vertrag, so hängt die Wirksamkeit des Vertrags für und gegen den Vertretenen von dessen Genehmigung ab. (2) Fordert der andere Teil den Vertretenen zur Erklärung über die Genehmigung auf, so kann die Erklärung nur ihm gegenüber erfolgen; eine vor der Aufforderung dem Vertreter gegenüber erklärte Genehmigung oder Verweigerung der Genehmigung wird unwirksam. Die Genehmigung kann nur bis zum Ablauf von zwei Wochen nach dem Empfang der Aufforderung erklärt werden; wird sie nicht erklärt, so gilt sie als verweigert. ",
+      "keywords": "bgb-177  Bürgerliches Gesetzbuch (BGB) § 177 Vertragsschluss durch Vertreter ohne Vertretungsmacht (1) Schließt jemand ohne Vertretungsmacht im Namen eines anderen einen Vertrag, so hängt die Wirksamkeit des Vertrags für und gegen den Vertretenen von dessen Genehmigung ab. (2) Fordert der andere Teil den Vertretenen zur Erklärung über die Genehmigung auf, so kann die Erklärung nur ihm gegenüber erfolgen; eine vor der Aufforderung dem Vertreter gegenüber erklärte Genehmigung oder Verweigerung der Genehmigung wird unwirksam. Die Genehmigung kann nur bis zum Ablauf von zwei Wochen nach dem Empfang der Aufforderung erklärt werden; wird sie nicht erklärt, so gilt sie als verweigert. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "0c86c993cf40c24277943768a2456b4a61d5c7fa1596d90222cbc0e40ac1bafb",
+      "snapshot_path": "snapshots/bgb-177.txt",
+      "snapshot_sha256": "5288b76777c66180a252769d304805ae013e808dde99016054257748d33583e3",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-178",
+      "title": "BGB § 178",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__178.html",
+      "locator": "BGB-178",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.355071+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 178 Widerrufsrecht des anderen Teils Bis zur Genehmigung des Vertrags ist der andere Teil zum Widerruf berechtigt, es sei denn, dass er den Mangel der Vertretungsmacht bei dem Abschluss des Vertrags gekannt hat. Der Widerruf kann auch dem Vertreter gegenüber erklärt werden. ",
+      "keywords": "bgb-178  Bürgerliches Gesetzbuch (BGB) § 178 Widerrufsrecht des anderen Teils Bis zur Genehmigung des Vertrags ist der andere Teil zum Widerruf berechtigt, es sei denn, dass er den Mangel der Vertretungsmacht bei dem Abschluss des Vertrags gekannt hat. Der Widerruf kann auch dem Vertreter gegenüber erklärt werden. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "8ef63e1345d8b88a6d4f3272511e6343197d5a9659c29f5ec46379b4fdb0b9e2",
+      "snapshot_path": "snapshots/bgb-178.txt",
+      "snapshot_sha256": "6b805043e3fe08ab93e034430d697a440826b3e7300618e911de3a7cd80e02d8",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-179",
+      "title": "BGB § 179",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__179.html",
+      "locator": "BGB-179",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.126926+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 179 Haftung des Vertreters ohne Vertretungsmacht (1) Wer als Vertreter einen Vertrag geschlossen hat, ist, sofern er nicht seine Vertretungsmacht nachweist, dem anderen Teil nach dessen Wahl zur Erfüllung oder zum Schadensersatz verpflichtet, wenn der Vertretene die Genehmigung des Vertrags verweigert. (2) Hat der Vertreter den Mangel der Vertretungsmacht nicht gekannt, so ist er nur zum Ersatz desjenigen Schadens verpflichtet, welchen der andere Teil dadurch erleidet, dass er auf die Vertretungsmacht vertraut, jedoch nicht über den Betrag des Interesses hinaus, welches der andere Teil an der Wirksamkeit des Vertrags hat. (3) Der Vertreter haftet nicht, wenn der andere Teil den Mangel der Vertretungsmacht kannte oder kennen musste. Der Vertreter haftet auch dann nicht, wenn er in der Geschäftsfähigkeit beschränkt war, es sei denn, dass er mit Zustimmung seines gesetzlichen Vertreters gehandelt hat. ",
+      "keywords": "bgb-179  Bürgerliches Gesetzbuch (BGB) § 179 Haftung des Vertreters ohne Vertretungsmacht (1) Wer als Vertreter einen Vertrag geschlossen hat, ist, sofern er nicht seine Vertretungsmacht nachweist, dem anderen Teil nach dessen Wahl zur Erfüllung oder zum Schadensersatz verpflichtet, wenn der Vertretene die Genehmigung des Vertrags verweigert. (2) Hat der Vertreter den Mangel der Vertretungsmacht nicht gekannt, so ist er nur zum Ersatz desjenigen Schadens verpflichtet, welchen der andere Teil dadurch erleidet, dass er auf die Vertretungsmacht vertraut, jedoch nicht über den Betrag des Interesses hinaus, welches der andere Teil an der Wirksamkeit des Vertrags hat. (3) Der Vertreter haftet nicht, wenn der andere Teil den Mangel der Vertretungsmacht kannte oder kennen musste. Der Vertreter haftet auch dann nicht, wenn er in der Geschäftsfähigkeit beschränkt war, es sei denn, dass er mit Zustimmung seines gesetzlichen Vertreters gehandelt hat. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "73b8501258cc3a60b0e8370a98746cf586efd55f1da671ce1dd270b05c0a52c4",
+      "snapshot_path": "snapshots/bgb-179.txt",
+      "snapshot_sha256": "97b8e62ad2ca9f0247edf27973cd2449b2d7cc2a7da235019d29bb71689faa1b",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-180",
+      "title": "BGB § 180",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__180.html",
+      "locator": "BGB-180",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.215893+00:00",
+      "text": " Bürgerliches Gesetzbuch (BGB) § 180 Einseitiges Rechtsgeschäft Bei einem einseitigen Rechtsgeschäft ist Vertretung ohne Vertretungsmacht unzulässig. Hat jedoch derjenige, welchem gegenüber ein solches Rechtsgeschäft vorzunehmen war, die von dem Vertreter behauptete Vertretungsmacht bei der Vornahme des Rechtsgeschäfts nicht beanstandet oder ist er damit einverstanden gewesen, dass der Vertreter ohne Vertretungsmacht handele, so finden die Vorschriften über Verträge entsprechende Anwendung. Das Gleiche gilt, wenn ein einseitiges Rechtsgeschäft gegenüber einem Vertreter ohne Vertretungsmacht mit dessen Einverständnis vorgenommen wird. ",
+      "keywords": "bgb-180  Bürgerliches Gesetzbuch (BGB) § 180 Einseitiges Rechtsgeschäft Bei einem einseitigen Rechtsgeschäft ist Vertretung ohne Vertretungsmacht unzulässig. Hat jedoch derjenige, welchem gegenüber ein solches Rechtsgeschäft vorzunehmen war, die von dem Vertreter behauptete Vertretungsmacht bei der Vornahme des Rechtsgeschäfts nicht beanstandet oder ist er damit einverstanden gewesen, dass der Vertreter ohne Vertretungsmacht handele, so finden die Vorschriften über Verträge entsprechende Anwendung. Das Gleiche gilt, wenn ein einseitiges Rechtsgeschäft gegenüber einem Vertreter ohne Vertretungsmacht mit dessen Einverständnis vorgenommen wird. ",
+      "document_types": [],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "996f27fe4b5480059d50f1c41f633e28ad9441bc7ee6007935d11f1440bb80ad",
+      "snapshot_path": "snapshots/bgb-180.txt",
+      "snapshot_sha256": "c6cb0ce83f44bed9707d845ce222541b7ad592b76f97f1ea56eb1879c7216356",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-181",
+      "title": "BGB § 181",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__181.html",
+      "locator": "BGB-181",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.297767+00:00",
+      "text": "Insichgeschäfte sind grundsätzlich begrenzt, mit gesetzlichen Ausnahmen. Keine Befreiung von § 181 BGB als Standard.",
+      "keywords": "bgb-181 Insichgeschäfte sind grundsätzlich begrenzt, mit gesetzlichen Ausnahmen. Keine Befreiung von § 181 BGB als Standard.",
+      "document_types": [
+        "vollmacht"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "1e2ad09bab25550ef6d65583036e65d56f794f6d05c9971ea8734e4a7dc92ce1",
+      "snapshot_path": "snapshots/bgb-181.txt",
+      "snapshot_sha256": "95e4f9391fc115deb1743c94a4c2d0d8769e1c3c88ef7db46e5306dc2f1891c7",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "rvg-3a",
+      "title": "RVG § 3A",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/rvg/__3a.html",
+      "locator": "RVG-3A",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.385364+00:00",
+      "text": "Textform, klare Bezeichnung und deutliche Absetzung; Vergütungsvereinbarung nicht in die Vollmacht aufnehmen. Kostenerstattungshinweis ist Pflichtinhalt; Ausnahmen, § 34 und weitere Grenzen prüfen.",
+      "keywords": "rvg-3a Textform, klare Bezeichnung und deutliche Absetzung; Vergütungsvereinbarung nicht in die Vollmacht aufnehmen. Kostenerstattungshinweis ist Pflichtinhalt; Ausnahmen, § 34 und weitere Grenzen prüfen.",
+      "document_types": [
+        "fee_agreement"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "c4a86cb5bf6a1dcd6e2be4171612b7f9c5b596c414917f68488526382221c316",
+      "snapshot_path": "snapshots/rvg-3a.txt",
+      "snapshot_sha256": "b4f3a80ac09a0d0ab6e220b33c9c103bc28caa1a71a131512e0674fdabae4f50",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "rvg-4b",
+      "title": "RVG § 4B",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/rvg/__4b.html",
+      "locator": "RVG-4B",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.470176+00:00",
+      "text": "Bei den ausdrücklich genannten Form-/Inhaltsfehlern kann keine höhere als die gesetzliche Vergütung gefordert werden. Nicht jeden fehlenden Hinweis pauschal dieser Folge gleichsetzen.",
+      "keywords": "rvg-4b Bei den ausdrücklich genannten Form-/Inhaltsfehlern kann keine höhere als die gesetzliche Vergütung gefordert werden. Nicht jeden fehlenden Hinweis pauschal dieser Folge gleichsetzen.",
+      "document_types": [
+        "fee_agreement"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "c5ce800db773206a2f4a9998df9707389265e77305eb3814dd8a28c365974dd9",
+      "snapshot_path": "snapshots/rvg-4b.txt",
+      "snapshot_sha256": "4bba8372d4816b05eb1502fa027efab7eeb676bf3dd06bf558ead71f4c9ca0dd",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "rvg-9",
+      "title": "RVG § 9",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/rvg/__9.html",
+      "locator": "RVG-9",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.551021+00:00",
+      "text": "Ein angemessener Vorschuss kann für entstandene und voraussichtlich entstehende Gebühren und Auslagen verlangt werden. Fünf Stunden allein belegen keine Angemessenheit.",
+      "keywords": "rvg-9 Ein angemessener Vorschuss kann für entstandene und voraussichtlich entstehende Gebühren und Auslagen verlangt werden. Fünf Stunden allein belegen keine Angemessenheit.",
+      "document_types": [
+        "fee_agreement",
+        "advance_invoice"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "759b1bea1ce454c7b74ba0090399c7d0989437a02ac6967316bf66d6cc83355d",
+      "snapshot_path": "snapshots/rvg-9.txt",
+      "snapshot_sha256": "3eb2929309bad411d49fa2cd6d7c8b6e916f7096225cf7247cbe58c24fbb2002",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "rvg-10",
+      "title": "RVG § 10",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/rvg/__10.html",
+      "locator": "RVG-10",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.635759+00:00",
+      "text": "Vergütungsberechnung bedarf aktuell der Textform; Einzelbeträge, Auslagen, Vorschüsse und weitere anwendbare Angaben prüfen. Vorschussanforderung ist keine endgültige Abrechnung erbrachter Arbeit.",
+      "keywords": "rvg-10 Vergütungsberechnung bedarf aktuell der Textform; Einzelbeträge, Auslagen, Vorschüsse und weitere anwendbare Angaben prüfen. Vorschussanforderung ist keine endgültige Abrechnung erbrachter Arbeit.",
+      "document_types": [
+        "advance_invoice"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "f0541550117cb0ede8a41dd60fe0568141b6ae2e212b38d57dabad426bb26f1d",
+      "snapshot_path": "snapshots/rvg-10.txt",
+      "snapshot_sha256": "cac7fb17e854339bbd7bea71a7f27190d580ab4470d43b820b3a936cab330f40",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "ustg-12",
+      "title": "USTG § 12",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/ustg_1980/__12.html",
+      "locator": "USTG-12",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.724324+00:00",
+      "text": "Der allgemeine Steuersatz beträgt 19 Prozent; daraus folgt nicht, dass er in jedem Mandat anwendbar ist. Nur ausdrücklich bereitgestellte, geprüfte Rechenannahmen verwenden.",
+      "keywords": "ustg-12 Der allgemeine Steuersatz beträgt 19 Prozent; daraus folgt nicht, dass er in jedem Mandat anwendbar ist. Nur ausdrücklich bereitgestellte, geprüfte Rechenannahmen verwenden.",
+      "document_types": [
+        "fee_agreement",
+        "advance_invoice"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "e8753b36595e445e776716ce43ec8d01633d9c548aec77d776105ae9484d09d0",
+      "snapshot_path": "snapshots/ustg-12.txt",
+      "snapshot_sha256": "4d3add9c17390ec3173880ea4f26624c935d4339079d8968eed40dd561788e17",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "ustg-13",
+      "title": "USTG § 13",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/ustg_1980/__13.html",
+      "locator": "USTG-13",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.809906+00:00",
+      "text": "Zeitpunkt der Steuerentstehung bei vereinnahmten Vorauszahlungen ist gesondert zu prüfen. Keinen Zahlungseingang oder Steuerzeitpunkt erfinden.",
+      "keywords": "ustg-13 Zeitpunkt der Steuerentstehung bei vereinnahmten Vorauszahlungen ist gesondert zu prüfen. Keinen Zahlungseingang oder Steuerzeitpunkt erfinden.",
+      "document_types": [
+        "advance_invoice"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "651a989b51b160c85addf12be5cceabf2e668b8f945fcdd6aca64e5baa867967",
+      "snapshot_path": "snapshots/ustg-13.txt",
+      "snapshot_sha256": "93bc6c9f3f0714573397857cc07abae1273d9cfe6019631fcb1a9e6c86aeb544",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "ustg-14",
+      "title": "USTG § 14",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/ustg_1980/__14.html",
+      "locator": "USTG-14",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.899558+00:00",
+      "text": "Absätze 1/2 regeln Rechnungsformat und Fallgruppen; Absatz 4 Pflichtangaben, Absatz 5 Anzahlungen und Absetzung in Endrechnungen. Bezeichnung als Zahlungsanforderung allein vermeidet keine Rechnungswirkung. Markdown/PDF ist keine strukturierte E-Rechnung.",
+      "keywords": "ustg-14 Absätze 1/2 regeln Rechnungsformat und Fallgruppen; Absatz 4 Pflichtangaben, Absatz 5 Anzahlungen und Absetzung in Endrechnungen. Bezeichnung als Zahlungsanforderung allein vermeidet keine Rechnungswirkung. Markdown/PDF ist keine strukturierte E-Rechnung.",
+      "document_types": [
+        "advance_invoice"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "ea479e0e6088f5f12a8453eceb145c1a59ef9861803a2c2eea12775d44360eb7",
+      "snapshot_path": "snapshots/ustg-14.txt",
+      "snapshot_sha256": "e58fb5aaa56b0eedd3ca8ddd119ebbd3c9ba95b9f5f8569bb73cae5061aefd7e",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "ustg-19",
+      "title": "USTG § 19",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/ustg_1980/__19.html",
+      "locator": "USTG-19",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:35.986741+00:00",
+      "text": "Kleinunternehmerregelung und deren Voraussetzungen sind gesondert zu prüfen; unbekannte Steuerbehandlung ist weder 19 Prozent noch eine bestätigte Befreiung.",
+      "keywords": "ustg-19 Kleinunternehmerregelung und deren Voraussetzungen sind gesondert zu prüfen; unbekannte Steuerbehandlung ist weder 19 Prozent noch eine bestätigte Befreiung.",
+      "document_types": [
+        "fee_agreement",
+        "advance_invoice"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "bcee10874715ec2bb3a0ed1867ef4f512bee0093e4eed85e57bae7addc777bfc",
+      "snapshot_path": "snapshots/ustg-19.txt",
+      "snapshot_sha256": "d7aa04dee35b247ab93866ed1355cfea547b8feb7a6ac30d02d5668c797a71f6",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "ustg-27",
+      "title": "USTG § 27",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/ustg_1980/__27.html",
+      "locator": "USTG-27",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:36.078568+00:00",
+      "text": "Absatz 38 enthält Übergangsregeln für 2025/2026 und bedingt 2027 (Vorjahresgesamtumsatz bis 800000 Euro), daneben EDI-Regeln. Zeitraum des Umsatzes, Frist, Zustimmung und konkrete Ausnahme prüfen.",
+      "keywords": "ustg-27 Absatz 38 enthält Übergangsregeln für 2025/2026 und bedingt 2027 (Vorjahresgesamtumsatz bis 800000 Euro), daneben EDI-Regeln. Zeitraum des Umsatzes, Frist, Zustimmung und konkrete Ausnahme prüfen.",
+      "document_types": [
+        "advance_invoice"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "58f8018d2dc7512cea52ca14847700b68fe07c8bfa3bc4e4aebc29c5f7451ee0",
+      "snapshot_path": "snapshots/ustg-27.txt",
+      "snapshot_sha256": "deedd21ba30fa1d3e950346a8870f788a38f3d46f0f8a6ff2b2cea2f3908de40",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bmf-einvoice",
+      "title": "BMF § EINVOICE",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.bundesfinanzministerium.de/Content/DE/FAQ/e-rechnung.html",
+      "locator": "BMF FAQ E-Rechnung",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:42:15.649771+00:00",
+      "text": "BMF-FAQ erläutert E-Rechnung, Übergangsregeln, Zustimmung, Anzahlungs-/Vorausrechnungen und Ausnahmen. Verwaltungsinformation ist keine gesetzliche Norm; Rechtsstand und konkreter Fall bleiben zu prüfen.",
+      "keywords": "bmf-einvoice BMF-FAQ erläutert E-Rechnung, Übergangsregeln, Zustimmung, Anzahlungs-/Vorausrechnungen und Ausnahmen. Verwaltungsinformation ist keine gesetzliche Norm; Rechtsstand und konkreter Fall bleiben zu prüfen.",
+      "document_types": [
+        "advance_invoice"
+      ],
+      "source_kind": "official_administrative_guidance",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "6b3840949710e4fa5c0bb67d31d3a4de1ea1cf5077861cbc7c0b5e81a8aa6013",
+      "snapshot_path": "snapshots/bmf-einvoice.txt",
+      "snapshot_sha256": "006332a3f88901297de45aef6ae0786bd63f90fa1d3907aa04876134ceb8ba13",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "bgb-126b",
+      "title": "BGB § 126B",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__126b.html",
+      "locator": "BGB-126B",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:45:59.802303+00:00",
+      "text": "Textform erfordert lesbare Erklärung, Benennung des Erklärenden und dauerhaften Datenträger. Unterschriftsfelder ersetzen keine konkrete Formprüfung.",
+      "keywords": "bgb-126b Textform erfordert lesbare Erklärung, Benennung des Erklärenden und dauerhaften Datenträger. Unterschriftsfelder ersetzen keine konkrete Formprüfung.",
+      "document_types": [
+        "fee_agreement",
+        "advance_invoice"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "42a3ec23ede8eaae79d2907ed080519d957d3a17e4e6e2107dc15392d6e8e70b",
+      "snapshot_path": "snapshots/bgb-126b.txt",
+      "snapshot_sha256": "b5fa573604b261528761d0947a73d496f54e5bcb3aa8a9780e65e27f6ea9f20e",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "rvg-4",
+      "title": "RVG § 4",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/rvg/__4.html",
+      "locator": "RVG-4",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:45:59.885837+00:00",
+      "text": "Außergerichtlich gelten besondere Möglichkeiten und Angemessenheitsanforderungen für Unterschreitungen gesetzlicher Vergütung; keinen universellen Mindestgebührensatz behaupten.",
+      "keywords": "rvg-4 Außergerichtlich gelten besondere Möglichkeiten und Angemessenheitsanforderungen für Unterschreitungen gesetzlicher Vergütung; keinen universellen Mindestgebührensatz behaupten.",
+      "document_types": [
+        "fee_agreement"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "952981ed3f38db97b4816c9a2d67c5acd99adcf0c260b4cda2ff4e921ac9eed1",
+      "snapshot_path": "snapshots/rvg-4.txt",
+      "snapshot_sha256": "93fe707a57450956371f1cf80e4df1a964f8af2f92c7583045b08eca5460f894",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "rvg-34",
+      "title": "RVG § 34",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/rvg/__34.html",
+      "locator": "RVG-34",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:45:59.971078+00:00",
+      "text": "Für Beratung/Gutachten gelten besondere Vergütungsregeln; § 3a nennt Ausnahmen für Vereinbarungen nach § 34. Anwendungsbereich prüfen.",
+      "keywords": "rvg-34 Für Beratung/Gutachten gelten besondere Vergütungsregeln; § 3a nennt Ausnahmen für Vereinbarungen nach § 34. Anwendungsbereich prüfen.",
+      "document_types": [
+        "fee_agreement"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "ded425d6dff61f44093bcffc7787e370a25d72aa823d51f4f1f1bf40163b682a",
+      "snapshot_path": "snapshots/rvg-34.txt",
+      "snapshot_sha256": "b4daa333935bd3ff68f40c9de175cb77cd8ef867093b7a6440d0d4c0f73eb337",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    },
+    {
+      "id": "brao-49b",
+      "title": "BRAO § 49B",
+      "jurisdiction": "Germany",
+      "topics": [
+        "legal_document_rules"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/brao/__49b.html",
+      "locator": "BRAO-49B",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "retrieved_at": "2026-11-11T08:46:00.061634+00:00",
+      "text": "Berufsrechtliche Vergütungsgrenzen und Ausnahmen sind vor Honorarvereinbarung zu prüfen; keine automatische Wirksamkeitszusage.",
+      "keywords": "brao-49b Berufsrechtliche Vergütungsgrenzen und Ausnahmen sind vor Honorarvereinbarung zu prüfen; keine automatische Wirksamkeitszusage.",
+      "document_types": [
+        "fee_agreement"
+      ],
+      "source_kind": "primary_legislation",
+      "verification_status": "source_text_checked",
+      "source_body_sha256": "e67fc6d90ae09439d59ecfb7be68f151b773fc3128b624f63d936c7fce0862cc",
+      "snapshot_path": "snapshots/brao-49b.txt",
+      "snapshot_sha256": "61d482f6803f1e673ed9fc64a1057a6402be89e5d7f2ba13686bc824cc275e84",
+      "limitation": "Consolidated source as retrieved; publication/enactment date not inferred. Applicability and drafting require lawyer review."
+    }
+  ]
+}

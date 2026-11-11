@@ -1,8 +1,6 @@
 """HTTP integration tests. All provider I/O is synthetic or mocked."""
 import concurrent.futures
 import contextvars
-from pathlib import Path
-import tempfile
 import threading
 from unittest.mock import MagicMock, patch
 

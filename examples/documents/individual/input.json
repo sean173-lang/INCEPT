@@ -1,0 +1,56 @@
+{
+  "synthetic_data": true,
+  "idempotency_key": "document-quality-individual-v2",
+  "client": {
+    "name": "DEMO Lena Wolkenfeld (vollständig fiktiv)",
+    "address": "Erfundene Gartenzeile 7, 00000 Musterort",
+    "email": "lena@wolkenfeld.invalid",
+    "jurisdiction": "Germany",
+    "client_type": "individual"
+  },
+  "firm": {
+    "name": "DEMO Kanzlei Lindenbogen (vollständig fiktiv)",
+    "lawyer_name": "DEMO Rechtsanwältin Nora Linden (fiktiv)",
+    "address": "Erfundener Kanzleiplatz 20, 00000 Musterort",
+    "email": "kanzlei@lindenbogen.invalid",
+    "jurisdiction": "Germany"
+  },
+  "matter": {
+    "title": "DEMO Zivilrecht — behauptete Lieferforderung",
+    "summary": "Vollständig fiktives Privatmandat: Eine Zahlung aus einem behaupteten Liefervertrag soll außergerichtlich geprüft werden. Die Berechtigung der Forderung ist nicht festgestellt.",
+    "requested_scope": "Außergerichtliche Prüfung der Vertragsunterlagen und Korrespondenz sowie rechtliche Stellungnahme zur behaupteten Lieferforderung. Keine Prozessführung oder Vergleichsvollmacht.",
+    "opposing_parties": [
+      "DEMO Handelspartner Morgenfeld GmbH (fiktiv)"
+    ],
+    "claimed_deadline": null,
+    "deadline_source": null,
+    "governing_law": "Germany"
+  },
+  "fees": {
+    "net_hourly_rate": "250.00",
+    "currency": "EUR",
+    "vat_mode": "taxable",
+    "vat_percent": "19",
+    "vat_basis": "Ausdrücklich bestätigte synthetische Rechenkonfiguration: inländische steuerpflichtige anwaltliche Leistung, 19 Prozent; keine Feststellung für ein reales Mandat."
+  },
+  "draft_date": "2026-11-11",
+  "document_options": {
+    "place": "Musterort (Demo)",
+    "representation_scope": "out_of_court",
+    "requested_ancillary_powers": [],
+    "engagement_law": "Germany",
+    "recipient_business_status": "consumer",
+    "supplier_domestic": true,
+    "recipient_domestic": true,
+    "firm_policy": {
+      "policy_id": "SYNTHETIC-LINDENBOGEN-2026-v1",
+      "net_hourly_rate": "250.00",
+      "billing_method": "actual_minutes",
+      "time_recording": "Tätigkeitsnachweis mit Datum, bearbeitender Person, Tätigkeitsbeschreibung und tatsächlicher Dauer in Minuten; keine pauschale Aufrundung.",
+      "expenses_terms": "Auslagen werden nur nach vorheriger gesonderter Vereinbarung angesetzt; in diesem Entwurf ist keine Auslagenpauschale vereinbart.",
+      "payment_terms": "Synthetische Kanzleiregel zur Prüfung: Zahlung binnen 14 Kalendertagen nach Zugang einer ordnungsgemäßen, gesondert freigegebenen Abrechnung. Dieser Entwurf löst keine Zahlungsfrist aus.",
+      "other_professionals_terms": "Für andere Berufsträger sind keine Stundensätze vereinbart. Ein Einsatz mit zusätzlichen Kosten bedarf einer gesonderten Vereinbarung.",
+      "vat_configuration_confirmed_for_demo": true
+    }
+  }
+}

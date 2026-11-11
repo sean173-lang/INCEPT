@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-11",
+  "operation": "POST https://api.tavily.com/search",
+  "http_status": 200,
+  "actual_search_requests": 1,
+  "search_depth": "basic",
+  "max_results": 3,
+  "retries": 0,
+  "results_returned": 3,
+  "retrieved_at": "2026-11-11T08:27:19.395976+00:00",
+  "sources": [
+    {
+      "title": "lock-up-agreement-dated-27-january-2017.pdf",
+      "url": "https://www.tescoplc.com/media/n5bnjth0/lock-up-agreement-dated-27-january-2017.pdf",
+      "published_date": null,
+      "retrieved_at": "2026-11-11T08:27:19.395976+00:00",
+      "evidence_status": "UNVERIFIED search lead; not a verified legal finding"
+    },
+    {
+      "title": "sfo v tesco dpa 2017",
+      "url": "https://www.judiciary.uk/wp-content/uploads/2019/01/sfo-v-tesco-stores-ltd-2017-approved-final.pdf",
+      "published_date": null,
+      "retrieved_at": "2026-11-11T08:27:19.395976+00:00",
+      "evidence_status": "UNVERIFIED search lead; not a verified legal finding"
+    },
+    {
+      "title": "articles-of-association-25-june-2020_- ...",
+      "url": "https://www.tescoplc.com/media/pf1euvlz/articles-of-association-25-june-2020_-final-clean.pdf",
+      "published_date": null,
+      "retrieved_at": "2026-11-11T08:27:19.395976+00:00",
+      "evidence_status": "UNVERIFIED search lead; not a verified legal finding"
+    }
+  ],
+  "credits_reported_by_search": 1,
+  "included_balance_reported_by_usage_api": 995,
+  "usage_api_account_usage": 5,
+  "quota_discrepancy": "Search reports one credit; usage endpoint still reports pre-search balance. No billing reconciliation is claimed.",
+  "billing_approval_basis": "User personally confirmed no payment information or paid billing enabled and explicitly authorized one included-credit Basic Search. Researcher plan and 995 remaining credits independently verified via read-only usage API.",
+  "report_integration": {
+    "mode": "controlled local test through existing CompanyService, evidence validator, typed corporate schemas and existing report-assembly Code node executed locally",
+    "status": "PASS",
+    "real_sources_rendered": 3,
+    "n8n_execution_id": null,
+    "registry_data": "previous execution 26 response; CACHED; no new registry lookup",
+    "freshness": "Publication dates unavailable; source-age/current applicability not verified."
+  },
+  "tests_passed": 295,
+  "new_google_requests": 0,
+  "new_clients_or_matters": 0,
+  "financial_requests": 0,
+  "existing_workflows_modified": false,
+  "execution26_preserved": true,
+  "limitations": [
+    "No new end-to-end n8n execution; existing execution-26 intake bundle reused.",
+    "Historical court-document lead may concern a different Tesco legal entity; no current liability or allegation inferred.",
+    "Gradio not implemented; controlled service must load updated code for future runs."
+  ]
+}

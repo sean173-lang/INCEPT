@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "production_approved": false,
+  "approval_status": "requires_lawyer_review",
+  "permitted_ancillary_powers": [],
+  "source_corpus_sha256": "d63b05958cf7886ff465c2fc392f7fd3383d56825789a3360d72eef4439d62f8",
+  "templates": {
+    "vollmacht": {
+      "file": "vollmacht.md",
+      "sha256": "240c3f1251059241c6f3e15c61d56327e989c2b150e22c21c602ba458b7c27bb",
+      "legal_rule_ids": [
+        "bgb-164",
+        "bgb-167",
+        "bgb-168",
+        "bgb-174",
+        "bgb-181"
+      ]
+    },
+    "fee_agreement": {
+      "file": "fee_agreement.md",
+      "sha256": "60716fc0833535cd2416bf9c4136f07c62c75aabd8aa06bf81b0268d9b44664e",
+      "legal_rule_ids": [
+        "rvg-3a",
+        "rvg-4b",
+        "rvg-9",
+        "ustg-12",
+        "ustg-19",
+        "bgb-126b",
+        "rvg-4",
+        "rvg-34",
+        "brao-49b"
+      ]
+    },
+    "advance_invoice": {
+      "file": "advance_invoice.md",
+      "sha256": "20736f18e6765893c54039c23a5734044df985848ff7b6e067218d078fe2a3a1",
+      "legal_rule_ids": [
+        "rvg-9",
+        "rvg-10",
+        "ustg-12",
+        "ustg-13",
+        "ustg-14",
+        "ustg-19",
+        "ustg-27",
+        "bmf-einvoice",
+        "bgb-126b"
+      ]
+    }
+  }
+}

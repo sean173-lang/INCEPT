@@ -39,7 +39,7 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
                            max_session_spend=max_session_spend, prices=prices, currency=currency,
                            cache_dir=cache_dir, ledger_path=ledger_path)
     service = CompanyService(tracker, verification_ttl=verification_ttl)
-    app = FastAPI(title='LEGALFLOW research services', version='0.2.0',
+    app = FastAPI(title='INCEPT intake and corporate services', version='0.2.0',
                   description='Company services and bounded local research tools for n8n. Development fixtures by default.')
     app.state.tracker = tracker
     app.state.company_service = service

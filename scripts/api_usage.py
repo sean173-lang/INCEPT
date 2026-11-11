@@ -23,7 +23,6 @@ from pathlib import Path
 # https://docs.tavily.com/documentation/api-credits
 CREDITS = {('OpenRegister', 'company_search'): 1,
            ('OpenRegister', 'company_details'): 10,
-           ('OpenRegister', 'financials'): 10,
            ('Tavily', 'search_basic'): 1}
 
 
@@ -156,6 +155,8 @@ class UsageTracker:
         # One lock covers check/reservation/execution: concurrent duplicate callers
         # cannot both issue a paid request in this process.
         with self.lock:
+            if operation in ('financials','accounts_list','document_metadata','document_download'):
+                raise UsageBlocked('Financial/account-document operations are retired in INCEPT')
             key = self.key(provider, operation, identity)
             if self.development:
                 if mock is None:

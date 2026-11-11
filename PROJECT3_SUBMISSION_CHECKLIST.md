@@ -1,27 +1,24 @@
-# Project 3 submission checkpoint
+# Project 3 submission checklist
 
-This checklist follows the supplied project requirements; an original course brief was not found locally. The tested implementation was published on the feature branch at `5c540b5`; this documentation update prepares review through a pull request. The default branch must change only after manual review and merge.
+Based on the supplied requirements; the original course brief/rubric has not been located. Gradio is the next milestone, not implemented in this checkpoint.
 
-| Requirement | Status and evidence |
+| Requirement | Verified status / limit |
 |---|---|
-| n8n primary orchestration | VERIFIED: integrated execution 19, review-ready outcome |
-| Three real external integrations | VERIFIED: Gmail, Sheets, Calendar in execution 19; independent executions 12–14 |
-| Autonomous bounded research → synthesis → report | VERIFIED for the approved German demo: official BGB §286 source retrieved and checked; not general autonomous legal advice |
-| RAG / grounding | IMPLEMENTED and offline tested: curated guidance, source attribution and unresolved claims |
-| Two distinct generated reports | PRESENT: individual and corporate examples under examples/reports; clearly synthetic offline outputs |
-| Error handling and review branches | IMPLEMENTED / regression tested; no uncertain deadlines or approval execution |
-| Corporate DE/UK extension | FIXTURE VERIFIED: isolated n8n executions 20–23; no live registry end-to-end verification |
-| Primary-stack justification | PRESENT: docs/stack_decision.md |
-| 2–3 GTM future sprints | PRESENT: gtm_future_sprints.md |
-| Reproducible 5–7 minute demo | DOCUMENTED: docs/demo_script.md; live services/account state still required for a fresh real run |
-| Clean GitHub submission | Feature branch pushed and verified at 5c540b5; documentation update, fresh security checks and PR review required before main publication |
-| Gradio UI | PLANNED separate milestone, not implemented here |
+| n8n primary orchestration | Real execution 28: approved-message intake, read-only Google checks, local API and legal-source research |
+| Three real external integrations | Gmail, Google Sheets and Google Calendar verified in recorded runs; no new calls during cleanup |
+| LLM/model-based synthesis | **Not implemented in the active path.** A locally available student example board describes LLM-written reports, but it is not a grading rubric. Confirm the requirement before submission. |
+| Autonomous research → synthesis → structured report | Bounded official BGB source selection/check plus local RAG/report assembly; not general autonomous legal advice |
+| German/UK corporate research | Preserved adapters and cache-only intake helper, offline routing/matching tests; unknown identity requires review |
+| Counterparty research | Recorded isolated execution 26 with one fresh UK profile; separate automated typed counterparties are not yet in canonical workflow |
+| RAG and source provenance | Local scoped references and 32 official document-law records; snippets, fixtures, registry facts and legal rules kept separate |
+| Two distinct generated reports | Three explicitly synthetic assessments and two principal/representative document bundles in examples/ |
+| German legal documents | Engine v2.0.0, immutable approval/issuance guards, validation and deterministic advance arithmetic; professional approval outstanding |
+| Error handling / idempotency | Retained offline regression tests; no external action executor |
+| Stack justification | [Decision](docs/stack_decision.md) |
+| GTM future sprints | [Three sprints](gtm_future_sprints.md) |
+| 5–7 minute demo | [Script](docs/demo_script.md); safely uses recorded proof and offline generation |
+| GitHub submission | Cleanup feature PR requires manual review; never auto-merged |
 
-Before submission: inspect the complete diff and secret exclusions, run the full suite, review sample artifacts, and manually review the feature-to-main pull request. Do not describe the cache-only corporate extension as a live provider test.
+[Live evidence](docs/live_integration_evidence.json), [execution 28](docs/incept_live_documents_v2_validation.json), [Tavily](docs/tavily_live_validation.json), [document HTTP validation](docs/legal_document_http_validation.json).
 
-
-## Isolated n8n validation (2026-11-11)
-
-Four separate inactive fixture test copies executed successfully in n8n: individual **20**, German company **21**, UK company **22**, ambiguous **23**. The first three produced review-ready bundles; the ambiguous case stopped at NEEDS_REVIEW. Google ingress/read operations and legislation retrieval were explicitly substituted, while local onboarding, adapters, evidence checks and report assembly ran for real. Company fixtures remain UNVERIFIED; these executions do not establish live registry or new Google connectivity. Original corporate workflow 0zruCCbLGNUZJ8Gt and proven FeRkXfcrj8dceBZh remain unchanged.
-
-Sanitized trace summary: [execution evidence](docs/incept_corporate_n8n_validation.json). Full local artifacts: `reports/incept_corporate_n8n_validation/`. Regression suite: **285 passing tests**. Gradio remains planned.
+Retired financial prototypes are recoverable from Git, not part of the active product. Original live workflows/execution evidence remain private and unchanged. Publication excludes credentials, raw inbox data, databases, provider caches and signed URLs. Complete the cleanup/security review and verify the PR before manual merge. Legal approval, production auth/tenancy and structured e-invoicing remain unresolved.

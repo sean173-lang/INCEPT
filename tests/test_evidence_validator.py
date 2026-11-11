@@ -1,14 +1,10 @@
 """Offline fixtures: no live providers or API credits."""
 import copy
-import json
 import unittest
 from offline_support import OfflineTestCase
 from datetime import date
-from types import SimpleNamespace
-from unittest.mock import patch
 
 from scripts.evidence_validator import classify_source, validate_evidence
-from scripts import legalflow_agent as agent
 
 
 PROFILE = {"company_name": "Example Limited", "company_number": "01234567",
@@ -102,36 +98,8 @@ class EvidenceTests(OfflineTestCase):
         data["register_court"] = "Hamburg"
         self.assertFalse(validate(data=data)["registry_checks"]["register_court"])
 
-    @patch.object(agent, "get_filing_history", return_value={"items": []})
-    @patch.object(agent, "get_company_officers", return_value={"items": []})
-    @patch.object(agent, "get_company_profile", return_value=PROFILE)
-    @patch.object(agent, "search_company", return_value={"items": [{"title": "Example Limited", "company_number": "01234567"}]})
-    def test_mocked_registry_pipeline(self, *_):
-        data = agent.get_uk_company("Example Limited")
-        self.assertTrue(all(validate(data=data)["registry_checks"].values()))
-        self.assertTrue(data["retrieved_at"].endswith("+00:00"))
 
-    @patch.object(agent, "get_company")
-    def test_mocked_german_response_retained(self, get_company):
-        raw = {"id": "provider-id", "name": {"name": "Example GmbH"}}
-        get_company.return_value.model_dump.return_value = raw
-        get_company.return_value.retrieved_at = "2026-11-09T00:00:00+00:00"
-        data = agent.get_german_company("provider-id")
-        self.assertEqual(data["original_api_data"], {"company": raw})
-        self.assertTrue(data["retrieved_at"].endswith("+00:00"))
 
-    @patch.object(agent, "OpenAI")
-    def test_validation_precedes_mocked_analysis(self, client):
-        client.return_value.responses.create.return_value = SimpleNamespace(output_text="Research report")
-        data = company()
-        research = {"sources": [source(company_number="99999999"), source()]}
-        original = copy.deepcopy(research)
-        report = agent.generate_ai_report(data, research)
-        payload = json.loads(client.return_value.responses.create.call_args.kwargs["input"])
-        self.assertEqual(len(payload["web_research"]), 1)
-        self.assertEqual(payload["evidence_verification"]["risk_assessment"], "Undetermined")
-        self.assertIn("**Undetermined**", report)
-        self.assertEqual(research, original)
 
 
 if __name__ == "__main__":

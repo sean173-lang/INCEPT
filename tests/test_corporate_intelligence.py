@@ -1,9 +1,7 @@
 """Synthetic cache-only scenarios. No live provider identity or research is claimed."""
-from contextlib import closing
 from datetime import datetime,timezone,timedelta
 from pathlib import Path
 import copy
-import hashlib
 import json
 import tempfile
 from unittest.mock import patch
@@ -42,7 +40,7 @@ class CorporateIntelligenceTests(OfflineTestCase):
 
     def test_german_and_uk_reuse_detail_verification_and_classified_evidence(self):
         for jurisdiction,provider in [('Germany','OpenRegister'),('United Kingdom','Companies House')]:
-            with self.subTest(jurisdiction=jurisdiction),patch('scripts.german_register.get_financials',side_effect=AssertionError('No financials')):
+            with self.subTest(jurisdiction=jurisdiction):
                 result=self.service.collect(self.request(self.client(jurisdiction)))
                 self.assertEqual(result.identity_verification_status,'verified');self.assertEqual(result.provider,provider)
                 self.assertEqual(result.status,'UNVERIFIED');self.assertTrue(result.synthetic_evidence)
@@ -51,6 +49,7 @@ class CorporateIntelligenceTests(OfflineTestCase):
                 self.assertEqual(result.management[0]['source_id'],result.sources[0].source_id)
                 self.assertIn('Corporate Client Intelligence',result.section_markdown)
                 self.assertEqual(result.section_markdown.count('### '),7)
+                self.assertTrue(result.warnings)
                 source_ids={s.source_id for s in result.sources}
                 self.assertTrue(all(set(f.source_ids)<=source_ids for f in result.findings))
                 self.assertTrue(all(r['jurisdiction'] in ('Germany','EU') if jurisdiction=='Germany' else r['jurisdiction'] in ('UK','EU') for r in result.reference_guidance))
@@ -77,7 +76,9 @@ class CorporateIntelligenceTests(OfflineTestCase):
 
     def cached(self,when):
         entry=json.loads(DEMO.read_text())['records']['DEMO-INCEPT-DE']
-        value={'payload':entry['record'],'retrieved_at':when,'provenance':{'provider':'OpenRegister','origin':'live_provider_response','synthetic':False}}
+        from scripts.corporate_cache import captured_record
+        value=captured_record('OpenRegister','DEMO-INCEPT-DE',entry['record'])
+        value['retrieved_at']=when
         key=UsageTracker.key('OpenRegister','company_details','DEMO-INCEPT-DE')
         JsonCache(self.root).put(key,value)
         return self.request().model_copy(update={'source_policy':'cache_only'})
@@ -114,3 +115,50 @@ class CorporateIntelligenceTests(OfflineTestCase):
             self.assertEqual(r.status_code,200,r.text);self.assertEqual(r.json()['provider'],'Companies House')
             forbidden=self.request().model_dump(mode='json');forbidden['max_external_requests']=1
             self.assertEqual(client.post('/v1/onboarding/corporate-intelligence',json=forbidden).status_code,422)
+
+    def test_tavily_failure_preserves_registry_and_redacts_exception(self):
+        with patch('scripts.company_service.CompanyService.research',side_effect=TimeoutError('sensitive-provider-detail')):
+            r=self.service.collect(self.request())
+        self.assertEqual(r.status,'UNVERIFIED');self.assertEqual(r.identity_verification_status,'verified')
+        self.assertTrue(r.findings);self.assertTrue(any('registry findings retained' in gap for gap in r.missing_evidence))
+        self.assertNotIn('sensitive-provider-detail',r.model_dump_json())
+
+    def test_public_search_lead_dates_urls_and_unrelated_filtering(self):
+        from scripts.service_schemas import ResearchResponse,CompanyIdentity,AnnotatedSource,ResearchSource
+        company=CompanyIdentity(provider='OpenRegister',name='INCEPT DEMO GmbH',provider_company_id='DEMO-INCEPT-DE',jurisdiction='Germany',registration_number='DEMO-246468')
+        def item(name,url,usable,identity):
+            return AnnotatedSource(source=ResearchSource(title=name,url=url,content=name,published_date='2026-10-01',retrieved_at='2026-11-11T00:00:00+00:00'),source_type='third_party',identity=identity,freshness='recent',usable=usable,registration_number_match=False,legal_evidence='unverified_search_excerpt',litigation_status='unknown',verified_legal_finding=False)
+        response=ResearchResponse(verification_id='a'*32,company=company,sources=[item('INCEPT DEMO GmbH company background','https://example.invalid/company',True,'possible_match'),item('Unrelated entity','https://example.invalid/other',False,'unrelated')],missing_evidence=[],coverage_note='Mocked bounded search',development=True)
+        with patch('scripts.company_service.CompanyService.research',return_value=response):r=self.service.collect(self.request())
+        self.assertEqual(len(r.background_leads),1);self.assertEqual(r.background_leads[0].category,'UNVERIFIED')
+        source=r.sources[-1];self.assertEqual(source.url,'https://example.invalid/company');self.assertEqual(source.retrieved_at,'2026-11-11T00:00:00+00:00');self.assertEqual(source.published_date,'2026-10-01');self.assertEqual(source.freshness,'recent')
+        self.assertIn('https://example.invalid/company',r.section_markdown);self.assertNotIn('https://example.invalid/other',r.section_markdown)
+
+
+    def test_three_result_limit_reaches_existing_research_adapter(self):
+        from scripts.company_research import research_company
+        from scripts.company_research import build_research_query
+        query=build_research_query('INCEPT DEMO GmbH','Germany',registration_number='DEMO-246468',register_court='Synthetic Berlin court')
+        key=UsageTracker.key('Tavily','search_basic',{'query':query,'max_results':3})
+        response={'company':'INCEPT DEMO GmbH','sources':[{'title':'SYNTHETIC INCEPT DEMO GmbH background','content':'INCEPT DEMO GmbH public information (synthetic test only)','url':'https://example.invalid/company','retrieved_at':'2026-11-11T00:00:00+00:00'}]}
+        original=CacheOnlyTracker.__init__
+        def seeded(tracker,*args,**kwargs):
+            original(tracker,*args,**kwargs);tracker.records[key]=response
+        with patch.object(CacheOnlyTracker,'__init__',seeded):
+            r=self.service.collect(self.request(max_search_results=3))
+        self.assertEqual(len(r.background_leads),1)
+        self.assertIn('https://example.invalid/company',r.section_markdown)
+        self.assertTrue(r.sources[-1].synthetic)
+        self.assertEqual(r.sources[-1].freshness,'unknown')
+        self.assertEqual(r.sources[-1].category,'UNVERIFIED')
+        self.assertTrue(any('SYNTHETIC' in claim.description for claim in r.background_leads))
+        self.assertTrue(all(claim.category=='UNVERIFIED' for claim in r.background_leads))
+
+
+    def test_source_urls_with_underscores_remain_traceable(self):
+        from scripts.corporate_intelligence import CorporateResult,CorporateSource,public_url
+        url='https://example.invalid/path/source_with_underscores.pdf'
+        r=CorporateResult(client_id='demo',matter_id='demo',status='UNAVAILABLE',identity_verification_status='unverified',sources=[CorporateSource(source_id='web:1',provider='Tavily cached excerpt',source_type='third_party',locator='Synthetic source URL',url=url,category='UNVERIFIED',freshness='unknown',synthetic=True)])
+        self.assertIn('[source](<'+url+'>)',self.service.render(r).section_markdown)
+        self.assertIsNone(public_url('https://example.invalid/<bad>'))
+        self.assertIsNone(public_url('https://example.invalid/\nunsafe'))

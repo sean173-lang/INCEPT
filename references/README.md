@@ -1,28 +1,9 @@
-# Curated corporate due diligence reference corpus
+# Reference stores and evidence separation
 
-Eight short, manually authored reference cards for the Phase 2 offline demo.
-They are **paraphrases**, not official text, not company records and not a complete
-statement of the law. Source URLs point to official legislation, courts,
-regulators or government guidance. No runtime download is performed.
+Three distinct inputs are maintained:
 
-Sources were reviewed on 2026-11-10 using accessible official pages and official
-search excerpts. Some legislation pages could not be fetched directly by the
-research tool; accessible official index/PDF excerpts were used to check the
-narrow description. In particular the UK section 441 card was checked against
-the official Companies Act contents/Part 15 material, and the German section 322
-card against the official ZPO full-text search excerpt. The original EU Merger
-Regulation date is recorded; unknown original document dates are explicitly null.
-A review date is not a consolidated-law effective date. Verify current official
-text before relying on any guidance for a transaction.
+- `corporate_due_diligence.json`: six curated German/UK identity, litigation and regulatory cards. They are paraphrases, not company records or a complete/current legal opinion. Former financial-disclosure cards were removed with that retired feature. Some original provision dates are unknown; review dates are not enactment dates. `LocalRAG` applies jurisdiction/topic filters and preserves chunk hashes/citations.
+- `mandate_intake.json`: four curated mandate/authority/fee/advance reference cards supporting intake review. No company-specific finding is inferred from general guidance.
+- `legal_documents/corpus.json` plus snapshots: 32 checked official document-law sources, exact document-type allowlists, retrieval/provenance and version hashes. BMF guidance is distinguished from legislation. See [source index](../docs/legal_document_sources.md) and [maintenance](../docs/legal_document_generation.md).
 
-Each document has a stable ID, title, jurisdiction, topics, exact source URL,
-locator, original date if established, review date, keywords and local text.
-`LocalRAG` adds content hashes and chunk IDs. This collection is intentionally
-small enough to review by hand. Future corpus updates should review legal
-currency, document provenance and retrieval tests together.
-
-The sources cover registration supporting documents, corporate financial filing,
-claims/judgments/pre-action distinctions and merger-control review. Reference
-cards describe questions to investigate, never an allegation or conclusion about
-any searched company. No copyrighted third-party treatise or paid database
-content is included.
+`incept_corporate_demo.json` contains explicitly synthetic approved offline evidence, not real provider responses. Provider caches remain private, provenance-labeled and separate from law/template guidance. Tavily snippets are unverified research leads; they never replace primary-law or registry evidence. No runtime download occurs during local retrieval/document generation.

@@ -1,4 +1,9 @@
-# Reproducible common environment; no dependency authorizes an external request.
--r requirements-service.txt
-# Preserved optional historical local PDF ingestion, also exercised by regression tests.
--r requirements-accounts.txt
+# INCEPT backend, SDK adapters and offline HTTP tests. Node.js is needed for graph-code tests.
+fastapi>=0.115,<1
+pydantic>=2.7,<3
+uvicorn>=0.30,<1
+httpx>=0.27,<1
+requests>=2.31,<3
+python-dotenv>=1,<2
+openregister-sdk
+tavily-python>=0.8.5,<0.9

@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import Field
 from scripts.service_schemas import Schema, ResearchRequest, CompanyIdentity, AnnotatedSource
 
-Topic = Literal['corporate_identity', 'financial_disclosures', 'litigation', 'regulatory_risks']
+Topic = Literal['corporate_identity', 'litigation', 'regulatory_risks']
 Tool = Literal['retrieve_references', 'company_research']
 
 
@@ -39,7 +39,7 @@ class RetrievalResponse(Schema):
 
 class CreateResearchRun(ResearchRequest):
     max_iterations: int = Field(default=2, ge=1, le=2)
-    topics: list[Topic] = Field(default_factory=lambda: ['corporate_identity', 'financial_disclosures', 'litigation', 'regulatory_risks'], min_length=1, max_length=4)
+    topics: list[Topic] = Field(default_factory=lambda: ['corporate_identity', 'litigation', 'regulatory_risks'], min_length=1, max_length=3)
 
 
 class RunPlan(Schema):

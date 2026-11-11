@@ -1,7 +1,5 @@
 """Separate INCEPT corporate-intake development graph; never overwrite the proven flow."""
 import copy
-import json
-from pathlib import Path
 import uuid
 from scripts.incept_autonomous_workflow import build_workflow as base_workflow
 
@@ -24,6 +22,7 @@ const response=$input.first().json;
 const result=response.statusCode===200&&response.body&&['CACHED','UNVERIFIED','UNAVAILABLE','NEEDS_REVIEW'].includes(response.body.status)?response.body:null;
 return [{json:result||{status:'UNAVAILABLE',identity_verification_status:'verification_failed',provider_requests:0,financial_requests:0,
  missing_evidence:['Corporate helper unavailable or unsupported; ordinary preview remains available.'],sources:[],
+ warnings:[{warning_id:'corporate:provider_failure:helper_unavailable',category:'provider_failure',message:'Corporate helper unavailable or unsupported; ordinary preview remains available.',source_ids:[]}],
  section_markdown:'\n## Corporate Client Intelligence\n\nUNAVAILABLE / NEEDS_REVIEW. Corporate evidence could not be retrieved; this does not establish that the company does not exist. Lawyer verification required.\n'}}];
 '''
 ENRICH=r'''
@@ -31,9 +30,23 @@ const base=$input.first().json;
 const route=$('Route Client Type and Law').first().json;
 let corporate=null;
 if(route.company) {
- try{corporate=$('Corporate Intelligence Result').first().json;}catch{corporate={status:'UNAVAILABLE',section_markdown:'\n## Corporate Client Intelligence\n\nUNAVAILABLE. Lawyer review required.\n'};}
+ try{corporate=$('Corporate Intelligence Result').first().json;}catch{corporate={status:'UNAVAILABLE',warnings:[{warning_id:'corporate:provider_failure:result_missing',category:'provider_failure',message:'Corporate result was not available; lawyer verification required.',source_ids:[]}],section_markdown:'\n## Corporate Client Intelligence\n\nUNAVAILABLE. Lawyer review required.\n'};}
  base.bundle.assessment.content_markdown+=corporate.section_markdown||'\n## Corporate Client Intelligence\n\nUNAVAILABLE.\n';
+ const assessment=base.bundle.assessment;
+ const unique=items=>[...new Set(items)];
+ // Older helper responses retain their warning text without claiming verification.
+ const warnings=Array.isArray(corporate.warnings)?corporate.warnings:
+  (corporate.missing_evidence||[]).map(message=>({warning_id:'corporate:legacy:'+message,category:'missing_information',message,source_ids:[]}));
+ const existing=assessment.review_warnings||[];
+ const seen=new Set(existing.map(w=>w.warning_id));
+ assessment.review_warnings=[...existing,...warnings.filter(w=>{if(seen.has(w.warning_id))return false;seen.add(w.warning_id);return true;})];
+ assessment.missing_information=unique([...(assessment.missing_information||[]),...warnings.filter(w=>w.category==='missing_information').map(w=>w.message)]);
+ base.uncertainty=unique([...(base.uncertainty||[]),...warnings.map(w=>w.message)]);
+
+ const sourceIds=new Set(assessment.sources.map(s=>s.source_id));
  for(const source of corporate.sources||[]) {
+  if(sourceIds.has(source.source_id))continue;
+  sourceIds.add(source.source_id);
   base.bundle.assessment.sources.push({source_id:source.source_id,kind:source.provider==='Tavily cached excerpt'?'public_search_lead':'corporate_record',
    locator:source.locator,content:source.category+'; provider '+source.provider+'; retrieved '+String(source.retrieved_at)+'; freshness '+source.freshness+'; synthetic '+source.synthetic,
    url:source.url||null,reviewed_at:null,document_date:null});
@@ -101,8 +114,3 @@ def bind_credentials(metadata):
             if c.get('type')!=kind or not c.get('id') or not c.get('name'):raise ValueError('Compatible existing credential metadata required')
             n['credentials']={kind:{'id':c['id'],'name':c['name']}}
     return w
-
-
-if __name__=='__main__':
-    path=Path(__file__).resolve().parent.parent/'workflows/incept_corporate_intake_dev.json'
-    path.write_text(json.dumps(build_workflow(),indent=2)+'\n')

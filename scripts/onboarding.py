@@ -1,6 +1,5 @@
 """Offline intake preview. Local persistence only; no delivery/approval executor exists."""
 from contextlib import closing
-from datetime import datetime, timezone
 from decimal import Decimal, ROUND_HALF_UP
 import hashlib
 import json
@@ -27,6 +26,7 @@ def money(value):return format(value.quantize(Decimal('0.01'),rounding=ROUND_HAL
 def intake_fingerprint(request):
     """Keep existing persisted legacy request keys valid after optional schema additions."""
     data=request.model_dump(mode='json')
+    if data.get('document_options') is None:data.pop('document_options',None)
     for person in ('client','firm'):
         for key,default in {'client_type':'unknown','registration_number':None,'register_court':None,'register_type':None,'approved_provider_id':None}.items():
             if data[person].get(key)==default:data[person].pop(key,None)
@@ -83,11 +83,13 @@ def build_bundle(request,rag):
     client=ClientRecord(**request.client.model_dump(),client_id='demo-client-'+uuid.uuid4().hex)
     matter=MatterRecord(**request.matter.model_dump(),client_id=client.client_id,matter_id='demo-matter-'+uuid.uuid4().hex)
     fee=advance(request.fees);report=assessment(request,rag)
-    header=LABEL+'\n\nMandantschaft: '+text(client.name)+'; '+text(client.address)+'\nKanzlei: '+text(request.firm.name)+'; '+text(request.firm.address)+'\nRechtsanwalt/Rechtsanwältin (DEMO): '+text(request.firm.lawyer_name)+'\nAktenzeichen: '+matter.matter_id+'\nEntwurfsdatum: '+request.draft_date+'\n\n'
-    authority='# DEMO Vollmacht\n\n'+header+'Die fiktive Mandantschaft beabsichtigt, die oben genannte fiktive anwaltliche Vertretung ausschließlich für folgende Angelegenheit zu bevollmächtigen:\n\n'+text(matter.title)+' — '+text(matter.requested_scope)+'\n\nUmfang, Prozessführung, Vergleichsabschluss, Empfang von Geldern und Untervollmacht sind NICHT freigegeben und bedürfen gesonderter anwaltlicher Festlegung. Keine Vergütungsvereinbarung ist Bestandteil dieses Entwurfs.\n\nUnterschrift Mandantschaft: __________________ (nicht geleistet)\n'
-    agreement='# DEMO Vergütungsvereinbarung — Stundenhonorar\n\n'+header+'Gesonderter, noch nicht vereinbarter Entwurf zur Angelegenheit '+text(matter.title)+'.\n\nVorgesehener Netto-Stundensatz: '+fee.net_hourly_rate+' EUR. Abzurechnen wäre tatsächlicher, dokumentierter Zeitaufwand; Zeittakt, Auslagen und weitere Bedingungen sind vor Vereinbarung zu prüfen. Kein Erfolgshonorar.\n\nUmsatzsteuerbehandlung: '+text(request.fees.vat_mode)+'; angegebener Prozentsatz: '+text(request.fees.vat_percent)+'; vom Intake gelieferte Grundlage: '+text(request.fees.vat_basis)+'. Keine steuerliche Bestätigung.\n\nIm Erstattungsfall müssen Gegner, andere Verfahrensbeteiligte oder die Staatskasse regelmäßig nicht mehr als die gesetzliche Vergütung erstatten.\n\nAnwendbarkeit, Form, Hinweise und Angemessenheit durch die Kanzlei prüfen. Nicht Bestandteil der Vollmacht. Keine Unterschriften geleistet.\n'
-    invoice='# DEMO Vorschussrechnung — DRAFT, NICHT AUSGESTELLT\n\n'+header+'Nur Entwurfsreferenz: DRAFT-'+matter.matter_id+' (keine fortlaufende Rechnungsnummer).\n\nVorschuss auf erwartete künftige anwaltliche Tätigkeit, KEINE bereits erbrachte Leistung. Fünf Stunden sind eine Demo-Kalkulationsannahme, keine bestätigte Aufwandsschätzung.\n\n5 Stunden × '+fee.net_hourly_rate+' EUR netto = '+fee.net_fee+' EUR netto.\nUmsatzsteuer ('+text(fee.vat_percent)+' %; '+text(fee.vat_mode)+'): '+text(fee.vat_amount)+' EUR.\nBrutto-Vorschuss: '+text(fee.gross_total)+' EUR.\n\nSteuerliche Grundlage nur laut Intake: '+text(request.fees.vat_basis)+'. Bei unbekannter Steuerbehandlung bleiben Steuerbetrag und Brutto offen. Keine erfundenen Steuer-/USt-IDs, Bankdaten, Leistungsdaten oder Zahlungsfristen. Pflichtangaben und Angemessenheit prüfen; nicht buchen, versenden oder bezahlen.\n'
-    docs=[DraftDocument(kind=kind,content_markdown=body) for kind,body in (('vollmacht',authority),('fee_agreement',agreement),('advance_invoice',invoice))]
+    from scripts.legal_documents import generate_documents
+    docs=generate_documents(request,client,matter,fee)
+    report.content_markdown+='\n## Document drafting validation — no legal approval\n\n'
+    for doc in docs:
+        report.content_markdown+='- '+doc.kind+': **'+doc.completeness_status+'**; template '+str(doc.template_version)+'. Lawyer approval pending; no issuance.\n'
+        if doc.completeness_status!='DRAFT_COMPLETE_FOR_LAWYER_REVIEW':
+            report.missing_information.append('Document '+doc.kind+': '+doc.completeness_status+'; missing fields: '+(', '.join(doc.missing_information) or 'individual legal review required')+'.')
     actions=[]
     for title,detail,sources in [('Konfliktprüfung und Mandatsannahme','Gegenparteien und verbundene Beteiligte ergänzen; keine Annahme vor Prüfung.',['intake:opponents']),
                                   ('Unterlagen und Vertretungsbefugnis prüfen','Originalvertrag, Korrespondenz, Identität und Zeichnungsberechtigung anfordern.',['intake:matter','intake:client']),
@@ -100,7 +102,7 @@ def build_bundle(request,rag):
                    detail='Nur Entwurf; keine Zustellung und keine Mandatsannahme.',source_ids=['intake:client','intake:scope'],recipient=client.email,
                    subject='DEMO — Unterlagen zur Mandatsprüfung: '+matter.title,
                    body='Guten Tag '+client.name+', wir haben Ihre fiktive Anfrage zur Angelegenheit '+matter.title+' als Demo erfasst. Bitte stellen Sie Originalunterlagen und Angaben zu möglichen Fristen bereit. Vollmacht, Stundenhonorar und Vorschuss sind ausschließlich ungeprüfte Entwürfe. Die Annahme des Mandats und jede externe Handlung bedürfen anwaltlicher Freigabe. Es wurde nichts versandt.'))
-    return OnboardingBundle(client=client,matter=matter,advance=fee,documents=docs,assessment=report,proposed_actions=actions)
+    return OnboardingBundle(document_generation_context=request.document_options,client=client,matter=matter,advance=fee,documents=docs,assessment=report,proposed_actions=actions)
 
 
 class OnboardingService:

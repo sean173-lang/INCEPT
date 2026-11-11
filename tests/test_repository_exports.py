@@ -19,11 +19,12 @@ class SafeWorkflowExportTests(OfflineTestCase):
             self.assertIs(document.get('active'),False)
             inspect(document)
 
-    def test_current_export_is_29_node_development_workflow(self):
+    def test_only_export_is_canonical_37_node_workflow(self):
         root=Path(__file__).resolve().parent.parent
-        workflow=json.loads((root/'workflows/legalflow_phase2_development.json').read_text())
-        self.assertEqual(len(workflow['nodes']),29)
+        self.assertEqual(len(list((root/'workflows').glob('*.json'))),1)
+        workflow=json.loads((root/'workflows/incept_live_documents_v2.json').read_text())
+        self.assertEqual(len(workflow['nodes']),37)
         for node in workflow['nodes']:
             if node['type'].endswith('httpRequest') and not node.get('disabled'):
-                self.assertIn('127.0.0.1:8000',node['parameters']['url'])
+                self.assertTrue(node['parameters']['url'].startswith(('http://127.0.0.1:8003/','https://gmail.googleapis.com/','https://www.googleapis.com/','https://www.gesetze-im-internet.de/','={{')))
                 self.assertNotIn('/financial',node['parameters']['url'])

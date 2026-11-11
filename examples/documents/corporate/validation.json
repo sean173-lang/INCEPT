@@ -1,0 +1,144 @@
+{
+  "scenario": "SYNTHETIC corporate",
+  "template_version": "2.0.0",
+  "source_version": "2026-11-11.1/a0d88691a1f4",
+  "legally_approved": false,
+  "ready_for_issuance": false,
+  "external_actions": 0,
+  "advance": {
+    "hours": "5",
+    "net_hourly_rate": "250.00",
+    "currency": "EUR",
+    "net_fee": "1250.00",
+    "vat_mode": "taxable",
+    "vat_percent": "19",
+    "vat_amount": "237.50",
+    "gross_total": "1487.50",
+    "tax_status": "supplied_demo_treatment_unverified",
+    "work_performed": false
+  },
+  "documents": [
+    {
+      "document_version": 2,
+      "template_id": "de-vollmacht",
+      "template_version": "2.0.0",
+      "source_version": "2026-11-11.1/a0d88691a1f4",
+      "completeness_status": "DRAFT_COMPLETE_FOR_LAWYER_REVIEW",
+      "validation_issues": [],
+      "missing_information": [],
+      "lawyer_review_questions": [
+        "Vorlage und Einzelfall professionell prüfen; automatische Validierung ist keine Rechtsfreigabe."
+      ],
+      "legal_source_ids": [
+        "bgb-164",
+        "bgb-167",
+        "bgb-168",
+        "bgb-174",
+        "bgb-181"
+      ],
+      "ready_for_issuance": false,
+      "legally_approved": false,
+      "kind": "vollmacht",
+      "state": "pending_lawyer_approval"
+    },
+    {
+      "document_version": 2,
+      "template_id": "de-fee_agreement",
+      "template_version": "2.0.0",
+      "source_version": "2026-11-11.1/a0d88691a1f4",
+      "completeness_status": "DRAFT_COMPLETE_FOR_LAWYER_REVIEW",
+      "validation_issues": [],
+      "missing_information": [],
+      "lawyer_review_questions": [
+        "Vorlage und Einzelfall professionell prüfen; automatische Validierung ist keine Rechtsfreigabe."
+      ],
+      "legal_source_ids": [
+        "rvg-3a",
+        "rvg-4b",
+        "rvg-9",
+        "ustg-12",
+        "ustg-19",
+        "bgb-126b",
+        "rvg-4",
+        "rvg-34",
+        "brao-49b"
+      ],
+      "ready_for_issuance": false,
+      "legally_approved": false,
+      "kind": "fee_agreement",
+      "state": "pending_lawyer_approval"
+    },
+    {
+      "document_version": 2,
+      "template_id": "de-advance_invoice",
+      "template_version": "2.0.0",
+      "source_version": "2026-11-11.1/a0d88691a1f4",
+      "completeness_status": "NOT_READY_FOR_ISSUANCE",
+      "validation_issues": [
+        {
+          "code": "invoice_invoice_issue_date",
+          "field": "document_options.invoice_issue_date",
+          "description": "Pflichtangabe vor Ausstellung ergänzen: invoice_issue_date",
+          "severity": "missing",
+          "source_ids": [
+            "ustg-14"
+          ]
+        },
+        {
+          "code": "invoice_invoice_number",
+          "field": "document_options.invoice_number",
+          "description": "Pflichtangabe vor Ausstellung ergänzen: invoice_number",
+          "severity": "missing",
+          "source_ids": [
+            "ustg-14"
+          ]
+        },
+        {
+          "code": "invoice_firm_policy.tax_identifier",
+          "field": "document_options.firm_policy.tax_identifier",
+          "description": "Pflichtangabe vor Ausstellung ergänzen: firm_policy.tax_identifier",
+          "severity": "missing",
+          "source_ids": [
+            "ustg-14"
+          ]
+        },
+        {
+          "code": "einvoice_review",
+          "field": "document_options.recipient_business_status",
+          "description": "Fallangabe: inländisches B2B-Mandat. Strukturierte E-Rechnung nach § 14 UStG grundsätzlich zu prüfen. Für Umsätze 2025/2026 kann § 27 Abs. 38 UStG eine Übergangsregelung eröffnen; Leistungszeitraum, Ausgabezeitpunkt und erforderliche Zustimmung sind zu prüfen. Die BMF-FAQ enthält ergänzende Hinweise zu Anzahlungs-, Voraus- und Abschlagsrechnungen. Strukturierte Rechnungsfähigkeit: NICHT BESTÄTIGT.",
+          "severity": "review",
+          "source_ids": [
+            "ustg-14",
+            "ustg-27",
+            "bmf-einvoice"
+          ]
+        }
+      ],
+      "missing_information": [
+        "document_options.invoice_issue_date",
+        "document_options.invoice_number",
+        "document_options.firm_policy.tax_identifier"
+      ],
+      "lawyer_review_questions": [
+        "Fallangabe: inländisches B2B-Mandat. Strukturierte E-Rechnung nach § 14 UStG grundsätzlich zu prüfen. Für Umsätze 2025/2026 kann § 27 Abs. 38 UStG eine Übergangsregelung eröffnen; Leistungszeitraum, Ausgabezeitpunkt und erforderliche Zustimmung sind zu prüfen. Die BMF-FAQ enthält ergänzende Hinweise zu Anzahlungs-, Voraus- und Abschlagsrechnungen. Strukturierte Rechnungsfähigkeit: NICHT BESTÄTIGT.",
+        "Vorlage und Einzelfall professionell prüfen; automatische Validierung ist keine Rechtsfreigabe."
+      ],
+      "legal_source_ids": [
+        "rvg-9",
+        "rvg-10",
+        "ustg-12",
+        "ustg-13",
+        "ustg-14",
+        "ustg-19",
+        "ustg-27",
+        "bmf-einvoice",
+        "bgb-126b"
+      ],
+      "ready_for_issuance": false,
+      "legally_approved": false,
+      "kind": "advance_invoice",
+      "state": "pending_lawyer_approval"
+    }
+  ],
+  "cross_document_errors": []
+}

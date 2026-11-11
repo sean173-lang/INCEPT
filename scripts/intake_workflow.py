@@ -123,9 +123,3 @@ def build_workflow():
     connect('Input Valid?','Failure Summary',1);connect('Bundle Valid?','Failure Summary',1);connect('Failure Summary','Execution Summary')
     return {'name':'LEGALFLOW — Fictional Legal Intake Preview','active':False,'nodes':nodes,'connections':edges,
             'settings':{'executionOrder':'v1','saveDataSuccessExecution':'all','saveDataErrorExecution':'all','saveManualExecutions':True}}
-
-
-if __name__=='__main__':
-    path=ROOT/'workflows/legal_intake_onboarding.json'
-    path.write_text(json.dumps(build_workflow(),indent=2,ensure_ascii=False)+'\n')
-    print(path)
