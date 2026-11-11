@@ -1,6 +1,6 @@
 # Project 3 submission checkpoint
 
-This checklist follows the supplied project requirements; an original course brief was not found locally. No submission or push was performed.
+This checklist follows the supplied project requirements; an original course brief was not found locally. The tested implementation was published on the feature branch at `5c540b5`; this documentation update prepares review through a pull request. The default branch must change only after manual review and merge.
 
 | Requirement | Status and evidence |
 |---|---|
@@ -10,14 +10,14 @@ This checklist follows the supplied project requirements; an original course bri
 | RAG / grounding | IMPLEMENTED and offline tested: curated guidance, source attribution and unresolved claims |
 | Two distinct generated reports | PRESENT: individual and corporate examples under examples/reports; clearly synthetic offline outputs |
 | Error handling and review branches | IMPLEMENTED / regression tested; no uncertain deadlines or approval execution |
-| Corporate DE/UK extension | PARTIAL: four offline cases, 37-node inactive import; no live end-to-end extension execution |
+| Corporate DE/UK extension | FIXTURE VERIFIED: isolated n8n executions 20–23; no live registry end-to-end verification |
 | Primary-stack justification | PRESENT: docs/stack_decision.md |
 | 2–3 GTM future sprints | PRESENT: gtm_future_sprints.md |
 | Reproducible 5–7 minute demo | DOCUMENTED: docs/demo_script.md; live services/account state still required for a fresh real run |
-| Clean GitHub submission | Publication authorized for feature/legal-intake-mvp after staged/history audit and final tests; actual commit/push result must be recorded separately |
+| Clean GitHub submission | Feature branch pushed and verified at 5c540b5; documentation update, fresh security checks and PR review required before main publication |
 | Gradio UI | PLANNED separate milestone, not implemented here |
 
-Before submission: inspect the complete diff and secret exclusions, run the full suite, review sample artifacts, and obtain explicit Git publication instructions. Do not describe the cache-only corporate extension as a live provider test.
+Before submission: inspect the complete diff and secret exclusions, run the full suite, review sample artifacts, and manually review the feature-to-main pull request. Do not describe the cache-only corporate extension as a live provider test.
 
 
 ## Isolated n8n validation (2026-11-11)

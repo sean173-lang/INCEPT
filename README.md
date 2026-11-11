@@ -1,6 +1,6 @@
-# INCEPT
+# INCEPT — AI-Powered Legal Client Onboarding & Corporate Intelligence
 
-**Autonomous Legal Intake & Matter Intelligence for German law firms.**
+**Industry: Legal Tech / Corporate Law.**
 
 INCEPT turns an explicitly approved fictional inquiry into a reviewable matter
 bundle: cited Mandate Assessment, DEMO Vollmacht, hourly-fee agreement, five-hour
@@ -10,13 +10,21 @@ provides typed processing, local storage, evidence checks and bounded research.
 This is an Ironhack Project 3 development MVP, not a production legal service.
 The repository and historical Python modules retain the LEGALFLOW name.
 
+## Main capabilities
+
+- Autonomous approved-inquiry intake orchestrated by n8n, with explicit individual, company or unresolved classification.
+- German and UK corporate intelligence through the existing OpenRegister and Companies House adapters; the new intake path uses approved cached evidence only.
+- Evidence-backed Mandate Assessment reports, jurisdiction-aware legal research and local RAG, with source dates and missing-information warnings.
+- Personalized DEMO Vollmacht, hourly-fee agreement and a deterministic five-hour advance invoice draft.
+- FastAPI processing and read-only Gmail, Google Sheets and Google Calendar integrations, with human approval before any external action.
+
 | Capability | Evidence/status |
 | --- | --- |
 | Approved Gmail → Sheets lookup → Calendar metadata → onboarding → official legal source → report | **VERIFIED:** actual n8n execution 19; review-ready bundle, 12 sources, three drafts, five pending actions |
 | Three real Google integrations | **VERIFIED:** independent executions 12–14 and integrated execution 19 |
 | Primary-source research | **VERIFIED, bounded:** official BGB §286(1)/(4), exact wording, source hash and retrieval timestamp; not a verified finding about the debt |
 | Local RAG and source attribution | **IMPLEMENTED:** curated references, uncertainty and source IDs; review dates are not enactment dates |
-| Individual/company routing and optional German/UK corporate intelligence | **OFFLINE VERIFIED:** four scenarios; separate 37-node workflow imported inactive, no live corporate extension execution claimed |
+| Individual/company routing and optional German/UK corporate intelligence | **FIXTURE VERIFIED:** four real n8n executions 20–23 using synthetic ingress/Google data and real local helpers; no live registry verification |
 | OpenRegister / Companies House / Tavily reuse | **CACHE-ONLY in new intake path:** no cache-miss network request or financial endpoint permitted |
 | UK substantive legal assessment | **NOT VERIFIED:** requires lawyer review; no automatic German BGB application |
 | Real sending, scheduling, billing or approval execution | **DISABLED / NOT IMPLEMENTED** |
@@ -26,21 +34,22 @@ The repository and historical Python modules retain the LEGALFLOW name.
 
 ```mermaid
 flowchart TD
-  A[Approved demo Gmail inquiry] --> B[n8n: metadata gate and structured intake]
-  B --> C{Explicit client type and jurisdiction}
-  C -->|Individual| D[Standard local preview]
-  C -->|German company| E[Existing OpenRegister adapter: approved cache only]
-  C -->|UK company| F[Existing Companies House adapter: approved cache only]
-  C -->|Unknown or unsupported| R[Needs review: no speculative lookup]
-  E --> G[Optional cached Tavily leads and corporate RAG]
-  F --> G
-  G --> D
-  D --> H[Independent governing-law routing]
-  H -->|Explicit relevant German matter| I[One allowlisted official-source check]
-  H -->|UK or unresolved law| J[Legal analysis not verified]
-  I --> K[Cited assessment and DEMO drafts]
-  J --> K
-  K --> L[Pending lawyer approval; no external actions]
+ A[Approved demo Gmail inquiry] --> B[n8n: validate structured intake]
+ B --> C{Explicit client type and jurisdiction}
+ C -->|Unknown or unsupported| R[Manual review: no lookup]
+ C -->|Individual or supported company| D[Read-only Sheets and Calendar checks]
+ D --> E[FastAPI preview: DEMO drafts and local idempotency]
+ E --> F{Corporate intelligence required?}
+ F -->|Individual| J[Independent governing-law gate]
+ F -->|German company| G[Existing OpenRegister adapter: approved cache only]
+ F -->|UK company| H[Existing Companies House adapter: approved cache only]
+ G --> I[Cached background leads and corporate RAG]
+ H --> I
+ I --> J
+ J -->|Relevant explicit German law| K[Bounded official-source check]
+ J -->|UK or unresolved law| L[Substantive analysis unresolved]
+ K --> M[Unified cited assessment and pending approval]
+ L --> M
 ```
 
 Company registration jurisdiction does not establish governing law, signing
@@ -129,6 +138,8 @@ VAT from an explicitly supplied treatment/rate, then gross. Unknown VAT remains
 unavailable; no tax eligibility, tax ID, invoice number or completed work is invented.
 No message, spreadsheet row, event or invoice is issued by this path.
 
+For GitHub presentation and publication scope, see [repository presentation](docs/github_presentation.md).
+
 ## Evidence, limitations and project status
 
 Execution 19 and its private generated artifacts remain in
@@ -145,16 +156,18 @@ pending lawyer approval. Cached corporate records are not treated as current.
 - [5–7 minute demo](docs/demo_script.md)
 - [GTM future sprints](gtm_future_sprints.md)
 
-## Repository map and pivot history
+## Repository map
 
 `workflows/` holds sanitized graphs; `scripts/` contains reusable services and
 adapters; `references/` contains curated guidance and labeled demo evidence;
 `examples/` contains synthetic inputs/reports; `tests/` is offline; `docs/` explains
 implementation/evidence. `data/` and `reports/` remain local runtime/output stores.
 
+## Legacy LEGALFLOW — M&A due diligence research
+
 LEGALFLOW began as corporate M&A diligence. Its reusable identity, evidence,
 research and reporting modules are retained, not deleted or renamed. Financial
-experiments remain historical and isolated. [Prior root documentation is archived](docs/legacy_legalflow.md).
+experiments remain historical and isolated. The original architecture combined registry search/detail verification, Tavily research, deterministic evidence and financial analysis, local RAG and sourced report rendering. Those modules, tests, workflows and Git history are preserved; financial endpoints are excluded from INCEPT intake. [Prior root documentation is archived](docs/legacy_legalflow.md).
 
 
 ## Isolated n8n validation (2026-11-11)
