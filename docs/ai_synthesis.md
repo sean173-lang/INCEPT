@@ -1,5 +1,7 @@
 # Controlled AI mandate synthesis
 
+Current contract repair: see [source-exact version 2](source_exact_synthesis.md) for execution-34 diagnosis, compatibility and the latest 274-test offline results. The original counts below describe the earlier implementation checkpoint.
+
 ## Status and scope
 
 Implemented: a callable OpenAI Responses API adapter, strict structured response contract, evidence validation, persistent request/token reservations, explicit fallback, FastAPI helper and a separate inactive 40-node n8n export. All validation in this change uses synthetic cases and mocked LLM/HTTP responses. The full suite passes 233 tests, including 44 synthesis/audit regressions; [sanitized validation record](ai_synthesis_validation.json). **No genuine live model execution or billing verification occurred.** Passing mock tests does not demonstrate real model reasoning quality or professional legal correctness.

@@ -345,3 +345,12 @@ class SynthesisTests(OfflineTestCase):
         self.assertNotIn('private transport diagnostics',result.model_dump_json())
         self.assertEqual(original,request.bundle.model_dump_json())
         self.assertTrue(all(a.state=='pending_lawyer_approval' for a in request.bundle.proposed_actions))
+
+    def test_rejected_provider_output_keeps_usage_and_safe_failure_category(self):
+        def paraphrased(packet):
+            raw=json.loads(mock_response(packet)[0]);raw['mandate_summary']['statement']='A generated paraphrase rather than the supplied source excerpt.'
+            return json.dumps(raw),{'input_tokens':50,'output_tokens':100,'total_tokens':150}
+        result=self.service(paraphrased).run(self.cases['individual'])
+        self.assertEqual(result.status,'unavailable');self.assertEqual(result.validation_diagnostic,'factual_statement_not_extractive')
+        self.assertEqual(result.usage['total_tokens'],150);self.assertIsNone(result.synthesis)
+        self.assertEqual(result.assessment.factual_findings,self.cases['individual'].bundle.assessment.factual_findings)

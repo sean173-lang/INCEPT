@@ -22,6 +22,7 @@ from scripts.local_rag import LocalRAG
 from scripts.primary_research import PrimaryResearchResult
 from scripts.report_renderer import text
 from scripts.ai_evidence import EvidenceResolver,ProvenanceError
+from scripts.ai_excerpt_contract import ExcerptSynthesis,ExcerptRecord,ExcerptSelection,build_excerpts,expand_selection
 from scripts.ai_content_policy import IssueCategory,AssertionType,ActionState,support_for,validate_content,validate_contradictions,OUT_OF_SCOPE,ContentPolicyError,ApprovalAssertionError
 
 
@@ -63,6 +64,7 @@ class AISynthesis(Schema):
 
 
 class SynthesisRequest(Schema):
+    contract_version: Literal['1.0','2.0']='1.0'
     bundle: OnboardingBundle
     corporate_result: CorporateResult | None = None
     primary_research: PrimaryResearchResult | None = None
@@ -78,11 +80,15 @@ class SynthesisResponse(Schema):
     evidence_fingerprint: str
     synthesis: AISynthesis | None
     assessment: MandateAssessment
+    contract_version: Literal['1.0','2.0']='1.0'
+    excerpt_catalog: dict[str,ExcerptRecord]=Field(default_factory=dict)
+    factual_references: dict[str,list[ExcerptSelection]]=Field(default_factory=dict)
     validated_issue_categories: list[IssueCategory] = Field(default_factory=list)
     cache_hit: bool = False
     input_token_upper_bound: int = 0
     output_token_limit: int = 0
     usage: dict | None = None
+    validation_diagnostic: Literal['factual_statement_not_extractive','factual_assertion_type_mismatch','other_output_validation_failure'] | None = None
     cost_display: Literal['Cost unknown'] = 'Cost unknown'
     billing_confirmed: Literal[False] = False
 
@@ -120,8 +126,22 @@ Return the strict JSON schema. All analysis is AI-generated and requires lawyer 
 
 
 
-def output_schema():
-    schema=AISynthesis.model_json_schema()
+def system_prompt(version='1.0'):
+    if version=='1.0':return SYSTEM
+    start=SYSTEM.index('For factual_background,')
+    end=SYSTEM.index('For legal issues,')
+    prompt=SYSTEM[:start]+'''Use contract_version 2.0. For mandate_summary, factual_background and corporate
+observations select only source_id/excerpt_id pairs from excerpts with the matching
+allowed_sections and role. NEVER write factual prose, quotes, classifications or
+provenance fields. The server populates those from its evidence records.
+'''+SYSTEM[end:]
+    prompt=prompt.replace('Cite exact supporting quotes for each ID.','Select source_id/excerpt_id evidence_references for every interpretation; never supply quote text.')
+    prompt=prompt.replace('Every statement has assertion_type','Every interpretation has assertion_type')
+    return prompt+'\nCoverage and legal references support questions, not corporate facts. Missing or unexcerptable sources require explicit uncertainty; do not invent excerpt IDs.\n'
+
+
+def output_schema(version='1.0'):
+    schema=(ExcerptSynthesis if version=='2.0' else AISynthesis).model_json_schema()
     def visit(value):
         if isinstance(value,dict):
             if 'const' in value:value['enum']=[value.pop('const')]
@@ -207,6 +227,14 @@ def evidence_packet(request, resolver=None):
             'limitations': corporate.limitations, 'current_registry_verification': False}), 'question')
     packet={'context': context, 'sources': sources}
     packet['issue_support']=support_for(packet)
+    if request.contract_version=='2.0':
+        packet['contract_version']='2.0'
+        packet['excerpts']=build_excerpts(packet)
+        packet['excerpt_limitations']=[]
+        if not any(s['classification']=='source_guidance' and s.get('scope')=='applicable_legal_guidance' for s in sources.values()):
+            packet['excerpt_limitations'].append('Applicable legal source evidence is unavailable; no legal analysis can be supplied.')
+        if context['client_type']=='company' and not any('corporate_intelligence_observations' in e['allowed_sections'] for e in packet['excerpts'].values()):
+            packet['excerpt_limitations'].append('Corporate record evidence is unavailable; identity and sender authority remain unverified.')
     return packet
 
 
@@ -284,6 +312,11 @@ def validate_synthesis(output, packet):
     return output
 
 
+def parse_provider_output(raw,packet,version='1.0'):
+    if version=='2.0':return expand_selection(ExcerptSynthesis.model_validate_json(raw),packet)
+    return validate_synthesis(AISynthesis.model_validate_json(raw),packet),{}
+
+
 class AIConfig:
     def __init__(self, *, enabled=False, billing_verified=False, approval_id='', model='', max_requests=0,
                  max_input_tokens=32000, max_output_tokens=3000, max_total_tokens=0, timeout=20):
@@ -318,15 +351,15 @@ class SynthesisService:
                         max_retries=0,timeout=self.config.timeout,http_client=http) as client:
                 response=client.responses.create(model=self.config.model,store=False,
                     max_output_tokens=self.config.max_output_tokens,
-                    input=[{'role':'system','content':SYSTEM},{'role':'user','content':canonical(packet)}],
-                    text={'format':{'type':'json_schema','name':'incept_mandate_synthesis','strict':True,'schema':output_schema()}})
+                    input=[{'role':'system','content':system_prompt(packet.get('contract_version','1.0'))},{'role':'user','content':canonical(packet)}],
+                    text={'format':{'type':'json_schema','name':'incept_mandate_synthesis','strict':True,'schema':output_schema(packet.get('contract_version','1.0'))}})
         if response.status!='completed':
             raise ValueError('Incomplete/refused model response')
         return response.output_text, response.usage.model_dump() if response.usage else None
 
     def run(self, request):
         original=request.bundle.assessment.model_copy(deep=True)
-        packet=None; fingerprint=''; input_bound=0; live_request=False
+        packet=None; fingerprint=''; input_bound=0; live_request=False;factual_references={}
         def result(status, reason, output=None, *, cached=False, usage=None):
             assessment=original.model_copy(deep=True)
             if output:
@@ -340,7 +373,7 @@ class SynthesisService:
                 assessment.content_markdown+='\n## AI analysis unavailable\n\nDeterministic assessment retained; no usable AI analysis is claimed. Reason: '+reason+'. Lawyer review required.\n'
             return SynthesisResponse(status=status,reason=reason,execution_mode='mock' if self.mocked else 'live' if output or live_request else 'disabled',model_used=bool(output) and not self.mocked,live_request=live_request,
                 model=self.config.model or None,evidence_fingerprint=fingerprint,synthesis=output,assessment=assessment,
-                validated_issue_categories=list(packet['issue_support']) if packet else [],cache_hit=cached,input_token_upper_bound=input_bound,output_token_limit=self.config.max_output_tokens,usage=usage)
+                contract_version=request.contract_version,excerpt_catalog=packet.get('excerpts',{}) if packet else {},factual_references=factual_references,validated_issue_categories=list(packet['issue_support']) if packet else [],cache_hit=cached,input_token_upper_bound=input_bound,output_token_limit=self.config.max_output_tokens,usage=usage)
         try:
             packet=evidence_packet(request,self.resolver); fingerprint=hashlib.sha256(canonical(packet).encode()).hexdigest()
         except ProvenanceError:
@@ -362,11 +395,11 @@ class SynthesisService:
         if not (c.enabled and c.billing_verified and c.approval_id and c.model and c.max_requests and c.max_total_tokens):
             return result('unavailable','ai_not_authorized_or_configured')
         # Conservative byte-based token reservation, including schema/instructions and framing.
-        input_bound=len((canonical(packet)+SYSTEM+canonical(output_schema())).encode())+4096
+        input_bound=len((canonical(packet)+system_prompt(request.contract_version)+canonical(output_schema(request.contract_version))).encode())+4096
         reservation=input_bound+c.max_output_tokens
         if input_bound>c.max_input_tokens or c.max_output_tokens<1 or reservation>c.max_total_tokens:
             return result('unavailable','ai_token_budget_exceeded')
-        policy_hash=hashlib.sha256((SYSTEM+canonical(output_schema())).encode()).hexdigest()
+        policy_hash=hashlib.sha256((system_prompt(request.contract_version)+canonical(output_schema(request.contract_version))).encode()).hexdigest()
         key=hashlib.sha256((fingerprint+':'+c.model+':'+policy_hash+':'+('mock' if self.mocked else 'live')).encode()).hexdigest()
         limits=canonical([c.model,policy_hash,c.max_requests,c.max_input_tokens,c.max_output_tokens,c.max_total_tokens])
         try:
@@ -383,7 +416,7 @@ class SynthesisService:
                     old=db.execute('SELECT state,output FROM requests WHERE approval=? AND key=?',(c.approval_id,key)).fetchone()
                     if old:
                         if old[0]=='completed':
-                            output=validate_synthesis(AISynthesis.model_validate_json(old[1]),packet)
+                            output,factual_references=parse_provider_output(old[1],packet,request.contract_version)
                             return result('completed','validated_cached_ai_synthesis',output,cached=True)
                         return result('unavailable','previous_attempt_failed_or_uncertain_no_retry')
                     count,tokens=db.execute('SELECT count(*),coalesce(sum(reservation),0) FROM requests WHERE approval=?',(c.approval_id,)).fetchone()
@@ -392,17 +425,20 @@ class SynthesisService:
                     db.execute('INSERT INTO requests VALUES(?,?,?,\'pending\',NULL)',(c.approval_id,key,reservation));db.commit()
                 # A crash/timeout retains the pending reservation across restarts.
                 live_request=not self.mocked
+                usage=None
                 try:
                     raw,usage=self.transport(packet)
                     if not isinstance(raw,str) or len(raw.encode())>100000:
                         raise ValueError('Unsupported output')
-                    output=validate_synthesis(AISynthesis.model_validate_json(raw),packet)
+                    output,factual_references=parse_provider_output(raw,packet,request.contract_version)
                 except Exception as error:
                     with closing(sqlite3.connect(self.ledger_path)) as db:
                         db.execute("UPDATE requests SET state='failed' WHERE approval=? AND key=?",(c.approval_id,key));db.commit()
-                    return result('unavailable','approval_or_issuance_language_rejected' if isinstance(error,ApprovalAssertionError) else 'unsupported_issue_or_adverse_content_rejected' if isinstance(error,ContentPolicyError) else 'ai_response_unavailable_or_rejected')
+                    rejected=result('unavailable','approval_or_issuance_language_rejected' if isinstance(error,ApprovalAssertionError) else 'unsupported_issue_or_adverse_content_rejected' if isinstance(error,ContentPolicyError) else 'ai_response_unavailable_or_rejected',usage=usage)
+                    rejected.validation_diagnostic={'Factual statements must be extractive':'factual_statement_not_extractive','Factual assertion type mismatch':'factual_assertion_type_mismatch'}.get(str(error),'other_output_validation_failure')
+                    return rejected
                 with closing(sqlite3.connect(self.ledger_path)) as db:
-                    db.execute("UPDATE requests SET state='completed',output=? WHERE approval=? AND key=?",(output.model_dump_json(),c.approval_id,key));db.commit()
+                    db.execute("UPDATE requests SET state='completed',output=? WHERE approval=? AND key=?",(raw if request.contract_version=='2.0' else output.model_dump_json(),c.approval_id,key));db.commit()
                 return result('completed','validated_preliminary_ai_synthesis',output,usage=usage)
         except Exception:
             return result('unavailable','ai_storage_or_validation_unavailable')
@@ -418,19 +454,28 @@ def render_ai(output, packet, *, mocked=False):
             'missing_information':'Missing information','uncertainties_and_limitations':'Uncertainties and limitations',
             'questions_requiring_lawyer_review':'Questions for lawyer review','proposed_next_steps':'Proposed next steps — questions only; no execution'}
     lines+=['','### Deterministic evidence limits — not AI findings','']
-    gaps=[]
+    gaps=list(packet.get('excerpt_limitations',[]))
     for id in ('synthesis:intake:coverage','synthesis:corporate:coverage'):
         if id not in packet['sources']:continue
         coverage=json.loads(packet['sources'][id]['content'])
         gaps+=coverage.get('missing_information',[])+coverage.get('missing_evidence',[])+coverage.get('discrepancies',[])+coverage.get('limitations',[])
-        gaps+=[w['message'] for w in coverage.get('warnings',[]) if isinstance(w,dict) and isinstance(w.get('message'),str)]
-    lines+=['- '+text(gap) for gap in dict.fromkeys(gaps)]
+        gaps+=[w['message'] for w in coverage.get('warnings',[])+coverage.get('review_warnings',[]) if isinstance(w,dict) and isinstance(w.get('message'),str)]
+    readable={'relevant_external_evidence':'Relevant independent external evidence is unavailable.','original_legal_documents':'Original legal documents have not been reviewed.','verified_litigation_status':'Litigation status has not been verified.','current_sanctions_and_insolvency_checks':'Current sanctions and insolvency checks are unavailable.'}
+    lines+=['- '+text(readable.get(gap,gap)) for gap in dict.fromkeys(gaps)]
     for field,label in labels.items():
         lines+=['','### '+label,'']
         values=[output.mandate_summary] if field=='mandate_summary' else getattr(output,field)
         for item in values:
             label={'client_alleged':'CLIENT-ALLEGED — NOT VERIFIED','official_record_reported':'HISTORICAL OFFICIAL RECORD — not a misconduct finding'}.get(item.evidence_status,item.evidence_status)
             lines.append('- '+text(item.statement)+' ['+', '.join(text(i) for i in item.source_ids)+']; '+label+'; issue '+item.issue_category+'; '+item.action_state+'.')
+            if packet.get('contract_version')=='2.0' and item.assertion_type=='source_excerpt':
+                e=next(e for e in packet['excerpts'].values() if e['source_id'] in item.source_ids and e['text']==item.statement and field in e['allowed_sections'])
+                provenance=e['provenance']
+                details=['server-populated exact excerpt','role '+e['role'],'governing-law context '+e['jurisdiction']]
+                if provenance.get('synthetic'):details.append('SYNTHETIC — not registry verification')
+                if provenance.get('retrieved_at'):details.append('original retrieval '+provenance['retrieved_at'])
+                if provenance.get('freshness'):details.append('freshness '+provenance['freshness'])
+                lines.append('  Source context: '+text('; '.join(details))+'.')
             for q in item.evidence_quotes:
                 source=packet['sources'][q.source_id]
                 lines.append('  Evidence excerpt: '+text(q.quote)+((' — [source](<'+source['url']+'>)') if source.get('url') else '')+'.')

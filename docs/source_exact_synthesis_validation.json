@@ -1,0 +1,36 @@
+{
+  "baseline_tests": 255,
+  "full_offline_tests": 274,
+  "new_regressions": 19,
+  "real_openai_requests_this_repair": 0,
+  "live_workflow_executions_this_repair": 0,
+  "model_contract_version": "2.0",
+  "normalized_response_backward_compatible": true,
+  "original_validators_unchanged": true,
+  "canonical_nodes_unchanged": 37,
+  "workflow_exports": [
+    {
+      "path": "workflows/incept_prose_intake_dev.json",
+      "nodes": 25
+    },
+    {
+      "path": "workflows/incept_live_documents_v2.json",
+      "nodes": 37
+    },
+    {
+      "path": "workflows/incept_ai_synthesis_dev.json",
+      "nodes": 40
+    }
+  ],
+  "historical_evidence_files_hash_verified": 154,
+  "secret_privacy_files_scanned": 23,
+  "secret_privacy_findings": [],
+  "broken_documentation_links": [],
+  "mock_sample": "reports/incept_source_exact_offline/german_payment_dispute/mandate_assessment.md",
+  "live_success_claimed": false,
+  "limitations": [
+    "Exact excerpts establish attribution, not source truth or general semantic entailment.",
+    "Mock selections do not establish real model reliability or professional legal approval.",
+    "Future live use requires fresh approval and reviewed input/output budgets."
+  ]
+}

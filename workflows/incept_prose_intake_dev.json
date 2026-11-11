@@ -1,0 +1,918 @@
+{
+  "name": "INCEPT — ordinary German prose, two authorized live AI calls (manual)",
+  "nodes": [
+    {
+      "id": "4061ccce68a152199d732fe8d3bc2c39",
+      "name": "Manual Controlled Prose Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {},
+      "retryOnFail": false
+    },
+    {
+      "id": "04264ee1462b51e0872cc232d12541f1",
+      "name": "Read Exact Approved Gmail Metadata",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages/0000000000000000?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "8a736896e52a5327b1ddd0cce78bd65e",
+      "name": "Validate Exact Message Scope",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const account=\"project-demo@example.invalid\";const r=$input.first().json,b=r.body;const h=n=>b?.payload?.headers?.filter(x=>x.name.toLowerCase()===n).map(x=>x.value);if(r.statusCode!==200||b?.id!==\"0000000000000000\"||h('from')?.[0]!==account||h('to')?.[0]!==account||h('subject')?.[0]!==\"INCEPT-PROSE-APPROVED \\u2014 fictional German inquiry\"||['from','to','subject'].some(k=>h(k)?.length!==1)||b.sizeEstimate>20000)throw new Error('Approved message metadata mismatch');return [{json:{message_id:b.id}}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "95f7d493c7825300a4d43d2db72ec215",
+      "name": "Read Approved Fictional Inquiry",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages/0000000000000000?format=full",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "c5eb836316a85f3cb4afaf2f8c5db23b",
+      "name": "Decode Ordinary German Prose",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const account=\"project-demo@example.invalid\";const r=$input.first().json,b=r.body;const parts=[b?.payload,...(b?.payload?.parts||[])].filter(p=>p?.mimeType==='text/plain'&&p.body?.data);if(r.statusCode!==200||b.id!==\"0000000000000000\"||parts.length!==1)throw new Error('One approved plain text body required');const text=Buffer.from(parts[0].body.data,'base64url').toString('utf8').replace(/\\r\\n/g,'\\n').trim();if(!text.includes('simulierte Testanfrage')||text.length>6000)throw new Error('Synthetic inquiry missing');return [{json:{synthetic_data:true,message_id:b.id,sender:account,recipient:account,subject:\"INCEPT-PROSE-APPROVED \\u2014 fictional German inquiry\",body:text}}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "0549dec8bd9153428e5455f75e686faf",
+      "name": "AI Extract Natural Intake",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8005/v1/onboarding/extract",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-LEGALFLOW-Service-Key",
+              "value": "REPLACE_WITH_PRIVATE_SERVICE_TOKEN"
+            }
+          ]
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "92a84378e1845613bd742863bfed4599",
+      "name": "Validate Extracted Facts and Prepare Intake",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json,b=r.body,e=b?.extraction;if(r.statusCode!==200||b.status!=='completed'||!b.model_used||b.model!=='gpt-4o-mini'||e?.client_type!=='company'||e.company_name?.text!=='INCEPT DEMO GmbH'||!e.counterparty?.text)throw new Error('Live extraction failed or requires review');const intake={\"synthetic_data\": true, \"idempotency_key\": \"document-quality-company-v2\", \"client\": {\"name\": \"INCEPT DEMO GmbH\", \"address\": \"[Anschrift der fiktiven Gesellschaft noch zu ergänzen]\", \"email\": \"intake@incept-demo.invalid\", \"jurisdiction\": \"Germany\", \"client_type\": \"company\", \"approved_provider_id\": \"DEMO-INCEPT-DE\", \"registration_number\": \"DEMO-246468\", \"register_court\": \"Synthetic Berlin court\", \"register_type\": \"HRB\"}, \"firm\": {\"name\": \"[Kanzleiname noch zu ergänzen]\", \"lawyer_name\": \"[Bearbeitende Person noch zu ergänzen]\", \"address\": \"[Kanzleianschrift noch zu ergänzen]\", \"email\": \"kanzlei@lindenbogen.invalid\", \"jurisdiction\": \"Germany\"}, \"matter\": {\"title\": \"DEMO Gesellschaftsmandat — Liefervertragsprüfung\", \"summary\": \"Vollständig fiktive Gesellschaft beauftragt eine außergerichtliche Prüfung einer behaupteten Lieferforderung; Geschäftsführung und Mandatsfreigabe beruhen ausschließlich auf synthetischem Demonstrationsnachweis.\", \"requested_scope\": \"Außergerichtliche Prüfung der Vertragsunterlagen und Korrespondenz sowie rechtliche Stellungnahme zur behaupteten Lieferforderung. Keine Prozessführung oder Vergleichsvollmacht.\", \"opposing_parties\": [\"DEMO Handelspartner Morgenfeld GmbH (fiktiv)\"], \"claimed_deadline\": null, \"deadline_source\": null, \"governing_law\": \"Germany\"}, \"fees\": {\"net_hourly_rate\": \"250.00\", \"currency\": \"EUR\", \"vat_mode\": \"taxable\", \"vat_percent\": \"19\", \"vat_basis\": \"Ausdrücklich bestätigte synthetische Rechenkonfiguration: inländische steuerpflichtige anwaltliche Leistung, 19 Prozent; keine Feststellung für ein reales Mandat.\"}, \"draft_date\": \"2026-11-11\", \"document_options\": {\"place\": \"Musterort (Demo)\", \"representation_scope\": \"out_of_court\", \"requested_ancillary_powers\": [], \"engagement_law\": \"Germany\", \"recipient_business_status\": \"business\", \"supplier_domestic\": true, \"recipient_domestic\": true, \"firm_policy\": {\"policy_id\": \"SYNTHETIC-LINDENBOGEN-2026-v1\", \"net_hourly_rate\": \"250.00\", \"billing_method\": \"actual_minutes\", \"time_recording\": \"Tätigkeitsnachweis mit Datum, bearbeitender Person, Tätigkeitsbeschreibung und tatsächlicher Dauer in Minuten; keine pauschale Aufrundung.\", \"expenses_terms\": \"Auslagen werden nur nach vorheriger gesonderter Vereinbarung angesetzt; in diesem Entwurf ist keine Auslagenpauschale vereinbart.\", \"payment_terms\": \"Synthetische Kanzleiregel zur Prüfung: Zahlung binnen 14 Kalendertagen nach Zugang einer ordnungsgemäßen, gesondert freigegebenen Abrechnung. Dieser Entwurf löst keine Zahlungsfrist aus.\", \"other_professionals_terms\": \"Für andere Berufsträger sind keine Stundensätze vereinbart. Ein Einsatz mit zusätzlichen Kosten bedarf einer gesonderten Vereinbarung.\", \"vat_configuration_confirmed_for_demo\": true}, \"representative\": null, \"invoice_number\": null}};intake.idempotency_key='incept-prose-gmail-'+$('Decode Ordinary German Prose').first().json.message_id;intake.client.name=e.company_name.text;intake.matter={title:'Simulierte Dienstleistungsforderung — anwaltliche Erstprüfung',summary:[e.matter_summary.text,...e.alleged_facts.map(x=>x.text),...e.dates.map(x=>x.text)].join(' '),requested_scope:e.requested_assistance.text,opposing_parties:[e.counterparty.text],governing_law:'Germany',claimed_deadline:null,deadline_source:null};return [{json:{intake,extraction:b}}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "55d2899354e5590697042b4631e3d92a",
+      "name": "Generate Real v2 Onboarding Drafts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8005/v1/onboarding/preview",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.intake) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-LEGALFLOW-Service-Key",
+              "value": "REPLACE_WITH_PRIVATE_SERVICE_TOKEN"
+            }
+          ]
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "6ec5eb636a5f51d8833d31476acfb772",
+      "name": "Validate Draft Bundle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json,b=r.body;if(r.statusCode!==200||b?.client?.name!=='INCEPT DEMO GmbH'||b.documents?.length!==3||b.documents.some(d=>d.template_version!=='2.0.0'||d.ready_for_issuance!==false||d.legally_approved!==false)||b.advance?.gross_total!=='1487.50'||b.proposed_actions?.length!==5||b.proposed_actions.some(a=>a.state!=='pending_lawyer_approval'||a.executed))throw new Error('Draft or approval safeguard failed');const audit=$('Validate Extracted Facts and Prepare Intake').first().json.extraction.grounding;if(audit){const message='Source grounding requires lawyer review: unsupported proposals were excluded ('+audit.excluded_proposals.map(x=>x.field).join(', ')+'); source case/spacing was restored. No sender authority verified.';b.assessment.review_warnings.push({warning_id:'intake:source-grounding',category:'unverified_evidence',message,source_ids:['intake:matter']});b.assessment.content_markdown+='\\n## Extraction grounding limitations\\n'+message+'\\n';}return [{json:{bundle:b}}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "6512b4b9c8d155729f6558984ff27439",
+      "name": "Corporate Research Synthetic Only",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8005/v1/onboarding/corporate-intelligence",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({synthetic_data:true,client_id:$json.bundle.client.client_id,matter_id:$json.bundle.matter.matter_id,client:$('Validate Extracted Facts and Prepare Intake').first().json.intake.client,source_policy:'approved_demo_fixture',max_external_requests:0,max_cached_operations:3}) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-LEGALFLOW-Service-Key",
+              "value": "REPLACE_WITH_PRIVATE_SERVICE_TOKEN"
+            }
+          ]
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "f420601c6660562caceff794529aec75",
+      "name": "Preserve Synthetic Corporate Provenance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json,c=r.body,b=$('Validate Draft Bundle').first().json.bundle;if(r.statusCode!==200||c.synthetic_evidence!==true||c.current_registry_verification!==false)throw new Error('Corporate provenance mismatch');b.assessment.content_markdown+='\\n'+c.section_markdown;return [{json:{bundle:b,corporate_result:c,legal_research:[]}}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "6c0917ad1a7950198154888619ec695c",
+      "name": "Retrieve Official BGB 611",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2420,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://www.gesetze-im-internet.de/bgb/__611.html",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file",
+              "outputPropertyName": "official_source"
+            }
+          }
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "c80be988f97d5c0bad5116b5cbe0b88a",
+      "name": "Prepare Source Check 611",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json;let bytes=null;if(r.statusCode===200 && $input.first().binary?.official_source){try{bytes=await this.helpers.getBinaryDataBuffer(0,'official_source');}catch{}}if(!bytes||bytes.length>200000)throw new Error('Official source bytes missing or oversized');return [{json:{synthetic_data:true,provision:'611',source_url:'https://www.gesetze-im-internet.de/bgb/__611.html',retrieved_at:new Date().toISOString(),http_status:r.statusCode||503,source_html:'',source_bytes_base64:bytes.toString('base64'),source_content_type:r.headers?.['content-type']||''}}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "4af981c5ea33571db32758b679c8f39c",
+      "name": "Verify Official Wording 611",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2860,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8005/v1/onboarding/payment-research/verify",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-LEGALFLOW-Service-Key",
+              "value": "REPLACE_WITH_PRIVATE_SERVICE_TOKEN"
+            }
+          ]
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "609f05918edd55c69aa3a6c353585646",
+      "name": "Attach Checked Guidance 611",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3080,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json,e=r.body,p=JSON.parse(JSON.stringify($('Preserve Synthetic Corporate Provenance').first().json));if(r.statusCode!==200||e?.status!=='wording_verified')throw new Error('Official source unavailable or wording changed');p.legal_research.push(e);p.bundle.assessment.sources.push(e.source);p.bundle.assessment.guidance.push({description:e.source.content,status:'reference_guidance',source_ids:[e.source.source_id]});p.bundle.assessment.content_markdown+='\\n## Official payment-dispute reference — not a case finding\\n'+e.source.content+'\\nSource: '+e.source.url+'; retrieved '+e.retrieved_at+'; '+e.limitation+'\\n';return [{json:p}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "a4343152f9185936846e07c72afad911",
+      "name": "Retrieve Official BGB 320",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3300,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://www.gesetze-im-internet.de/bgb/__320.html",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file",
+              "outputPropertyName": "official_source"
+            }
+          }
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "7dd107807d11502b96ba45fa0457fa27",
+      "name": "Prepare Source Check 320",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3520,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json;let bytes=null;if(r.statusCode===200 && $input.first().binary?.official_source){try{bytes=await this.helpers.getBinaryDataBuffer(0,'official_source');}catch{}}if(!bytes||bytes.length>200000)throw new Error('Official source bytes missing or oversized');return [{json:{synthetic_data:true,provision:'320',source_url:'https://www.gesetze-im-internet.de/bgb/__320.html',retrieved_at:new Date().toISOString(),http_status:r.statusCode||503,source_html:'',source_bytes_base64:bytes.toString('base64'),source_content_type:r.headers?.['content-type']||''}}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "d627bc2478d05378bdc93adbd4d45f33",
+      "name": "Verify Official Wording 320",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3740,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8005/v1/onboarding/payment-research/verify",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-LEGALFLOW-Service-Key",
+              "value": "REPLACE_WITH_PRIVATE_SERVICE_TOKEN"
+            }
+          ]
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "8fb616384bf659cbaa04b5c5b247bf31",
+      "name": "Attach Checked Guidance 320",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3960,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json,e=r.body,p=JSON.parse(JSON.stringify($('Attach Checked Guidance 611').first().json));if(r.statusCode!==200||e?.status!=='wording_verified')throw new Error('Official source unavailable or wording changed');p.legal_research.push(e);p.bundle.assessment.sources.push(e.source);p.bundle.assessment.guidance.push({description:e.source.content,status:'reference_guidance',source_ids:[e.source.source_id]});p.bundle.assessment.content_markdown+='\\n## Official payment-dispute reference — not a case finding\\n'+e.source.content+'\\nSource: '+e.source.url+'; retrieved '+e.retrieved_at+'; '+e.limitation+'\\n';return [{json:p}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "435b577197db51bfb6d89ec5ee69d185",
+      "name": "Retrieve Official BGB 641",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        4180,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://www.gesetze-im-internet.de/bgb/__641.html",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file",
+              "outputPropertyName": "official_source"
+            }
+          }
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "dc35b021248e587691013023c0194a67",
+      "name": "Prepare Source Check 641",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4400,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json;let bytes=null;if(r.statusCode===200 && $input.first().binary?.official_source){try{bytes=await this.helpers.getBinaryDataBuffer(0,'official_source');}catch{}}if(!bytes||bytes.length>200000)throw new Error('Official source bytes missing or oversized');return [{json:{synthetic_data:true,provision:'641',source_url:'https://www.gesetze-im-internet.de/bgb/__641.html',retrieved_at:new Date().toISOString(),http_status:r.statusCode||503,source_html:'',source_bytes_base64:bytes.toString('base64'),source_content_type:r.headers?.['content-type']||''}}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "affdf019705257ed93dbe8890a117b51",
+      "name": "Verify Official Wording 641",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        4620,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8005/v1/onboarding/payment-research/verify",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-LEGALFLOW-Service-Key",
+              "value": "REPLACE_WITH_PRIVATE_SERVICE_TOKEN"
+            }
+          ]
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "786df7b080a55e9388528ede08214d96",
+      "name": "Attach Checked Guidance 641",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4840,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json,e=r.body,p=JSON.parse(JSON.stringify($('Attach Checked Guidance 320').first().json));if(r.statusCode!==200||e?.status!=='wording_verified')throw new Error('Official source unavailable or wording changed');p.legal_research.push(e);p.bundle.assessment.sources.push(e.source);p.bundle.assessment.guidance.push({description:e.source.content,status:'reference_guidance',source_ids:[e.source.source_id]});p.bundle.assessment.content_markdown+='\\n## Official payment-dispute reference — not a case finding\\n'+e.source.content+'\\nSource: '+e.source.url+'; retrieved '+e.retrieved_at+'; '+e.limitation+'\\n';return [{json:p}];"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "56f8bb0c9df05c0283d725c4dd6dc902",
+      "name": "AI Synthesize Mandate Assessment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        5060,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8005/v1/onboarding/synthesis",
+        "options": {
+          "timeout": 45000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({bundle:$json.bundle,corporate_result:$json.corporate_result,primary_research:null}) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-LEGALFLOW-Service-Key",
+              "value": "REPLACE_WITH_PRIVATE_SERVICE_TOKEN"
+            }
+          ]
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "ca6955031f12550ebbddf811218d61ec",
+      "name": "Validate Live AI Assessment and Pending Actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5280,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json,s=r.body,p=$('Attach Checked Guidance 641').first().json;if(r.statusCode!==200||s?.status!=='completed'||s.model_used!==true||!s.synthesis||s.synthesis.mandate_accepted!==false||s.synthesis.invoice_issued!==false||s.synthesis.documents_approved!==false||s.synthesis.external_actions_executed!==false)throw new Error('AI synthesis unavailable/rejected: '+(s?.reason||'unknown'));p.bundle.assessment=s.assessment;return [{json:{state:'LIVE_AI_PREVIEW_READY_FOR_LAWYER_REVIEW',...p,ai_synthesis:s,extraction:$('Validate Extracted Facts and Prepare Intake').first().json.extraction,message_id:$('Decode Ordinary German Prose').first().json.message_id,all_external_actions_pending_lawyer_approval:true,registry_requests:0,financial_requests:0,client_identity:'explicitly_fictional_not_registry_verified'}}];"
+      },
+      "retryOnFail": false
+    }
+  ],
+  "connections": {
+    "Manual Controlled Prose Test": {
+      "main": [
+        [
+          {
+            "node": "Read Exact Approved Gmail Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Exact Approved Gmail Metadata": {
+      "main": [
+        [
+          {
+            "node": "Validate Exact Message Scope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Exact Message Scope": {
+      "main": [
+        [
+          {
+            "node": "Read Approved Fictional Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Approved Fictional Inquiry": {
+      "main": [
+        [
+          {
+            "node": "Decode Ordinary German Prose",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decode Ordinary German Prose": {
+      "main": [
+        [
+          {
+            "node": "AI Extract Natural Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Extract Natural Intake": {
+      "main": [
+        [
+          {
+            "node": "Validate Extracted Facts and Prepare Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Extracted Facts and Prepare Intake": {
+      "main": [
+        [
+          {
+            "node": "Generate Real v2 Onboarding Drafts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Real v2 Onboarding Drafts": {
+      "main": [
+        [
+          {
+            "node": "Validate Draft Bundle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Draft Bundle": {
+      "main": [
+        [
+          {
+            "node": "Corporate Research Synthetic Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Corporate Research Synthetic Only": {
+      "main": [
+        [
+          {
+            "node": "Preserve Synthetic Corporate Provenance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preserve Synthetic Corporate Provenance": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Official BGB 611",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Official BGB 611": {
+      "main": [
+        [
+          {
+            "node": "Prepare Source Check 611",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Source Check 611": {
+      "main": [
+        [
+          {
+            "node": "Verify Official Wording 611",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Official Wording 611": {
+      "main": [
+        [
+          {
+            "node": "Attach Checked Guidance 611",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Checked Guidance 611": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Official BGB 320",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Official BGB 320": {
+      "main": [
+        [
+          {
+            "node": "Prepare Source Check 320",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Source Check 320": {
+      "main": [
+        [
+          {
+            "node": "Verify Official Wording 320",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Official Wording 320": {
+      "main": [
+        [
+          {
+            "node": "Attach Checked Guidance 320",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Checked Guidance 320": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Official BGB 641",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Official BGB 641": {
+      "main": [
+        [
+          {
+            "node": "Prepare Source Check 641",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Source Check 641": {
+      "main": [
+        [
+          {
+            "node": "Verify Official Wording 641",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Official Wording 641": {
+      "main": [
+        [
+          {
+            "node": "Attach Checked Guidance 641",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach Checked Guidance 641": {
+      "main": [
+        [
+          {
+            "node": "AI Synthesize Mandate Assessment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Synthesize Mandate Assessment": {
+      "main": [
+        [
+          {
+            "node": "Validate Live AI Assessment and Pending Actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

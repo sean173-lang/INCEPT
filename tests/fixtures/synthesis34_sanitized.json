@@ -1,0 +1,16 @@
+{
+  "description": "Sanitized synthetic-only failure shapes from execution 34; no Gmail, account, case IDs or raw execution trace.",
+  "sources": {
+    "synthesis:intake:client": "{\"client_type\":\"company\",\"jurisdiction\":\"Germany\",\"name\":\"INCEPT DEMO GmbH\"}",
+    "synthesis:intake:opponents": "[\"Nordlicht Projektservice GmbH\"]",
+    "synthesis:corporate:coverage": "{\"current_registry_verification\":false,\"identity_status\":\"verified\",\"missing_evidence\":[\"original_legal_documents\"]}"
+  },
+  "items": [
+    {"field":"factual_background","source_id":"synthesis:intake:client","statement":"INCEPT DEMO GmbH ist ein Unternehmen mit Sitz in Deutschland.","quote":"{\"client_type\":\"company\",\"jurisdiction\":\"Germany\",\"name\":\"INCEPT DEMO GmbH\"}","diagnosis":"unsupported_seat_inference_from_jurisdiction"},
+    {"field":"factual_background","source_id":"synthesis:intake:opponents","statement":"Der Gegner in diesem Mandat ist Nordlicht Projektservice GmbH.","quote":"[\"Nordlicht Projektservice GmbH\"]","diagnosis":"source_supported_paraphrase_but_not_an_exact_excerpt"},
+    {"field":"corporate_intelligence_observations","source_id":"synthesis:corporate:coverage","statement":"Es fehlen Informationen zu relevanten externen Beweisen.","quote":"{\"missing_information\":[\"relevant_external_evidence\"]}","diagnosis":"inexact_quote_and_coverage_in_factual_section"}
+  ],
+  "schema_valid": true,
+  "wrong_source_ids_observed": false,
+  "first_rejection": "Factual statements must be extractive"
+}

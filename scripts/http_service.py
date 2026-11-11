@@ -19,6 +19,8 @@ from scripts.service_schemas import (CompanyInput, VerificationRequest, Research
                                      VerificationResponse, ResearchResponse, ErrorResponse, ErrorDetail, UsageResponse)
 from scripts.onboarding import OnboardingService, DEFAULT_DB
 from scripts.onboarding_schemas import OnboardingRequest, OnboardingBundle
+from scripts.natural_intake import EmailInquiry,ExtractionService
+from scripts.payment_research import PaymentSourceRequest,verify_payment_source
 from scripts.ai_synthesis import SynthesisRequest, SynthesisResponse, SynthesisService
 from scripts.primary_research import PrimaryResearchRequest, PrimaryResearchResult, verify_research
 from scripts.corporate_intelligence import CorporateIntelligence, CorporateRequest, CorporateResult
@@ -32,9 +34,12 @@ def error_response(status, code, message, fields=None):
 def create_app(*, development=True, service_token=None, allow_paid=False,
                max_openregister_credits=50, max_tavily_searches=5, max_session_spend=None,
                prices=None, currency='EUR', cache_dir='data/api_cache', ledger_path='data/api_usage.jsonl',
-               verification_ttl=900, onboarding_db=DEFAULT_DB, corporate_cache_dir='data/api_cache', ai_service=None):
+               verification_ttl=900, onboarding_db=DEFAULT_DB, corporate_cache_dir='data/api_cache', ai_service=None, extraction_service=None):
     if not development and not service_token:
         raise ValueError('Live mode requires a service authentication token')
+    extractor=extraction_service or ExtractionService()
+    if extractor.config.enabled and not service_token:
+        raise ValueError('Live extraction requires service authentication')
     synthesis=ai_service or SynthesisService(corporate_cache_dir=corporate_cache_dir,allow_demo=development)
     if synthesis.config.enabled and not service_token:
         raise ValueError('AI synthesis opt-in requires service authentication even in development')
@@ -119,6 +124,21 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
         if not development:
             raise ServiceError(403,'development_required','Onboarding preview accepts synthetic development intakes only.')
         return onboarding.preview(request)
+
+    @app.post('/v1/onboarding/extract',dependencies=[Depends(authorize)],responses=errors)
+    def extract_natural_inquiry(request: EmailInquiry):
+        if not development:
+            raise ServiceError(403,'development_required','Natural intake extraction supports synthetic development only.')
+        return extractor.run(request)
+
+    @app.post('/v1/onboarding/payment-research/verify',dependencies=[Depends(authorize)],responses=errors)
+    def payment_research(request: PaymentSourceRequest):
+        if not development:
+            raise ServiceError(403,'development_required','Payment source checks support synthetic development only.')
+        try:
+            return verify_payment_source(request)
+        except ValueError:
+            raise ServiceError(422,'invalid_research_metadata','Source retrieval metadata could not be validated.') from None
 
     @app.post('/v1/onboarding/synthesis', response_model=SynthesisResponse,
               dependencies=[Depends(authorize)], responses=errors)

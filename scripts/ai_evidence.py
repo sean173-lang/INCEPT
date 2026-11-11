@@ -13,6 +13,7 @@ from scripts.corporate_cache import CorporateCacheRecord
 from scripts.corporate_intelligence import CorporateIntelligence,CorporateRequest,DEMO
 from scripts.local_rag import LocalRAG
 from scripts.onboarding import CORPUS
+from scripts.payment_research import CORPUS as PAYMENT_CORPUS
 from scripts.primary_research import SOURCE_URL,RULES
 
 
@@ -32,7 +33,7 @@ class EvidenceResolver:
     def __init__(self,cache_dir='data/api_cache',receipt_dir='data/ai_synthesis/evidence_receipts',*,allow_demo=True,clock=None):
         self.cache_dir=Path(cache_dir);self.receipt_dir=Path(receipt_dir)
         self.allow_demo=allow_demo;self.clock=clock or (lambda:datetime.now(timezone.utc))
-        self.known={**LocalRAG(CORPUS).chunks,**LocalRAG().chunks}
+        self.known={**LocalRAG(CORPUS).chunks,**LocalRAG().chunks,**LocalRAG(PAYMENT_CORPUS).chunks}
 
     def legal(self,source,bundle,primary=None):
         card=self.known.get(source.source_id)

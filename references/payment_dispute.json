@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "id": "payment-bgb-611",
+      "title": "BGB §611",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__611.html",
+      "locator": "BGB §611(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "payment invoice remuneration services performance dispute contract maturity",
+      "text": "Durch den Dienstvertrag wird derjenige, welcher Dienste zusagt, zur Leistung der versprochenen Dienste, der andere Teil zur Gewährung der vereinbarten Vergütung verpflichtet."
+    },
+    {
+      "id": "payment-bgb-320",
+      "title": "BGB §320",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__320.html",
+      "locator": "BGB §320(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "payment invoice remuneration services performance dispute contract maturity",
+      "text": "Wer aus einem gegenseitigen Vertrag verpflichtet ist, kann die ihm obliegende Leistung bis zur Bewirkung der Gegenleistung verweigern, es sei denn, dass er vorzuleisten verpflichtet ist."
+    },
+    {
+      "id": "payment-bgb-641",
+      "title": "BGB §641",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__641.html",
+      "locator": "BGB §641(1), first sentence",
+      "document_date": null,
+      "reviewed_at": "2026-11-11",
+      "content_kind": "official_statutory_excerpt_not_case_finding",
+      "keywords": "payment invoice remuneration services performance dispute contract maturity",
+      "text": "Die Vergütung ist bei der Abnahme des Werkes zu entrichten."
+    }
+  ]
+}
