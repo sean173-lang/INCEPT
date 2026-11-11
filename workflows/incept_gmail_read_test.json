@@ -1,0 +1,102 @@
+{
+  "name": "INCEPT \u2014 Read-Only Gmail Labels List Test",
+  "active": false,
+  "nodes": [
+    {
+      "id": "5cc8bb05a38b5ccfabba2d80230e70fc",
+      "name": "Manual Read Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "dc81794783a25ac59ed7ae043fc44c1b",
+      "name": "Gmail Labels List",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        250,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/labels",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "fields",
+              "value": "labels(type)"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "75ab910f236a56618f3cfb30ba201039",
+      "name": "Sanitized Proof",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst response=$input.first().json;\nif(response.statusCode!==200) throw new Error('google_read_failed_http_'+(Number.isInteger(response.statusCode)?response.statusCode:'unknown'));\nconst body=response.body;\nif(!body || typeof body!=='object') throw new Error('unsupported_google_response');\n\nif(!Array.isArray(body.labels) || body.labels.some(x=>!x || !['system','user'].includes(x.type))) throw new Error('unsupported_labels_response');\nconst count=body.labels.length;\nreturn [{json:{product:'INCEPT',integration:\"gmail\",status:'passed',http_status:200,n8n_execution_id:String($execution.id),response_count:count,count_scope:\"all_labels\",\n has_more:typeof body.nextPageToken==='string' && body.nextPageToken.length>0,\n read_only:true,response_mocked:false,email_bodies_read:0,emails_sent:0,spreadsheet_writes:0,calendar_events_created:0,\n personal_content_exported:false,credential_secrets_exported:false,completed_at:new Date().toISOString()}}];\n"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Read Test": {
+      "main": [
+        [
+          {
+            "node": "Gmail Labels List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Labels List": {
+      "main": [
+        [
+          {
+            "node": "Sanitized Proof",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": true
+  }
+}

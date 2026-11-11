@@ -1,0 +1,4 @@
+# Reproducible common environment; no dependency authorizes an external request.
+-r requirements-service.txt
+# Preserved optional historical local PDF ingestion, also exercised by regression tests.
+-r requirements-accounts.txt

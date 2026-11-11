@@ -1,0 +1,33 @@
+{
+  "synthetic_data": true,
+  "idempotency_key": "fictional-intake-demo-001",
+  "client": {
+    "name": "DEMO Musterwerk GmbH (fiktiv)",
+    "address": "Fiktive Musterstraße 1, 00000 Demostadt, Deutschland",
+    "email": "intake@musterwerk.invalid",
+    "jurisdiction": "Germany"
+  },
+  "firm": {
+    "name": "DEMO Kanzlei Beispiel (fiktiv)",
+    "lawyer_name": "DEMO Rechtsanwältin Beispiel",
+    "address": "Fiktiver Kanzleiplatz 2, 00000 Demostadt, Deutschland",
+    "email": "team@kanzlei-beispiel.invalid",
+    "jurisdiction": "Germany"
+  },
+  "matter": {
+    "title": "DEMO — Prüfung einer behaupteten Vertragsforderung",
+    "summary": "Fiktive Intake-Angabe: Eine DEMO Lieferantin verlangt Zahlung aus einem angeblichen Liefervertrag. Vertrag, Rechnung und Korrespondenz wurden noch nicht vorgelegt. Die Berechtigung der Forderung ist ungeprüft.",
+    "requested_scope": "Zunächst Unterlagen und Risiken einer außergerichtlichen Verteidigung prüfen; keine Prozessführung oder Anerkennung freigegeben.",
+    "opposing_parties": ["DEMO Lieferantin GmbH (fiktiv)"],
+    "claimed_deadline": "2026-11-24",
+    "deadline_source": "Nur fiktive mündliche Mandantenangabe; Originalschreiben und Zugangsbeleg fehlen."
+  },
+  "fees": {
+    "net_hourly_rate": "250.00",
+    "currency": "EUR",
+    "vat_mode": "taxable",
+    "vat_percent": "19",
+    "vat_basis": "Ausschließlich synthetische Rechenannahme des Demo-Intakes; steuerliche Anwendbarkeit ist anwaltlich zu prüfen."
+  },
+  "draft_date": "2026-11-10"
+}

@@ -1,0 +1,5 @@
+# GTM future sprints
+
+1. **Lawyer workflow validation.** Interview five small German firms using synthetic intake bundles. Compare missing-information detection and document review time against their present process. Deliver a ranked approval/checklist backlog; measure corrections per bundle and whether each firm would trial the workflow. No production client records are needed.
+2. **Supervised usability pilot.** Add the planned Gradio review surface and test with three lawyer reviewers on ten fictional matters. Measure completion time, misunderstood source labels and approval-gate errors. Require zero unintended external actions before considering a production pilot.
+3. **Pilot readiness and acquisition.** Prepare data-processing/security documentation, deployment controls and a narrowly scoped pricing hypothesis. Recruit through existing lawyer contacts and legal-tech communities. Measure qualified pilot interest and support effort; do not claim regulatory compliance or publish client data as marketing proof.

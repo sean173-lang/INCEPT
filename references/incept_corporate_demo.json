@@ -1,0 +1,93 @@
+{
+  "synthetic_only": true,
+  "records": {
+    "DEMO-INCEPT-DE": {
+      "jurisdiction": "Germany",
+      "retrieved_at": "2026-11-01T12:00:00+00:00",
+      "synthetic": true,
+      "approval_scope": "explicit offline development fixtures only; not provider evidence",
+      "record": {
+        "id": "DEMO-INCEPT-DE",
+        "name": {
+          "name": "INCEPT DEMO GmbH"
+        },
+        "country": "DE",
+        "register": {
+          "register_number": "DEMO-246468",
+          "register_type": "HRB",
+          "register_court": "Synthetic Berlin court"
+        },
+        "address": {
+          "street": "Fictional Street 1",
+          "city": "DEMO CITY",
+          "country": "DE"
+        },
+        "representation": [
+          {
+            "name": "DEMO Officer",
+            "role": "synthetic director",
+            "start_date": "2024-01-01"
+          }
+        ],
+        "incorporated_at": "2022-01-01"
+      },
+      "operation_records": [
+        {
+          "provider": "Tavily",
+          "operation": "search_basic",
+          "identity": {
+            "query": "\"INCEPT DEMO GmbH\" \"DEMO-246468\" \"Synthetic Berlin court\" Germany \"legal proceedings\"",
+            "max_results": 5
+          },
+          "value": {
+            "company": "INCEPT DEMO GmbH",
+            "country": "Germany",
+            "query": "\"INCEPT DEMO GmbH\" \"DEMO-246468\" \"Synthetic Berlin court\" Germany \"legal proceedings\"",
+            "sources": [],
+            "coverage_note": "Synthetic empty background cache, not a live investigation."
+          }
+        }
+      ]
+    },
+    "DEMO0001": {
+      "jurisdiction": "UK",
+      "retrieved_at": "2026-11-01T12:00:00+00:00",
+      "synthetic": true,
+      "approval_scope": "explicit offline development fixtures only; not provider evidence",
+      "record": {
+        "company_number": "DEMO0001",
+        "company_name": "INCEPT DEMO LTD",
+        "country": "GB",
+        "registered_office_address": {
+          "address_line_1": "Fictional Street 2",
+          "locality": "DEMO CITY"
+        },
+        "date_of_creation": "2022-01-01",
+        "officers": [
+          {
+            "name": "DEMO Officer",
+            "role": "synthetic director",
+            "appointed_on": "2024-01-01"
+          }
+        ]
+      },
+      "operation_records": [
+        {
+          "provider": "Tavily",
+          "operation": "search_basic",
+          "identity": {
+            "query": "\"INCEPT DEMO LTD\" \"DEMO0001\" United Kingdom \"legal proceedings\"",
+            "max_results": 5
+          },
+          "value": {
+            "company": "INCEPT DEMO LTD",
+            "country": "UK",
+            "query": "\"INCEPT DEMO LTD\" \"DEMO0001\" United Kingdom \"legal proceedings\"",
+            "sources": [],
+            "coverage_note": "Synthetic empty background cache, not a live investigation."
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-11",
+  "branch": "feature/legal-intake-mvp",
+  "offline_tests": 285,
+  "offline_test_result": "PASS",
+  "n8n_test_executions": {
+    "individual": "20",
+    "germany_company": "21",
+    "uk_company": "22",
+    "ambiguous": "23",
+    "idempotency_replay": "24"
+  },
+  "execution_scope": "separate inactive fixture copies; real local Python helpers; not live Google/provider verification",
+  "protected_workflows_unchanged": [
+    "FeRkXfcrj8dceBZh",
+    "0zruCCbLGNUZJ8Gt"
+  ],
+  "execution_19_evidence": "preserved; not edited",
+  "live_provider_requests": 0,
+  "paid_requests": 0,
+  "financial_requests": 0,
+  "external_writes": 0,
+  "security_audit": "No staged exact configured-secret/token-pattern matches or history secret matches detected. This does not guarantee detection of every unknown secret.",
+  "excluded": [
+    ".env",
+    "raw executions",
+    "private Gmail",
+    "data caches",
+    "SQLite stores",
+    "private backups",
+    "runtime reports"
+  ],
+  "gradio": "planned; not implemented"
+}
