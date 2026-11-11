@@ -1,6 +1,6 @@
 # INCEPT — Legal Client Onboarding & Corporate Intelligence
 
-**Implementation boundary:** the active workflow is rule-based, with local reference retrieval and controlled templates. It currently makes no LLM call; autonomous orchestration does not establish model-based legal reasoning. Project 3 rubric compliance remains to be confirmed.
+**Implementation boundary:** the validated canonical workflow remains deterministic. A separate, optional OpenAI synthesis helper and development workflow are implemented and offline-tested with mocks. **No live LLM execution has been verified.** Billing/approval flags and budgets default to blocking requests. Project 3 rubric compliance remains to be confirmed.
 
 **Legal Tech / Corporate Law.** An Ironhack Project 3 development MVP for law firms and legal professionals. n8n orchestrates approved inquiry intake; Python/FastAPI supplies typed processing, evidence checks, local RAG and deterministic German draft documents.
 
@@ -34,6 +34,7 @@ Company jurisdiction does not establish governing law or authority to instruct. 
 | Document engine v2.0.0 | Versioned templates, 32 official source records, validation and issuance blockers; not professional legal approval |
 | UK substantive legal analysis | Unverified; lawyer review required; no automatic BGB application |
 | Separate counterparty orchestration | Demonstrated in the isolated execution-26 test; not a general typed counterparty branch in the canonical export |
+| Optional AI mandate synthesis | Strict structured output, supplied citations/exact quotes, conditional analysis and explicit fallback; offline mocks only. [Details](docs/ai_synthesis.md) |
 | Gradio / external action executor | Planned / not implemented |
 
 [Live evidence](docs/live_integration_evidence.json) · [Execution 28](docs/incept_live_documents_v2.md) · [Tavily evidence](docs/tavily_live_validation.json). No fixture is presented as a live response.
@@ -69,9 +70,11 @@ The loopback example is not production authentication. `scripts.http_service:app
 
 ## Canonical n8n workflow and safe demo
 
-**One export:** [workflows/incept_live_documents_v2.json](workflows/incept_live_documents_v2.json). It preserves execution-28 logic, the UK guidance guard and v2 document checks. Account/spreadsheet fields are placeholders; OAuth bindings, webhook IDs and private executions are excluded. It is manual-only and inactive.
+**Canonical export:** [workflows/incept_live_documents_v2.json](workflows/incept_live_documents_v2.json). It preserves execution-28 logic, the UK guidance guard and v2 document checks. Account/spreadsheet fields are placeholders; OAuth bindings, webhook IDs and private executions are excluded. It is manual-only and inactive.
 
-[Import and binding instructions](docs/incept_live_documents_v2.md). Existing local workflows are not changed by this cleanup. Import as a separate inactive copy, bind existing compatible project credentials and configure only the dedicated synthetic account. A new live run or email requires explicit authorization; do not send another message merely to replay a prior test. [5–7 minute safe demo](docs/demo_script.md).
+[Import and binding instructions](docs/incept_live_documents_v2.md). Existing local workflows are not changed by code publication. Import as a separate inactive copy, bind existing compatible project credentials and configure only the dedicated synthetic account. A new live run or email requires explicit authorization; do not send another message merely to replay a prior test. [5–7 minute safe demo](docs/demo_script.md).
+
+A separate [40-node AI development export](workflows/incept_ai_synthesis_dev.json) adds optional synthesis and validation after evidence assembly. It is inactive, manual-only and not imported into the running instance. Defaults produce an explicit unavailable/fallback response. Follow the [AI setup, billing gates and limitations](docs/ai_synthesis.md); importing an export does not authorize Google or model requests.
 
 ## Samples, documents and safeguards
 
@@ -79,6 +82,7 @@ The loopback example is not production authentication. `scripts.http_service:app
 - [German corporate Mandate Assessment](examples/reports/germany_company_mandate_assessment.md)
 - [UK corporate Mandate Assessment](examples/reports/uk_company_mandate_assessment.md)
 - [German legal-document bundles and validation](examples/documents/README.md)
+- [Synthetic mock AI assessment examples](examples/ai_synthesis/README.md) — hand-authored mocks, not live reasoning proof
 - [Synthetic email payload](examples/incept_approved_demo_inquiry.txt) (exact subject documented in workflow setup)
 
 Reports and inputs above are explicitly synthetic. The two document bundles cover different principal/representative cases. They intentionally omit genuine fiscal identifiers, invoice numbers and payment credentials. Decimal arithmetic remains **5 × EUR250 net + supplied 19% demo VAT = EUR1487.50**; unknown tax leaves VAT/gross unresolved. No blanket 19% assumption applies.
@@ -89,6 +93,7 @@ The document/approval gates distinguish data completeness from legal readiness. 
 
 ## Reviewer map
 
+- [Optional AI synthesis contract and offline demo](docs/ai_synthesis.md)
 - [Architecture and route boundaries](docs/architecture.md)
 - [Document architecture and maintenance](docs/legal_document_generation.md)
 - [32 official source records](docs/legal_document_sources.md)

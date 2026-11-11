@@ -40,3 +40,11 @@ See [setup and evidence policy](api_usage.md).
 Execution 19 proves the approved German demo used the real Google integrations and bounded official-source research. Executions 20–23 prove separate inactive n8n copies process four synthetic scenarios through real local helpers; their Google and legislation nodes are fixture substitutions. These are distinct claims. Corporate source consistency is not fresh registry verification, a conflicts check or authority to instruct. The original imported corporate workflow remains unchanged; corrected development exports and isolated copies contain the UK guidance-validation fix.
 
 Historical LEGALFLOW M&A research and financial modules remain preserved and outside the INCEPT intake path. Gradio is planned, not implemented.
+
+## Optional AI synthesis development path
+
+The existing canonical 37-node flow remains unchanged. A separate inactive 40-node export adds a FastAPI synthesis call, structured-output validation and a final lawyer-review report. The helper sends a minimized, untrusted evidence packet to the configured OpenAI Responses model only after explicit server-side billing/approval and persistent budget gates. The model has no tools or action executor. Only the assessment may be enriched; documents, fees and five pending actions remain deterministic and untouched.
+
+The existing atomic onboarding preview creates protected document drafts before this optional synthesis stage. This intentionally preserves the working contract rather than moving generation behind the model. An unavailable/rejected model response retains the original deterministic assessment and explicitly labels AI analysis unavailable. Model output is distinct from source facts and source classifications; exact quotes/citations are validated, but semantic/legal correctness still needs professional review.
+
+Implementation and tests are offline with mock outputs; no live model run is claimed. See [AI synthesis architecture, schema, cost limits and reproduction](ai_synthesis.md).

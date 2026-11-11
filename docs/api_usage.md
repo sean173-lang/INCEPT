@@ -9,6 +9,7 @@ Installation and the single development launch command are in [README](../README
 | GET /health | Development health |
 | POST /v1/onboarding/preview | Synthetic typed request, SQLite idempotency, draft documents |
 | POST /v1/onboarding/corporate-intelligence | Zero-network optional corporate helper; max three cached operations |
+| POST /v1/onboarding/synthesis | Optional synthetic-only AI assessment; disabled by default; authenticated opt-in, persistent request/token budgets and strict output validation |
 | POST /v1/onboarding/research/verify | Check orchestrator-provided official source bytes; helper makes no request |
 | POST /v1/company/search | DE/UK adapter search; fixtures by default |
 | POST /v1/company/verify | Detail/registration identity matching; name alone insufficient |
@@ -49,3 +50,5 @@ Legacy cache entries are not silently migrated. Missing essential provenance lea
 Corporate `warnings` carry stable IDs, categories, messages and source IDs. Final n8n assessment exposes the same warnings as `review_warnings`; actual missing-information messages also populate `missing_information`, while freshness, identity, provenance, authority and provider-failure warnings retain distinct categories. The final `uncertainty` list includes all warning messages with stable deduplication. Individual intakes receive no spurious corporate warnings. Existing v2 document and lawyer-approval validators are unchanged.
 
 Budget/duplicate safeguards in generic live services remain process-scoped: their JSONL events are not a transactional cross-process reservation ledger. The retired isolated profiles' crash-safe credit ceilings are not claimed here. Cache-only intake needs no paid reservation; successful identity caches and matter idempotency survive restart. A multi-process paid deployment would need durable reservations before enabling automatic live tools. No such deployment or paid request is enabled by these repairs.
+
+Optional AI has separate, default-disabled billing/approval/model/request/token controls; existing paid-provider flags cannot enable it. It does not modify registry/Tavily budgets or permit financial calls. See [AI synthesis](ai_synthesis.md) for the private SQLite reservation semantics and current offline-only verification status.

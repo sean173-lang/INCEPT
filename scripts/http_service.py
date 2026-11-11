@@ -19,6 +19,7 @@ from scripts.service_schemas import (CompanyInput, VerificationRequest, Research
                                      VerificationResponse, ResearchResponse, ErrorResponse, ErrorDetail, UsageResponse)
 from scripts.onboarding import OnboardingService, DEFAULT_DB
 from scripts.onboarding_schemas import OnboardingRequest, OnboardingBundle
+from scripts.ai_synthesis import SynthesisRequest, SynthesisResponse, SynthesisService
 from scripts.primary_research import PrimaryResearchRequest, PrimaryResearchResult, verify_research
 from scripts.corporate_intelligence import CorporateIntelligence, CorporateRequest, CorporateResult
 
@@ -31,9 +32,12 @@ def error_response(status, code, message, fields=None):
 def create_app(*, development=True, service_token=None, allow_paid=False,
                max_openregister_credits=50, max_tavily_searches=5, max_session_spend=None,
                prices=None, currency='EUR', cache_dir='data/api_cache', ledger_path='data/api_usage.jsonl',
-               verification_ttl=900, onboarding_db=DEFAULT_DB, corporate_cache_dir='data/api_cache'):
+               verification_ttl=900, onboarding_db=DEFAULT_DB, corporate_cache_dir='data/api_cache', ai_service=None):
     if not development and not service_token:
         raise ValueError('Live mode requires a service authentication token')
+    synthesis=ai_service or SynthesisService()
+    if synthesis.config.enabled and not service_token:
+        raise ValueError('AI synthesis opt-in requires service authentication even in development')
     tracker = UsageTracker(approved=allow_paid, development=development,
                            max_openregister_credits=max_openregister_credits, max_tavily_searches=max_tavily_searches,
                            max_session_spend=max_session_spend, prices=prices, currency=currency,
@@ -48,6 +52,7 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
     onboarding = OnboardingService(onboarding_db)
     app.state.onboarding_service = onboarding
     corporate_intelligence=CorporateIntelligence(corporate_cache_dir,allow_demo=development)
+    app.state.ai_synthesis=synthesis
     auth_header = APIKeyHeader(name='X-LEGALFLOW-Service-Key', auto_error=False)
 
     def authorize(key: str | None = Depends(auth_header)):
@@ -114,6 +119,13 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
         if not development:
             raise ServiceError(403,'development_required','Onboarding preview accepts synthetic development intakes only.')
         return onboarding.preview(request)
+
+    @app.post('/v1/onboarding/synthesis', response_model=SynthesisResponse,
+              dependencies=[Depends(authorize)], responses=errors)
+    def mandate_synthesis(request: SynthesisRequest):
+        if not development:
+            raise ServiceError(403,'development_required','AI synthesis currently supports synthetic intake only.')
+        return synthesis.run(request)
 
     @app.post('/v1/onboarding/corporate-intelligence',response_model=CorporateResult,
               dependencies=[Depends(authorize)],responses=errors)
