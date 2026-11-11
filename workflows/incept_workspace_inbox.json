@@ -1,0 +1,181 @@
+{
+  "name": "INCEPT workspace — read inbox metadata only",
+  "active": false,
+  "nodes": [
+    {
+      "id": "9d879db1363a51e8985a5689dfe134b7",
+      "name": "Manual Workspace Operation",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {},
+      "retryOnFail": false
+    },
+    {
+      "id": "8c6f32c356de596a8622acabf7c1e9a6",
+      "name": "Read Gmail Profile",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/profile",
+        "options": {
+          "timeout": 20000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "b94dbf1629a456fdac69764aa9ee03a0",
+      "name": "List Recent Gmail IDs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=in%3Ainbox+-in%3Aspam+-in%3Atrash&maxResults=8",
+        "options": {
+          "timeout": 20000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "fb663ab83e0b5f1c93e0ba41ca3c0c83",
+      "name": "Bound Message IDs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r=$input.first().json;if(r.statusCode!==200)throw new Error('Gmail list unavailable');const ids=r.body?.messages||[];if(!Array.isArray(ids)||ids.length>8)throw new Error('Unsupported list');return ids.map(v=>{if(!/^[a-f0-9]{8,64}$/i.test(v.id))throw new Error('Invalid Gmail ID');return {json:{message_id:v.id}};});"
+      },
+      "retryOnFail": false
+    },
+    {
+      "id": "36cd3186e8465c1caaa60067202303f2",
+      "name": "Read Message Metadata",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://gmail.googleapis.com/gmail/v1/users/me/messages/'+($json.empty?'NO_MESSAGES':$json.message_id)+'?format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject&metadataHeaders=Date&metadataHeaders=Message-ID' }}",
+        "options": {
+          "timeout": 20000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2"
+      },
+      "retryOnFail": false
+    }
+  ],
+  "connections": {
+    "Manual Workspace Operation": {
+      "main": [
+        [
+          {
+            "node": "Read Gmail Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Gmail Profile": {
+      "main": [
+        [
+          {
+            "node": "List Recent Gmail IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Recent Gmail IDs": {
+      "main": [
+        [
+          {
+            "node": "Bound Message IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bound Message IDs": {
+      "main": [
+        [
+          {
+            "node": "Read Message Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": true
+  }
+}

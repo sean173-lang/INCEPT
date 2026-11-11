@@ -25,3 +25,6 @@ __pycache__/
 # Research outputs, provider caches, usage logs and raw executions
 /reports/
 /data/
+
+# Private workspace-generated document downloads
+/downloads/

@@ -1,0 +1,69 @@
+{
+  "workspace": "real Gmail-to-mandate local pilot",
+  "real_gmail_authenticated": true,
+  "credential_type": "gmailOAuth2",
+  "oauth_tokens_or_secret_values_read": false,
+  "effective_read_operations_verified": [
+    "profile",
+    "list",
+    "metadata",
+    "selected full message"
+  ],
+  "effective_send_operation_verified": true,
+  "oauth_scope_strings_not_exported": true,
+  "read_only_execution_ids": [
+    "41",
+    "42"
+  ],
+  "gradio_selected_email_analysis_execution": "45",
+  "backend_regeneration_execution": "46",
+  "real_gradio_http_callbacks": true,
+  "selected_message_processed_without_fixed_case_substitution": true,
+  "new_paid_ai_requests": 0,
+  "assessment_mode": "deterministic, with exact-message retained extraction reused where its hash matches",
+  "real_pdf_downloads": [
+    {
+      "kind": "vollmacht",
+      "http_status": 200,
+      "bytes": 25036
+    },
+    {
+      "kind": "fee_agreement",
+      "http_status": 200,
+      "bytes": 26464
+    },
+    {
+      "kind": "advance_invoice",
+      "http_status": 200,
+      "bytes": 26052
+    }
+  ],
+  "original_five_actions_pending": true,
+  "mandate_accepted": false,
+  "invoice_issued": false,
+  "controlled_self_send": {
+    "n8n_execution_id": "49",
+    "gmail_result": "sent",
+    "genuine_message_id_recorded_privately": true,
+    "recipient_scope": "connected account itself only",
+    "attachments": [],
+    "explicit_user_authorization": true,
+    "explicit_gradio_final_confirmation": true,
+    "automatic_retry": false
+  },
+  "current_case_document_states": {
+    "vollmacht": "MISSING_INFORMATION",
+    "fee_agreement": "MISSING_INFORMATION",
+    "advance_invoice": "NOT_READY_FOR_ISSUANCE"
+  },
+  "released_complete_pdf_mime_attachment_test": "offline regression only; no live attachment-send claim",
+  "external_recipient_send": "blocked",
+  "historical_workflows_unchanged": 22,
+  "historical_evidence_files_unchanged": 154,
+  "raw_mail_and_bindings": "excluded from Git in ignored private runtime storage",
+  "paid_financial_or_registry_requests": 0,
+  "full_test_suite_passed": 301,
+  "workflow_exports_valid": 5,
+  "legal_engine_and_previous_exports_unchanged": true,
+  "pdf_attachment_mime_offline_test": true
+}

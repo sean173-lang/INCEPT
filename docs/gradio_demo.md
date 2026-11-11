@@ -1,17 +1,19 @@
-# INCEPT: one-command local demonstration
+# INCEPT: preserved fixed demonstration
+
+The primary interface is now the [Gmail workspace](gmail_workspace.md). The fixed demo remains as its DEMO FALLBACK tab or standalone with `--demo-only`.
 
 ## Launch
 
 From the repository root, in the installed backend environment:
 
 ```sh
-python -m scripts.gradio_app
+python -m scripts.gradio_app --demo-only
 ```
 
 Exact command tested on this machine:
 
 ```sh
-conda run --no-capture-output -n bootcamp-env python -m scripts.gradio_app
+conda run --no-capture-output -n bootcamp-env python -m scripts.gradio_app --demo-only
 ```
 
 Open **http://127.0.0.1:7860**. Keep the terminal running; stop with Ctrl+C. This starts Gradio and an isolated FastAPI helper on **127.0.0.1:8010**. Existing services on 8000/8002 and historical workflows are not modified. If 7860 is occupied, use `--port 7861`. An unrelated service on 8010 is never stopped or silently reused; n8n execution is blocked and saved mode stays available.

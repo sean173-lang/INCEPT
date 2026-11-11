@@ -1,17 +1,16 @@
 # INCEPT — Legal Client Onboarding & Corporate Intelligence
 
-## Run the INCEPT demonstration
+## Launch the Gmail-to-mandate workspace
 
 ```sh
 python -m scripts.gradio_app
 ```
 
-Open **http://127.0.0.1:7860**. The fixed fictional German-company scenario shows the complete Mandate Assessment, three document drafts, validation/missing information and five pending lawyer actions. **Run DEMO through n8n** uses the real local n8n → FastAPI structured-intake path; **Load saved DEMO fixture** is explicitly labeled and works without n8n or paid APIs. No AI/provider request or external action is needed. The advance remains unissued.
+Open **http://127.0.0.1:7860**. Refresh real Gmail, select an actual authorized test inquiry, confirm missing client details, and generate its assessment and three v2 drafts through **n8n → FastAPI**. Download PDFs, regenerate after corrections, and prepare a reply. Sending requires a preview and explicit confirmation; the pilot permits only self-addressed project tests and blocks incomplete attachments.
 
-[Setup and actual verification](docs/gradio_demo.md) · [5–7 minute presentation](docs/demo_script.md) · [Project 3 evidence checklist](PROJECT3_SUBMISSION_CHECKLIST.md).
+The working fixed demonstration remains in **DEMO FALLBACK**, or run `python -m scripts.gradio_app --demo-only`. It never replaces a selected email. No paid model or registry call is required. Real-client processing and external-recipient sending remain disabled.
 
-Experimental source-exact AI synthesis v2 is offline-tested and separate from this reliable deterministic demo. The last live synthesis was rejected; no accepted live AI report is claimed.
-
+[Workspace guide and verified executions](docs/gmail_workspace.md) · [Original demo](docs/gradio_demo.md) · [Presentation](docs/demo_script.md) · [Project 3 checklist](PROJECT3_SUBMISSION_CHECKLIST.md).
 
 **Implementation boundary:** the validated canonical workflow remains deterministic. A separate, optional OpenAI synthesis helper and development workflow are implemented and offline-tested with mocks. **No accepted live AI assessment has been verified.** Earlier model responses were rejected by validation. Billing/approval flags and budgets default to blocking requests. Project 3 rubric compliance remains to be confirmed.
 
@@ -49,7 +48,8 @@ Company jurisdiction does not establish governing law or authority to instruct. 
 | Separate counterparty orchestration | Demonstrated in the isolated execution-26 test; not a general typed counterparty branch in the canonical export |
 | Optional AI mandate synthesis | Strict structured output, supplied citations/exact quotes, conditional analysis and explicit fallback. V2 is offline-tested; the last live synthesis was rejected in execution 34. [Details](docs/ai_synthesis.md) |
 | Gradio interface | Implemented and verified through real local n8n execution **38**; explicit saved-fixture fallback |
-| External action executor | Not implemented; five actions remain pending lawyer approval |
+| Gmail reply workspace | Real inbox/selected-message analysis, PDF downloads and explicitly confirmed self-reply verified; incomplete attachments blocked |
+| Other external actions | No mandate approval, invoice issuance or Calendar/Sheets writes; five original actions remain pending |
 
 [Live evidence](docs/live_integration_evidence.json) · [Execution 28](docs/incept_live_documents_v2.md) · [Tavily evidence](docs/tavily_live_validation.json). No fixture is presented as a live response.
 

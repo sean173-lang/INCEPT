@@ -94,13 +94,13 @@ def backend_worker():
     app=create_app(development=True,allow_paid=False,cache_dir=None,ledger_path=None,onboarding_db=RUNTIME/'onboarding.sqlite3',ai_service=SynthesisService(AIConfig()),extraction_service=ExtractionService())
     @app.middleware('http')
     async def only_preview(request,call_next):
-        if request.url.path not in ('/health','/v1/onboarding/preview'):return JSONResponse(status_code=403,content={'error':'demo_preview_only'})
+        if request.url.path not in ('/health','/v1/onboarding/preview','/v1/onboarding/payment-research/verify'):return JSONResponse(status_code=403,content={'error':'demo_preview_only'})
         response=await call_next(request);response.headers['X-INCEPT-Demo-Profile']='structured-preview-v1';return response
     uvicorn.run(app,host='127.0.0.1',port=8010,access_log=False,log_level='warning')
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--port',type=int,default=7860);args=parser.parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--port',type=int,default=7860);parser.add_argument('--demo-only',action='store_true');args=parser.parse_args()
     session=requests.Session();session.trust_env=False;child=None
     try:
         try:
@@ -114,9 +114,13 @@ def main():
                 except requests.RequestException:pass
                 if not child.is_alive():break
                 time.sleep(.1)
-        print('INCEPT DEMO: http://127.0.0.1:'+str(args.port)+' — saved fixture always labeled; n8n run requires local n8n.',flush=True)
-        app=build_app();app.launch(server_name='127.0.0.1',server_port=args.port,share=False,inbrowser=False,show_error=False,
-                                 theme=__import__('gradio').themes.Soft(font=['Arial','sans-serif']),footer_links=[],blocked_paths=[str(RUNTIME.parent),str(RUNTIME.parents[1]/'reports'),str(RUNTIME.parents[1]/'.git'),str(RUNTIME.parents[1]/'.env')])
+        print('INCEPT '+('DEMO' if args.demo_only else 'Gmail workspace')+': http://127.0.0.1:'+str(args.port)+' — local n8n required for Gmail; fixed DEMO fallback preserved.',flush=True)
+        if args.demo_only:app=build_app()
+        else:
+            from scripts.workspace_ui import build_workspace_app
+            app=build_workspace_app(fallback_builder=build_app)
+        app.launch(server_name='127.0.0.1',server_port=args.port,share=False,inbrowser=False,show_error=False,
+                                 theme=__import__('gradio').themes.Soft(font=['Arial','sans-serif']),footer_links=[],allowed_paths=[str(RUNTIME.parents[1]/'downloads')],blocked_paths=[str(RUNTIME.parent),str(RUNTIME.parents[1]/'reports'),str(RUNTIME.parents[1]/'.git'),str(RUNTIME.parents[1]/'.env')])
     finally:
         if child is not None:child.terminate();child.join(timeout=5)
 

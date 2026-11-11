@@ -11,3 +11,6 @@ openai>=3.46.0,<4
 
 # Local demo interface; no model calls required.
 gradio>=6.30,<7
+
+# PDF rendering of existing legal drafts; no remote service.
+reportlab>=4.4,<5
