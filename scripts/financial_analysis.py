@@ -39,8 +39,12 @@ def normalize_openregister(raw, source):
     for indicator in raw.get("indicators", []):
         report = reports.get(indicator.get("report_id"), {})
         end = report.get("report_end_date") or indicator.get("date")
-        currency = report.get("currency") or raw.get("currency")
-        scale = report.get("scale", raw.get("scale"))
+        currency = indicator.get("currency") or report.get("currency") or raw.get("currency")
+        scale = indicator.get("scale", report.get("scale", raw.get("scale")))
+        currencies = {str(row['currency']).upper() for row in (raw, report, indicator) if row.get('currency') is not None}
+        scales = {number(row['scale']) for row in (raw, report, indicator) if row.get('scale') is not None}
+        unit_conflict = len(currencies)>1 or len(scales)>1
+        if unit_conflict:currency,scale=None,None
         scope = {True: "consolidated", False: "standalone"}.get(report.get("consolidated"), "unknown")
         facts = {}
         for key, provider_key in OPENREGISTER_FIELDS.items():
@@ -51,6 +55,7 @@ def normalize_openregister(raw, source):
         periods.append({"period_start": report.get("report_start_date"), "period_end": end,
                         "scope": scope, "short_year": indicator.get("short_year"),
                         "report_id": indicator.get("report_id"), "facts": facts,
+                        "indicator_date": indicator.get("date"), "unit_conflict": unit_conflict,
                         "source": source, "document_sources": report.get("sources", []),
                         "period_conflict": bool(report.get("report_end_date") and indicator.get("date")
                                                 and report["report_end_date"] != indicator["date"])})
@@ -104,7 +109,7 @@ def analyze_financials(data=None, *, today=None):
                                "metric": "current_ratio", "period_end": period.get("period_end"),
                                "evidence": ratios["current_ratio"], "source": period.get("source"),
                                "verification_status": "calculated_indicator_not_legal_finding"})
-    ordered = sorted((p for p in results if p["valid_period"]), key=lambda p: p["period_end"])
+    ordered = sorted((p for p in results if p["valid_period"]), key=lambda p: (p.get("scope") or "unknown", p["period_end"]))
     for previous, current in zip(ordered, ordered[1:]):
         reason = None
         ps, cs = valid_date(previous.get("period_start")), valid_date(current.get("period_start"))
@@ -118,6 +123,8 @@ def analyze_financials(data=None, *, today=None):
             reason = "Missing, overlapping, or unequal reporting periods."
         elif previous.get("short_year") or current.get("short_year"):
             reason = "Short financial year; annual comparison withheld."
+        elif cs.year != ps.year+1 or not 0 <= (cs-pe).days <= 7:
+            reason = "Non-consecutive annual periods; year-over-year comparison withheld."
         changes = {}
         for metric in ("revenue", "net_income", "total_assets", "equity", "cash"):
             a = previous["normalized_values"].get(metric)
@@ -127,7 +134,9 @@ def analyze_financials(data=None, *, today=None):
             base = number(a["value"]) if ok else None
             changes[metric] = {"absolute_change": str(delta) if delta is not None else None,
                                "percent_change": str(delta / base * 100) if base is not None and base > 0 else None,
-                               "currency": b["currency"] if ok else None}
+                               "currency": b["currency"] if ok else None,
+                               "reason": reason or ("Missing figures, currency or scale, conflicting units, or incompatible currencies." if not ok else None),
+                               "percent_change_reason": None if base is not None and base > 0 else "Percentage change requires comparable units and a positive prior value."}
             if delta is not None and delta < 0:
                 indicators.append({"description": f"Reported {metric.replace('_', ' ')} declined between comparable periods",
                                    "metric": metric, "period_end": current["period_end"],
@@ -135,6 +144,7 @@ def analyze_financials(data=None, *, today=None):
                                    "source": [previous.get("source"), current.get("source")],
                                    "verification_status": "calculated_trend_not_legal_finding"})
         comparisons.append({"from": previous["period_end"], "to": current["period_end"],
+                            "scope": current.get("scope"),
                             "reason": reason, "changes": changes})
     return {"status": data.get("status", "unavailable"),
             **{key: data.get(key) for key in ("request_status", "financial_data_status", "publication_status",

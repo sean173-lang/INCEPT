@@ -1,0 +1,325 @@
+{
+  "name": "LEGALFLOW — Fictional Legal Intake Preview",
+  "active": false,
+  "nodes": [
+    {
+      "id": "3385c3a6aaa05abbb1ae1343d9105cee",
+      "name": "Manual Intake Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "70d4967673945dc7a5cc4cb501c5584a",
+      "name": "Fictional Intake",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json:{\"synthetic_data\": true, \"idempotency_key\": \"fictional-n8n-onboarding-001\", \"client\": {\"name\": \"DEMO Musterwerk GmbH (fiktiv)\", \"address\": \"Fiktive Musterstraße 1, 00000 Demostadt, Deutschland\", \"email\": \"intake@musterwerk.invalid\", \"jurisdiction\": \"Germany\"}, \"firm\": {\"name\": \"DEMO Kanzlei Beispiel (fiktiv)\", \"lawyer_name\": \"DEMO Rechtsanwältin Beispiel\", \"address\": \"Fiktiver Kanzleiplatz 2, 00000 Demostadt, Deutschland\", \"email\": \"team@kanzlei-beispiel.invalid\", \"jurisdiction\": \"Germany\"}, \"matter\": {\"title\": \"DEMO — Prüfung einer behaupteten Vertragsforderung\", \"summary\": \"Fiktive Intake-Angabe: Eine DEMO Lieferantin verlangt Zahlung aus einem angeblichen Liefervertrag. Vertrag, Rechnung und Korrespondenz wurden noch nicht vorgelegt. Die Berechtigung der Forderung ist ungeprüft.\", \"requested_scope\": \"Zunächst Unterlagen und Risiken einer außergerichtlichen Verteidigung prüfen; keine Prozessführung oder Anerkennung freigegeben.\", \"opposing_parties\": [\"DEMO Lieferantin GmbH (fiktiv)\"], \"claimed_deadline\": \"2026-11-24\", \"deadline_source\": \"Nur fiktive mündliche Mandantenangabe; Originalschreiben und Zugangsbeleg fehlen.\"}, \"fees\": {\"net_hourly_rate\": \"250.00\", \"currency\": \"EUR\", \"vat_mode\": \"taxable\", \"vat_percent\": \"19\", \"vat_basis\": \"Ausschließlich synthetische Rechenannahme des Demo-Intakes; steuerliche Anwendbarkeit ist anwaltlich zu prüfen.\"}, \"draft_date\": \"2026-11-10\"}}];"
+      }
+    },
+    {
+      "id": "6bdc70f5fb0453deb79bc48bf38fa846",
+      "name": "Validate Intake",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst intake = $input.first().json;\nlet reasons = [];\nconst noControls = s => typeof s === 'string' && s.length > 0 && !/[\\x00-\\x1f\\x7f]/.test(s);\nif (intake.synthetic_data !== true) reasons.push('synthetic_data_required');\nif (!/^[A-Za-z0-9_-]{8,100}$/.test(intake.idempotency_key || '')) reasons.push('invalid_idempotency_key');\nfor (const key of ['client','firm']) {\n  const x=intake[key];\n  if (!x || !noControls(x.name) || !noControls(x.address) || !/^[^\\s@]+@[^\\s@]+\\.invalid$/.test(x.email || '') || x.jurisdiction !== 'Germany') reasons.push('invalid_'+key);\n}\nif (!noControls(intake.firm?.lawyer_name) || !noControls(intake.matter?.summary) || !noControls(intake.matter?.title) || !noControls(intake.matter?.requested_scope)) reasons.push('invalid_matter_or_lawyer');\nif (!/^\\d{4}-\\d{2}-\\d{2}$/.test(intake.draft_date || '') || Number.isNaN(Date.parse(intake.draft_date))) reasons.push('invalid_draft_date');\nif (!/^\\d{1,5}(\\.\\d{1,2})?$/.test(intake.fees?.net_hourly_rate || '') || Number(intake.fees?.net_hourly_rate)<=0 || intake.fees?.currency!=='EUR') reasons.push('invalid_fee');\nconst f=intake.fees || {};\nif (!['taxable','exempt','unknown'].includes(f.vat_mode)) reasons.push('invalid_vat_mode');\nif (f.vat_mode==='taxable' && (!/^\\d{1,3}(\\.\\d{1,2})?$/.test(f.vat_percent || '') || Number(f.vat_percent)<=0 || Number(f.vat_percent)>100 || !noControls(f.vat_basis))) reasons.push('explicit_vat_required');\nif (f.vat_mode==='exempt' && (!noControls(f.vat_basis) || f.vat_percent!=null)) reasons.push('invalid_exemption');\nif (f.vat_mode==='unknown' && (f.vat_percent!=null || f.vat_basis!=null)) reasons.push('unknown_vat_must_not_guess');\nreturn [{json:{intake,valid:reasons.length===0,stage:'input_validation',reasons}}];\n"
+      }
+    },
+    {
+      "id": "79b935e4c5575230be02ff3314b4e47a",
+      "name": "Input Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a2b6b797a9565418bd0e602f08b3456a",
+              "leftValue": "={{ $json.valid === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "36ab8cabe2af51abaa655a61fa597cd4",
+      "name": "POST Onboarding Preview",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8002/v1/onboarding/preview",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.intake) }}",
+        "options": {
+          "timeout": 15000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text",
+              "outputPropertyName": "body"
+            }
+          }
+        }
+      },
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "dc18830273f153fd806a0d07f27e8a5c",
+      "name": "Validate Onboarding Bundle",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst response=$input.first().json;\nconst intake=$('Validate Intake').first().json.intake;\nconst status=response.statusCode;\nlet body=response.body ?? response.data;\nif (typeof body==='string') {try {body=JSON.parse(body);} catch {body=null;}}\nfunction fail(reason) {return [{json:{valid:false,stage:'response_validation',http_status:Number.isInteger(status)?status:null,reasons:[reason],\n  provider_calls:0,external_actions_executed:false}}];}\nif (status!==200) return fail(status===409?'idempotency_conflict':status===422?'api_input_validation_error':status===401||status===403?'api_access_rejected':status?'api_http_failure':'api_transport_failure');\nif (!body || typeof body!=='object') return fail('unexpected_response_format');\ntry {\n const check=(ok,reason)=>{if(!ok)throw new Error(reason);};\n check(body.schema_version===1 && body.synthetic_data===true && body.status==='preview_pending_lawyer_approval','unexpected_bundle_status');\n check(body.external_actions_executed===false && body.paid_api_calls===0,'external_action_or_spending_flag');\n const c=body.client,m=body.matter,a=body.advance,r=body.assessment;\n check(c && m && typeof c.client_id==='string' && c.client_id.startsWith('demo-client-') && typeof m.matter_id==='string' && m.matter_id.startsWith('demo-matter-') && m.client_id===c.client_id,'invalid_client_matter_link');\n check(c.name===intake.client.name && c.email===intake.client.email && c.synthetic_data===true && m.title===intake.matter.title && m.summary===intake.matter.summary && m.status==='draft_pending_lawyer_review','intake_identity_mismatch');\n const cents=s=>{check(typeof s==='string' && /^\\d+(\\.\\d{1,2})?$/.test(s),'invalid_money_format');let [i,d='']=s.split('.');return BigInt(i)*100n+BigInt(d.padEnd(2,'0'));};\n const cash=n=>(n/100n).toString()+'.'+(n%100n).toString().padStart(2,'0');\n const net=cents(intake.fees.net_hourly_rate)*5n;\n const vat=intake.fees.vat_mode==='unknown'?null:intake.fees.vat_mode==='exempt'?0n:(net*cents(intake.fees.vat_percent)+5000n)/10000n;\n check(a && a.hours==='5' && a.currency==='EUR' && a.work_performed===false && a.tax_status==='supplied_demo_treatment_unverified','invalid_advance_scope');\n check(a.net_hourly_rate===cash(cents(intake.fees.net_hourly_rate)) && a.net_fee===cash(net) && a.vat_mode===intake.fees.vat_mode && a.vat_percent===(intake.fees.vat_percent??null),'net_or_vat_assumption_mismatch');\n check(a.vat_amount===(vat===null?null:cash(vat)) && a.gross_total===(vat===null?null:cash(net+vat)),'advance_arithmetic_mismatch');\n check(Array.isArray(body.documents) && body.documents.length===3 && new Set(body.documents.map(d=>d.kind)).size===3,'missing_documents');\n check(body.documents.every(d=>['vollmacht','fee_agreement','advance_invoice'].includes(d.kind) && d.state==='pending_lawyer_approval' && typeof d.content_markdown==='string' && d.content_markdown.includes('DEMO') && d.content_markdown.length>100),'unsafe_or_empty_document');\n check(r && r.title==='DEMO Mandate Assessment Report' && r.conclusion==='lawyer_review_required' && r.confidence==='insufficient_for_legal_conclusions' && typeof r.content_markdown==='string' && r.content_markdown.length>100 && typeof r.corpus_version==='string','invalid_assessment');\n check(Array.isArray(r.sources) && r.sources.length>=4 && Array.isArray(r.factual_findings) && r.factual_findings.length>=3 && Array.isArray(r.guidance) && r.guidance.length>=4 && Array.isArray(r.missing_information) && r.missing_information.length>0,'missing_evidence_or_warnings');\n const sources=new Map(r.sources.map(s=>[s.source_id,s]));\n check(sources.size===r.sources.length,'duplicate_source_ids');\n for (const f of [...r.factual_findings,...r.guidance]) {\n  check(Array.isArray(f.source_ids) && f.source_ids.length>0 && f.source_ids.every(id=>sources.has(id)),'unresolved_citation');\n  check(typeof f.description==='string' && f.description.length>0,'empty_finding');\n }\n check(r.factual_findings.every(f=>f.status==='unverified_intake_statement' && f.source_ids.every(id=>sources.get(id).kind==='synthetic_intake')),'unsupported_verified_fact');\n check(r.guidance.every(f=>f.status==='reference_guidance' && f.source_ids.every(id=>{const s=sources.get(id);return s.kind==='legal_reference' && s.url?.startsWith('https://www.gesetze-im-internet.de/') && typeof s.locator==='string' && typeof s.reviewed_at==='string';})),'invalid_reference_guidance');\n check(Array.isArray(body.proposed_actions) && body.proposed_actions.length>=5,'missing_actions');\n check(body.proposed_actions.every(x=>x.state==='pending_lawyer_approval' && x.executed===false && x.due_date===null && Array.isArray(x.source_ids) && x.source_ids.length>0 && x.source_ids.every(id=>sources.has(id))),'unsafe_action');\n check(['task','potential_deadline','draft_email'].every(k=>body.proposed_actions.some(a=>a.kind===k)),'missing_action_type');\n const email=body.proposed_actions.find(x=>x.kind==='draft_email'),deadline=body.proposed_actions.find(x=>x.kind==='potential_deadline');\n check(email.recipient===intake.client.email && typeof email.body==='string' && email.body.length>0 && typeof email.subject==='string','invalid_email_draft');\n check(deadline.candidate_date===(intake.matter.claimed_deadline??null),'deadline_promoted_or_mismatched');\n return [{json:{valid:true,stage:'response_validation',http_status:status,bundle:body,validation:{documents:3,actions:body.proposed_actions.length,sources:r.sources.length,factual_findings:r.factual_findings.length,all_citations_resolve:true,decimal_arithmetic_valid:true,all_actions_pending_approval:true,no_confirmed_deadlines:true,synthetic_only:true,no_external_actions:true}}}];\n} catch(error) {return fail(error.message || 'unexpected_response');}\n"
+      }
+    },
+    {
+      "id": "d6cddd59ea275ef7bd82c7c9a306b311",
+      "name": "Bundle Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ba0038b157c512fa2ecf78d3137b14d",
+              "leftValue": "={{ $json.valid === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "ca845938a98b5f2ca6ed569cc84b6ba5",
+      "name": "Success Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst checked=$input.first().json;\nreturn [{json:{outcome:'passed',business_success:true,http_status:checked.http_status,\n  client_id:checked.bundle.client.client_id,matter_id:checked.bundle.matter.matter_id,\n  advance:checked.bundle.advance,validation:checked.validation,bundle:checked.bundle}}];\n"
+      }
+    },
+    {
+      "id": "d1a61a1503df5ea08d7be13626e3184d",
+      "name": "Failure Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        260
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst checked=$input.first().json;\nreturn [{json:{outcome:'manual_review_required',business_success:false,stage:checked.stage||'unknown',\n  http_status:checked.http_status??null,reasons:checked.reasons||['unclassified_failure'],\n  external_actions_executed:false,paid_api_calls:0}}];\n"
+      }
+    },
+    {
+      "id": "a79c8d2bcf9253d487b46a8ac33d0a56",
+      "name": "Execution Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        0
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nreturn [{json:{...$input.first().json,workflow_purpose:'fictional_legal_intake_preview',\n  n8n_execution_id:String($execution.id),completed_at:new Date().toISOString(),\n  lawyer_approval_bypassed:false,emails_sent:0,calendar_events_created:0,invoices_issued:0,\n  project3_three_real_integrations_satisfied:false}}];\n"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Intake Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fictional Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fictional Intake": {
+      "main": [
+        [
+          {
+            "node": "Validate Intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Intake": {
+      "main": [
+        [
+          {
+            "node": "Input Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Valid?": {
+      "main": [
+        [
+          {
+            "node": "POST Onboarding Preview",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Failure Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Onboarding Preview": {
+      "main": [
+        [
+          {
+            "node": "Validate Onboarding Bundle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Onboarding Bundle": {
+      "main": [
+        [
+          {
+            "node": "Bundle Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bundle Valid?": {
+      "main": [
+        [
+          {
+            "node": "Success Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Failure Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Summary": {
+      "main": [
+        [
+          {
+            "node": "Execution Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Failure Summary": {
+      "main": [
+        [
+          {
+            "node": "Execution Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "saveManualExecutions": true
+  }
+}

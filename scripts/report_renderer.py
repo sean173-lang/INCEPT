@@ -173,6 +173,11 @@ def render_report(company, validation, model_output):
     return "\n".join(lines)
 
 
+def document_reference(report_id, source_index):
+    """Report IDs are stable references; raw URLs stay in private provider provenance."""
+    return 'Provider report ID: ' + text(report_id) + '; source ' + str(source_index) + ' (URL retained privately; not fetched).'
+
+
 def financial_section(financials):
     lines = ["", "## Financial Analysis", "", "Retrieval status: " + text(financials["status"].replace("_", " ")) + ".",
              text(financials.get("reason") or financials["coverage"]), ""]
@@ -198,16 +203,21 @@ def financial_section(financials):
         for name, ratio in period["ratios"].items():
             lines.append("- " + text(name.replace("_", " ")) + ": " + text(ratio["value"] or "Unavailable")
                          + "; formula: " + text(ratio["formula"]) + ("; " + text(ratio["reason"]) if ratio["reason"] else ""))
-        for source in period.get("document_sources", []):
-            lines.append("- Original statement reference supplied by provider: " + text(source.get("html_url")))
+        if period.get('period_conflict'):
+            lines.append('- Date conflict: indicator date '+text(period.get('indicator_date'))+' differs from linked report end '+text(period.get('period_end'))+'; this row is excluded from calculations.')
+        if period.get('unit_conflict'):
+            lines.append('- Conflicting unit metadata; calculations withheld.')
+        for index, source in enumerate(period.get("document_sources", []),1):
+            lines.append("- " + document_reference(period.get('report_id'),index))
         lines.append("")
     for comparison in financials["comparisons"]:
-        lines.append("Comparison: " + text(comparison["from"]) + " to " + text(comparison["to"]) + ".")
+        lines.append("Comparison: " + text(comparison["from"]) + " to " + text(comparison["to"]) + "; scope: " + text(comparison.get('scope')) + ".")
         if comparison["reason"]:
             lines.append("- Comparison withheld: " + text(comparison["reason"]))
         for metric, change in comparison["changes"].items():
             lines.append("- " + text(metric.replace("_", " ")) + ": absolute change " + text(change["absolute_change"])
                          + " " + text(change["currency"]) + "; percentage change " + text(change["percent_change"]) + "%.")
+            if change.get('reason'):lines.append('  Withheld: '+text(change['reason']))
     lines.extend(["", "Financial indicators (not legal findings):", ""])
     lines.extend("- " + text(item["description"]) + "; period ending " + text(item["period_end"])
                  for item in financials["indicators"])

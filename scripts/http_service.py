@@ -17,6 +17,10 @@ from scripts.research_schemas import (RetrievalRequest, RetrievalResponse, Creat
                                       RunPlan, ToolRequest, ResearchReport)
 from scripts.service_schemas import (CompanyInput, VerificationRequest, ResearchRequest, SearchResponse,
                                      VerificationResponse, ResearchResponse, ErrorResponse, ErrorDetail, UsageResponse)
+from scripts.onboarding import OnboardingService, DEFAULT_DB
+from scripts.onboarding_schemas import OnboardingRequest, OnboardingBundle
+from scripts.primary_research import PrimaryResearchRequest, PrimaryResearchResult, verify_research
+from scripts.corporate_intelligence import CorporateIntelligence, CorporateRequest, CorporateResult
 
 
 def error_response(status, code, message, fields=None):
@@ -27,7 +31,7 @@ def error_response(status, code, message, fields=None):
 def create_app(*, development=True, service_token=None, allow_paid=False,
                max_openregister_credits=50, max_tavily_searches=5, max_session_spend=None,
                prices=None, currency='EUR', cache_dir='data/api_cache', ledger_path='data/api_usage.jsonl',
-               verification_ttl=900):
+               verification_ttl=900, onboarding_db=DEFAULT_DB, corporate_cache_dir='data/api_cache'):
     if not development and not service_token:
         raise ValueError('Live mode requires a service authentication token')
     tracker = UsageTracker(approved=allow_paid, development=development,
@@ -41,6 +45,9 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
     app.state.company_service = service
     pipeline = ResearchPipeline(service)
     app.state.research_pipeline = pipeline
+    onboarding = OnboardingService(onboarding_db)
+    app.state.onboarding_service = onboarding
+    corporate_intelligence=CorporateIntelligence(corporate_cache_dir,allow_demo=development)
     auth_header = APIKeyHeader(name='X-LEGALFLOW-Service-Key', auto_error=False)
 
     def authorize(key: str | None = Depends(auth_header)):
@@ -100,6 +107,28 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
     @app.get('/health')
     def health():
         return {'status': 'ok', 'development': development}
+
+    @app.post('/v1/onboarding/preview', response_model=OnboardingBundle,
+              dependencies=[Depends(authorize)], responses={**errors,503:{'model':ErrorResponse}})
+    def onboarding_preview(request: OnboardingRequest):
+        if not development:
+            raise ServiceError(403,'development_required','Onboarding preview accepts synthetic development intakes only.')
+        return onboarding.preview(request)
+
+    @app.post('/v1/onboarding/corporate-intelligence',response_model=CorporateResult,
+              dependencies=[Depends(authorize)],responses=errors)
+    def corporate_client_intelligence(request: CorporateRequest):
+        return corporate_intelligence.collect(request)
+
+    @app.post('/v1/onboarding/research/verify',response_model=PrimaryResearchResult,
+              dependencies=[Depends(authorize)],responses=errors)
+    def verify_primary_research(request: PrimaryResearchRequest):
+        if not development:
+            raise ServiceError(403,'development_required','Primary-source verification supports synthetic development intake only.')
+        try:
+            return verify_research(request)
+        except ValueError:
+            raise ServiceError(422,'research_context_mismatch','Research source and bundle context could not be validated.') from None
 
     @app.post('/v1/company/search', response_model=SearchResponse, dependencies=[Depends(authorize)], responses=errors)
     def search(request: CompanyInput):

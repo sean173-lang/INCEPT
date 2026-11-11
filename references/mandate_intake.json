@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "id": "bgb-167",
+      "title": "BGB §167",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/bgb/__167.html",
+      "locator": "Section 167, paragraphs 1–2",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "mandate authority power representation",
+      "text": "Authority is granted by a declaration to the representative or the third party. The actual scope and any special procedural requirements require lawyer review; a generated draft does not establish authority."
+    },
+    {
+      "id": "rvg-3a",
+      "title": "RVG §3a",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/rvg/__3a.html",
+      "locator": "Section 3a, paragraph 1",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "mandate fee agreement hourly rate",
+      "text": "The provision generally calls for text form, a clearly identified separate remuneration agreement, separation from the power of attorney, and a warning concerning limits on reimbursement. Applicability and exceptions require lawyer review."
+    },
+    {
+      "id": "rvg-9",
+      "title": "RVG §9",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/rvg/__9.html",
+      "locator": "Section 9",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "mandate advance fee invoice",
+      "text": "An appropriate advance may be requested for incurred and expected fees and expenses. A five-hour demo calculation does not establish that five hours is appropriate or that services have been performed."
+    },
+    {
+      "id": "brao-43a",
+      "title": "BRAO §43a",
+      "jurisdiction": "Germany",
+      "topics": [
+        "mandate_intake"
+      ],
+      "source_url": "https://www.gesetze-im-internet.de/brao/__43a.html",
+      "locator": "Section 43a, paragraphs 2 and 4",
+      "document_date": null,
+      "reviewed_at": "2026-11-10",
+      "content_kind": "curated_paraphrase",
+      "keywords": "mandate confidentiality conflict intake",
+      "text": "The provision addresses professional confidentiality and conflicts involving representation in the same legal matter. Intake alone does not establish that confidentiality controls or a conflict check have been completed."
+    }
+  ]
+}
