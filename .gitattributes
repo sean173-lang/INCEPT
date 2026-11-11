@@ -1,0 +1,5 @@
+# German legal Markdown uses intentional two-space CommonMark line breaks.
+templates/german_legal/v2/*.md whitespace=-blank-at-eol
+examples/documents/*/*.md whitespace=-blank-at-eol
+# Preserve exact whitespace in hash-pinned official source excerpts.
+references/legal_documents/snapshots/*.txt whitespace=-blank-at-eol

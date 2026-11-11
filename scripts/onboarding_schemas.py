@@ -5,6 +5,7 @@ from typing import Literal
 import re
 from pydantic import Field, field_validator, model_validator
 from scripts.service_schemas import Schema
+from scripts.document_schemas import DocumentOptions,DocumentIssue,Status
 
 
 class IntakeText(Schema):
@@ -78,6 +79,7 @@ class FeeInput(IntakeText):
 
 
 class OnboardingRequest(IntakeText):
+    document_options: DocumentOptions|None=None
     synthetic_data: Literal[True]
     idempotency_key: str=Field(min_length=8,max_length=100,pattern=r'^[A-Za-z0-9_-]+$')
     client: ClientInput
@@ -109,6 +111,17 @@ class MatterRecord(MatterInput):
 
 
 class DraftDocument(Schema):
+    document_version: int=1
+    template_id: str|None=None
+    template_version: str|None=None
+    source_version: str|None=None
+    completeness_status: Status='LEGAL_REVIEW_REQUIRED'
+    validation_issues: list[DocumentIssue]=Field(default_factory=list)
+    missing_information: list[str]=Field(default_factory=list)
+    lawyer_review_questions: list[str]=Field(default_factory=list)
+    legal_source_ids: list[str]=Field(default_factory=list)
+    ready_for_issuance: Literal[False]=False
+    legally_approved: Literal[False]=False
     kind: Literal['vollmacht','fee_agreement','advance_invoice']
     state: Literal['pending_lawyer_approval']='pending_lawyer_approval'
     content_markdown: str
@@ -171,6 +184,7 @@ class ProposedAction(Schema):
 
 
 class OnboardingBundle(Schema):
+    document_generation_context: DocumentOptions|None=None
     schema_version: Literal[1]=1
     synthetic_data: Literal[True]=True
     status: Literal['preview_pending_lawyer_approval']='preview_pending_lawyer_approval'

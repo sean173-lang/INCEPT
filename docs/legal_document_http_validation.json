@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-11",
+  "base_url": "http://127.0.0.1:8003",
+  "local_development_service_restarted": true,
+  "paid_apis_enabled": false,
+  "updated_schema_loaded": true,
+  "template_version": "2.0.0",
+  "template_production_approved": false,
+  "scenarios": {
+    "individual": {
+      "http_status": 200,
+      "document_statuses": {
+        "vollmacht": "DRAFT_COMPLETE_FOR_LAWYER_REVIEW",
+        "fee_agreement": "DRAFT_COMPLETE_FOR_LAWYER_REVIEW",
+        "advance_invoice": "NOT_READY_FOR_ISSUANCE"
+      },
+      "all_documents_version_2": true,
+      "all_documents_pending_lawyer_approval": true,
+      "no_document_legally_approved_or_issued": true,
+      "advance_net": "1250.00",
+      "advance_vat": "237.50",
+      "advance_gross": "1487.50",
+      "explicit_demo_vat_percent": "19",
+      "idempotency_replay_equal": true,
+      "existing_n8n_response_validator_passed": true
+    },
+    "corporate": {
+      "http_status": 200,
+      "document_statuses": {
+        "vollmacht": "DRAFT_COMPLETE_FOR_LAWYER_REVIEW",
+        "fee_agreement": "DRAFT_COMPLETE_FOR_LAWYER_REVIEW",
+        "advance_invoice": "NOT_READY_FOR_ISSUANCE"
+      },
+      "all_documents_version_2": true,
+      "all_documents_pending_lawyer_approval": true,
+      "no_document_legally_approved_or_issued": true,
+      "advance_net": "1250.00",
+      "advance_vat": "237.50",
+      "advance_gross": "1487.50",
+      "explicit_demo_vat_percent": "19",
+      "idempotency_replay_equal": true,
+      "existing_n8n_response_validator_passed": true
+    }
+  },
+  "negative_case": {
+    "http_status": 200,
+    "fee_agreement": "GENERATION_FAILED",
+    "advance_invoice": "GENERATION_FAILED",
+    "matter_status": "draft_pending_lawyer_review",
+    "all_actions_pending": true,
+    "no_issuance": true
+  },
+  "blocked_executor_routes": {
+    "/v1/onboarding/approve": 404,
+    "/v1/onboarding/issue": 404,
+    "/v1/onboarding/send": 404
+  },
+  "approval_injection_http_status": 422,
+  "full_offline_tests_passed": 315,
+  "execution26_files_and_n8n_record_preserved": true,
+  "workflows_unchanged": true,
+  "new_n8n_execution": null,
+  "gmail_sends": 0,
+  "live_provider_searches": 0,
+  "paid_requests": 0,
+  "calendar_writes": 0,
+  "invoices_issued": 0,
+  "artifact_policy": "Raw loopback responses, demo store backup and file fingerprints remain ignored under data/ and reports/. This summary contains no client records or private execution payloads."
+}

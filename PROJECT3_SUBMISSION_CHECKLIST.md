@@ -25,3 +25,13 @@ Before submission: inspect the complete diff and secret exclusions, run the full
 Four separate inactive fixture test copies executed successfully in n8n: individual **20**, German company **21**, UK company **22**, ambiguous **23**. The first three produced review-ready bundles; the ambiguous case stopped at NEEDS_REVIEW. Google ingress/read operations and legislation retrieval were explicitly substituted, while local onboarding, adapters, evidence checks and report assembly ran for real. Company fixtures remain UNVERIFIED; these executions do not establish live registry or new Google connectivity. Original corporate workflow 0zruCCbLGNUZJ8Gt and proven FeRkXfcrj8dceBZh remain unchanged.
 
 Sanitized trace summary: [execution evidence](docs/incept_corporate_n8n_validation.json). Full local artifacts: `reports/incept_corporate_n8n_validation/`. Regression suite: **285 passing tests**. Gradio remains planned.
+
+
+## German document quality overhaul (2026-11-11)
+
+Implemented: versioned separate German templates, 32 checked official source records, optional typed document inputs, deterministic rendering and validation, explicit missing-information/issuance states and two generated synthetic bundles in examples/documents. Authority/fee samples are complete for lawyer review; advances remain NOT_READY_FOR_ISSUANCE because no genuine fiscal/invoice metadata is fabricated. This is not legal approval, structured e-invoice support or production readiness. Existing saved bundles and live execution evidence are preserved. See docs/legal_document_generation.md and docs/legal_document_quality_audit.md.
+
+Validation after this overhaul: **314 offline tests passed**, including **19 document-specific tests**. Workflow export structures/links and changed-file privacy scans passed; no live workflow execution or legal approval is claimed.
+
+
+Actual document-engine HTTP checkpoint: both synthetic scenarios passed on the updated port-8003 service; failed-document states cannot approve matters or issue documents. Final suite: **315 tests passed**. See [sanitized HTTP evidence](docs/legal_document_http_validation.json). Template/legal approval and valid issuance data remain unresolved. No new n8n execution or external action was performed.
