@@ -70,7 +70,7 @@ python -m unittest discover -s tests -p test_legal_documents.py -q
 python -m unittest discover -s tests -q
 ```
 
-Each of the two generated bundles includes three Markdown drafts, input JSON, structured validation and a lawyer checklist. Both authority/fee drafts are complete for review. Both advances intentionally lack a genuine tax identifier, unique invoice number and issuance date and remain NOT_READY_FOR_ISSUANCE. No genuine payment credentials appear. No DOCX/PDF generation layer existed; installed pypdf only reads historical accounts, so Markdown is the implemented output.
+Each of the two generated bundles includes three Markdown drafts, input JSON, structured validation and a lawyer checklist. Both authority/fee drafts are complete for review. Both advances intentionally lack a genuine tax identifier, unique invoice number and issuance date and remain NOT_READY_FOR_ISSUANCE. No genuine payment credentials appear. Markdown is the only implemented output; financial PDF ingestion and its pypdf dependency are retired.
 
 Before updating a template: review the primary source and temporal applicability; record URL/retrieval/hash; amend the document-specific rule card and relevant allowlist; change template version and manifest digests; keep production approval pending until professional review; regenerate samples; run tampering, cross-document, idempotency, endpoint and full regression tests. Never update live workflows or old evidence as part of this process. Bump document versions for materially changed wording and preserve persisted historical bundles.
 

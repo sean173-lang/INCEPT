@@ -12,7 +12,6 @@ from scripts.service_schemas import Schema,VerificationRequest,ResearchRequest
 from scripts.onboarding_schemas import ClientInput
 from scripts.api_usage import UsageTracker,UsageBlocked,use_tracker
 from scripts.company_service import CompanyService
-from scripts.company_research import build_research_query
 from scripts.local_rag import LocalRAG
 from scripts.report_renderer import text
 

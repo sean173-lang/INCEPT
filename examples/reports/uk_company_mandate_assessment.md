@@ -1,4 +1,4 @@
-> SYSTEM-GENERATED SYNTHETIC n8n TEST. Execution 22; fixture ingress and Google data; real local helper code; no live company finding.
+> SYSTEM-GENERATED OFFLINE SAMPLE. Regenerated with the current INCEPT engine after cleanup. Synthetic intake and corporate fixtures; no live provider call or new n8n execution.
 
 # DEMO Mandate Assessment Report
 
@@ -33,6 +33,12 @@ Conclusion: lawyer review required. Confidence: insufficient for legal conclusio
 - intake:opponents: matter.opposing\_parties; synthetic user-supplied intake, unverified.
 - intake:deadline: matter.claimed\_deadline; synthetic user-supplied intake, unverified.
 
+## Document drafting validation — no legal approval
+
+- vollmacht: **MISSING_INFORMATION**; template 2.0.0. Lawyer approval pending; no issuance.
+- fee_agreement: **MISSING_INFORMATION**; template 2.0.0. Lawyer approval pending; no issuance.
+- advance_invoice: **NOT_READY_FOR_ISSUANCE**; template 2.0.0. Lawyer approval pending; no issuance.
+
 ## Corporate Client Intelligence
 
 Evidence status: UNVERIFIED. Identity check: verified. Current registry verification: false.
@@ -66,7 +72,7 @@ current\_sanctions\_and\_insolvency\_checks
 
 ### Source Freshness and Limitations
 
-corporate:3a5ec6ee3734fd88: Companies House; Explicit synthetic demo catalogue: DEMO0001; retrieved 2026-11-01T12:00:00+00:00; published Not available; UNVERIFIED; recent_cache_not_current_verification
+corporate:3a5ec6ee3734fd88: Companies House; Explicit synthetic demo catalogue: DEMO0001; retrieved 2026-11-01T12:00:00+00:00; published Not available; source type official; UNVERIFIED; recent_cache_not_current_verification
 Register records do not establish the authority of the person instructing the firm.
 Corporate intelligence is not professional conflict-of-interest clearance.
 No financial data, annual accounts, ratios or provider network requests are part of this path.

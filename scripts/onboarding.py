@@ -1,6 +1,5 @@
 """Offline intake preview. Local persistence only; no delivery/approval executor exists."""
 from contextlib import closing
-from datetime import datetime, timezone
 from decimal import Decimal, ROUND_HALF_UP
 import hashlib
 import json

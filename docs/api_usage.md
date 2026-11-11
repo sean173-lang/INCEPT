@@ -1,143 +1,39 @@
-# API usage monitoring and cost protection
+# API, configuration and cost safeguards
 
-LEGALFLOW routes its provider operations through `scripts/api_usage.py`.
-The CLI prints a usage summary even if a request fails or a budget blocks it.
-A credential-free event ledger is written to `data/api_usage.jsonl` (gitignored).
-Events contain provider, operation, UTC timestamp, session/run IDs, estimated
-credits and cost, cache-hit status, outcome, execution mode and a
-`billing_confirmed: false` marker. Query text, company IDs, request URLs,
-headers, bodies and credentials are not written to the usage ledger.
+Installation and the single development launch command are in [README](../README.md). Never edit or export real credentials as part of workflow setup. n8n owns OAuth; Python provider adapters read private configuration. Environment/header names beginning LEGALFLOW remain compatible identifiers, not a separate product.
 
-## Run modes
+## Active service routes
 
-```sh
-# Safe synthetic workflow: no provider clients or network requests:
-python -m scripts.legalflow_agent --dev --financials
+| Route | Purpose / gate |
+|---|---|
+| GET /health | Development health |
+| POST /v1/onboarding/preview | Synthetic typed request, SQLite idempotency, draft documents |
+| POST /v1/onboarding/corporate-intelligence | Zero-network optional corporate helper; max three cached operations |
+| POST /v1/onboarding/research/verify | Check orchestrator-provided official source bytes; helper makes no request |
+| POST /v1/company/search | DE/UK adapter search; fixtures by default |
+| POST /v1/company/verify | Detail/registration identity matching; name alone insufficient |
+| POST /v1/research/search | Bounded exact-identity Tavily Search after verification |
+| POST /v1/rag/query | Local jurisdiction-filtered corporate references; development-only |
+| POST /v1/research/runs | Create bounded development research run |
+| POST /v1/research/runs/{run_id}/plan | Next allowlisted action |
+| POST /v1/research/runs/{run_id}/tools | One ordered, idempotent step; maximum two iterations |
+| POST /v1/research/runs/{run_id}/report | Structured source-linked result |
+| GET /v1/usage | Credential-free estimated usage |
 
-# Explicit authorization of potentially paid calls, within hard limits:
-python -m scripts.legalflow_agent --approve-api \
-  --max-openregister-credits 20 --max-tavily-searches 1
+There are no financial/annual-account, approval, issuance or send routes. The retired `financial_disclosures` research topic is explicitly rejected with 422; retained topics are corporate_identity, litigation and regulatory_risks. No retained workflow uses the retired topic. Generic usage accounting rejects retired financial/document-download operations before a mock, cache or network callback. UK adapters restrict paths and reject accounts-only retrieval.
 
-# Financials remain separately opt-in (10 estimated OpenRegister credits):
-python -m scripts.legalflow_agent --approve-api --financials \
-  --max-openregister-credits 20 --max-tavily-searches 1
+## Budget and cache behavior
 
-# A finite money cap blocks all unknown-cost calls:
-python -m scripts.legalflow_agent --approve-api \
-  --max-session-spend 1 --usage-config usage-config.json
+`UsageTracker` preserves provider, operation, UTC timestamp, estimated credits/cost, cache hit, outcome and session metadata. It does not log query text, credentials, headers or bodies. Credits are estimates, not confirmed billing. Unknown monetary pricing displays **Cost unknown** and blocks execution under a finite spend cap.
 
-# Standalone company search supports approval and development flags too:
-python -m scripts.company_search --dev 'Demo company'
-python -m scripts.company_search --approve-api 'Company name'
-```
+Company search/details and Tavily Search retain JSON caching, expiration, process-level duplicate reservation and failure tracking. No cache miss in the corporate-intake helper can invoke a provider callback. Only provenance-attested provider caches or separately labeled approved demo evidence qualify; unknown provenance remains unavailable. Cached registry records are never represented as fresh verification.
 
-A development report is prominently marked synthetic. Development bypasses real
-caches and returns fixtures before initializing SDKs or checking credentials.
-Unmocked operations fail closed. Development calls record zero consumption and
-cannot populate live caches. Development fixtures do not establish any facts
-about the company entered by the user.
+Paid-capable cache misses require server approval and fit configured OpenRegister-credit, Tavily-search and session-spend limits. HTTP request bodies cannot approve spending. Defaults use fixtures and paid access disabled. Exact historical money prices are not hardcoded. Read-only does not necessarily mean free: obtain request-specific authorization and verify allowance/billing before a controlled provider call. Tavily uses bounded Basic Search, never the Research endpoint, with 20-second timeout and no retries/redirects.
 
-Without approval, paid cache misses raise `ApprovalRequired`. Cache hits are
-permitted without approval. `--financials`/`allow_paid=True` explicitly approves
-that financial operation, but never overrides budget limits. Free Companies
-House operations do not require paid-call approval. Earlier usage examples in
-the README predate these additional approval controls.
+Private historical ledgers/caches were not reset or deleted during cleanup because they may establish earlier spending/audit history. They are ignored and are not imported by the retired financial subsystem. `.env` was not changed. Configure secrets outside Git; the live environment mode requires a nonempty service token. Loopback development is not tenant isolation or production access control.
 
-## Budgets and prices
+## Approval and evidence
 
-Defaults are 50 estimated OpenRegister credits and 5 Tavily searches per run.
-There is no default monetary cap, because the account's applicable rates and
-allowances are not known. Non-free monetary costs display **Cost unknown** until
-reliable upper bounds are configured; unknowns are never reported as zero total
-spending. A finite spending cap blocks unknown costs, even with approval.
+Every action remains pending_lawyer_approval; no external action executor exists. Complete-looking documents are not approved. Representative authority, applicable law, conflicts and fiscal particulars require professional review. Original workflow/execution evidence is immutable during normal code updates. Offline tests block sockets and use mocks/temporary stores; no external credits are consumed.
 
-The CLI config file supports:
-
-```json
-{
-  "currency": "EUR",
-  "cache_ttl_seconds": 86400,
-  "prices": []
-}
-```
-
-Each optional price entry requires `provider`, `operation`, `upper_bound`, and
-`source`. `upper_bound` must be a non-negative finite decimal amount **per
-operation in the configured session currency**. `source` should identify a
-verified account tariff or a documented, conservative calculation. No actual
-account price is shipped in configuration. The operator must establish a
-reliable bound rather than inventing a price. There is no automatic exchange
-rate conversion. For dynamic OpenAI requests, the bound must cover both input
-and maximum output usage; otherwise leave that price unknown.
-
-Recognized provider/operation pairs:
-
-| Provider | Operation | Estimated credits per call |
-| --- | --- | --- |
-| OpenRegister | `company_search` | 1 |
-| OpenRegister | `company_details` | 10 |
-| OpenRegister | `financials` | 10 |
-| Tavily | `search_basic` | 1 |
-| OpenAI | `legal_analysis` | Not applicable/unknown |
-| Companies House | `public_data`, `document_metadata`, `document_download` | 0; public data is free |
-
-Credit estimates were checked against official documentation on 2026-11-09:
-[OpenRegister](https://docs.openregister.de/pricing),
-[Tavily](https://docs.tavily.com/documentation/api-credits), and
-[Companies House](https://www.gov.uk/guidance/searching-the-companies-house-register).
-These estimates are not confirmed billing or proof of account entitlement.
-Published overage rates are not assumed to apply to this account.
-
-Consumption is reserved **before** execution. Failures retain the estimate,
-because timeout/error responses do not reliably establish whether billing
-occurred. A `reserved` ledger event owns the consumption estimate; completion
-events (`success`/`failure`) do not add it again. Blocked and cache-hit events
-consume no credits. A failed operation returned as a structured result counts
-as a failure too. Never sum a reservation and completion as two requests.
-
-A tracker instance defines a session; CLI invocation creates one session/run.
-`tracker.new_run()` resets credit/search limits while retaining session spending
-and the ledger. Session budgets are not restored from previous processes. This
-is local protection, not an account-wide cap or a substitute for provider limits.
-
-## Caches and duplicate protection
-
-Searches, company details and Tavily research have a shared JSON cache under
-`data/api_cache/`, default TTL 24 hours. TTL is configurable. Keys hash the
-provider, operation and complete operation identity/parameters. Original company
-retrieval timestamps survive detail-cache hits. Files are replaced atomically;
-malformed, expired or future-dated entries are treated as misses. Successful
-empty search results are cacheable; exceptions and malformed research responses
-are not. Cached values are copied before use.
-
-Existing `data/financials/` files and `financial_cache.py` are preserved. Financial
-cache reads precede budget reservations and do not require another paid approval.
-Its existing no-expiration policy is unchanged; old financial data still requires
-freshness review. Corrupt financial cache entries are treated as misses. A paid
-miss still requires approval and budget capacity.
-
-Within a process, a shared lock prevents concurrent duplicate paid execution.
-Successful repeated operations reuse results. Failed/uncertain repeats are
-blocked for the current run, rather than automatically retried. Expiration does
-not implicitly authorize another call to the same operation within a run: start
-an explicit new run to refresh it. SDK retries are disabled for OpenRegister and
-OpenAI. No financial REST fallback is attempted after an SDK request failure.
-
-Standalone library callers can use:
-
-```python
-from scripts.api_usage import UsageTracker, use_tracker
-from scripts.company_search import search_companies
-
-tracker = UsageTracker(development=True, max_openregister_credits=0)
-with use_tracker(tracker):
-    companies = search_companies("Demo")  # synthetic fixture, no requests
-print(tracker.summary())
-```
-
-Remaining limitations: limits and duplicate locks do not coordinate separate
-processes, accounts or external tools. Monetary upper bounds are operator-supplied
-and cannot establish actual billing. The preserved financial cache has no TTL.
-Document download is monitored as one logical operation, which can include an
-anonymous storage redirect. There is no account-balance query, automatic retry,
-provider invoice reconciliation, or automatic permission to exceed a limit.
+See [Tavily validation](tavily_integration.md), [document rules](legal_document_generation.md) and [live evidence](live_integration_evidence.json). Run `python -m scripts.submission_audit` after explicitly staging reviewed files; it scans staged content and Git history without printing matches. No signed-URL exceptions are allowlisted.

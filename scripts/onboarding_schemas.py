@@ -2,7 +2,6 @@
 from datetime import date
 from decimal import Decimal
 from typing import Literal
-import re
 from pydantic import Field, field_validator, model_validator
 from scripts.service_schemas import Schema
 from scripts.document_schemas import DocumentOptions,DocumentIssue,Status

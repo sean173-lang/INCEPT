@@ -6,7 +6,6 @@ from pathlib import Path
 from string import Template
 import hashlib
 import json
-import re
 from scripts.document_schemas import DocumentOptions,DocumentIssue
 from scripts.onboarding_schemas import DraftDocument,OnboardingRequest,ClientRecord,MatterRecord,AdvanceCalculation
 from scripts.local_rag import LocalRAG

@@ -1,4 +1,4 @@
-> SYSTEM-GENERATED SYNTHETIC n8n TEST. Execution 20; fixture ingress and Google data; real local helper code; no live company finding.
+> SYSTEM-GENERATED OFFLINE SAMPLE. Regenerated with the current INCEPT engine after cleanup. Synthetic intake and corporate fixtures; no live provider call or new n8n execution.
 
 # DEMO Mandate Assessment Report
 
@@ -40,16 +40,8 @@ Conclusion: lawyer review required. Confidence: insufficient for legal conclusio
 - rvg-9:78d7300a6c25517a: Section 9 — [Section 9](https://www.gesetze-im-internet.de/rvg/__9.html); reviewed 2026-11-10; enactment date not supplied.
 - rvg-3a:6c52f5e7738e76c4: Section 3a, paragraph 1 — [Section 3a, paragraph 1](https://www.gesetze-im-internet.de/rvg/__3a.html); reviewed 2026-11-10; enactment date not supplied.
 
-## Bounded primary-source research
+## Document drafting validation — no legal approval
 
-Research status: unavailable. Case merits remain unverified.
-- Unavailable research: Orchestrator reports network\_or\_http\_failure; source research unavailable.
-
-## Potential Deadline Analysis
-
-State: pending_lawyer_approval. Intake candidate: 2026-11-24. Confirmed deadline: unavailable. Calculated deadline: none.
-No legally confirmed date is calculated. The intake date is a candidate only. BGB §286 does not itself supply missing trigger dates; special rules and procedural deadlines need lawyer review.
-- Missing: Original contract and evidence of maturity/due date.
-- Missing: Original demand/reminder and evidence of receipt.
-- Missing: Any original court document and service evidence, if applicable.
-- Missing: Applicability of statutory exceptions and responsibility for non-performance.
+- vollmacht: **MISSING_INFORMATION**; template 2.0.0. Lawyer approval pending; no issuance.
+- fee_agreement: **MISSING_INFORMATION**; template 2.0.0. Lawyer approval pending; no issuance.
+- advance_invoice: **NOT_READY_FOR_ISSUANCE**; template 2.0.0. Lawyer approval pending; no issuance.

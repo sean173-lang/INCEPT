@@ -1,2 +1,0 @@
-# Optional local PDF extraction; no provider/API dependency.
-pypdf>=5,<7

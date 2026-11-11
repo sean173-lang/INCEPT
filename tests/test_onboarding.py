@@ -10,8 +10,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 from offline_support import OfflineTestCase
 from scripts.http_service import create_app
-from scripts.onboarding import OnboardingService, build_bundle, CORPUS
-from scripts.local_rag import LocalRAG
+from scripts.onboarding import OnboardingService
 from scripts.report_renderer import text
 
 EXAMPLE=Path(__file__).resolve().parents[1]/'examples/onboarding_preview.json'

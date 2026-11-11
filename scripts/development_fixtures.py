@@ -12,10 +12,3 @@ def uk_response(endpoint, params=None):
         return {'items': []}
     return {'company_name': 'LEGALFLOW DEMO LTD', 'company_number': '00000000',
             'company_status': 'active', 'date_of_creation': '2020-01-01'}
-
-
-def financials(company_id):
-    return {'provider': 'OpenRegister', 'company_id': company_id, 'status': 'unavailable',
-            'request_status': 'succeeded', 'financial_data_status': 'no_figures_returned',
-            'publication_status': 'unknown', 'raw': {'reports': [], 'indicators': []},
-            'reason': 'Synthetic development fixture: no financial figures supplied.'}

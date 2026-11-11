@@ -12,7 +12,7 @@ def audit():
     def secret(raw):
         s=raw.decode('utf8',errors='replace')
         return any(v in s for v in secrets) or any(re.search(p,s) for p in patterns)
-    paths=[p for p in git('diff','--cached','--name-only','-z').decode().split('\0') if p]
+    paths=[p for p in git('diff','--cached','--diff-filter=ACMRT','--name-only','-z').decode().split('\0') if p]
     findings=[]
     for path in paths:
         raw=git('show',':'+path);s=raw.decode('utf8',errors='replace')
@@ -24,15 +24,14 @@ def audit():
             w=json.loads(s)
             for n in w['nodes']:
                 if n.get('credentials') or n.get('webhookId'):findings.append((path,'unsanitized workflow binding'))
-        # This regression deliberately uses a nonfunctional example.invalid URL.
-        if re.search(r'[?&](?:X-Amz-Signature|access_token)=',s,re.I) and path!='tests/test_financial_cache_regression.py':findings.append((path,'signed/token URL'))
+        if re.search(r'[?&](?:X-Amz-Signature|access_token)=',s,re.I):findings.append((path,'signed/token URL'))
     history=[];blobs=0
     for row in git('rev-list','--objects','--all').decode().splitlines():
         oid=row.split()[0]
         if git('cat-file','-t',oid).strip()==b'blob':
             blobs+=1
             if secret(git('cat-file','blob',oid)):history.append(oid)
-    result={'staged_files':len(paths),'staged_findings':findings,'history_blobs_checked':blobs,'history_secret_findings':len(history),'limitations':['Pattern/exact-value scan cannot prove absence of every unknown secret.','Only synthetic signed-URL regression placeholder is allowlisted.']}
+    result={'staged_files':len(paths),'staged_findings':findings,'history_blobs_checked':blobs,'history_secret_findings':len(history),'limitations':['Pattern/exact-value scan cannot prove absence of every unknown secret.','No signed-URL exceptions are allowlisted.']}
     print(json.dumps(result,indent=2));return not findings and not history
 
 if __name__=='__main__':raise SystemExit(0 if audit() else 1)

@@ -1,0 +1,34 @@
+{
+  "execution_id": "26",
+  "workflow_id": "SImuK5mMrGMzIgri",
+  "business_state": "PREVIEW_READY_FOR_LAWYER_REVIEW",
+  "gmail_sheets_calendar": "Real APIs in the same intake; only authorized synthetic self-email was sent.",
+  "registry": {
+    "provider": "Companies House",
+    "company_id": "00445790",
+    "name": "TESCO PLC",
+    "role": "counterparty/research subject; fictional individual remains client",
+    "requests": 1,
+    "cache_hit_on_request": false,
+    "phase": "Pre-email live verification; workflow consumed this same-test response without a second lookup.",
+    "source_url": "https://find-and-update.company-information.service.gov.uk/company/00445790",
+    "retrieved_at": "2026-11-11T07:54:00.096136+00:00",
+    "http_status": null,
+    "http_result": "Successful parsed response; exact HTTP status not retained by legacy adapter."
+  },
+  "legal_source": {
+    "url": "https://www.legislation.gov.uk/ukpga/2015/15/section/9/data.xml",
+    "retrieved_at": "2026-11-11T07:57:40.449Z",
+    "http_status": 200,
+    "bytes_received": 21836,
+    "state": "LIVE UNVERIFIED",
+    "provision": "Consumer Rights Act 2015, section 9",
+    "applicability": "REQUIRES LAWYER REVIEW: no verified transaction, consumer status, governing law, territorial application or product evidence.",
+    "verified_case_findings": false
+  },
+  "documents": "Old DEMO engine; no issuance/approval. Execution 28 verifies v2.0.0.",
+  "scope_limit": "Counterparty orchestration was a separate controlled test copy. Canonical export researches corporate clients, not a separate typed counterparty automatically. Reusable subject verification APIs remain.",
+  "execution28_evidence": "incept_live_documents_v2_validation.json",
+  "tavily_evidence": "tavily_live_validation.json",
+  "private_evidence": "Preserved under ignored data/ and reports/; raw inbox content and bindings excluded."
+}

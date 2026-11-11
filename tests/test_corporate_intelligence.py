@@ -1,9 +1,7 @@
 """Synthetic cache-only scenarios. No live provider identity or research is claimed."""
-from contextlib import closing
 from datetime import datetime,timezone,timedelta
 from pathlib import Path
 import copy
-import hashlib
 import json
 import tempfile
 from unittest.mock import patch
@@ -42,7 +40,7 @@ class CorporateIntelligenceTests(OfflineTestCase):
 
     def test_german_and_uk_reuse_detail_verification_and_classified_evidence(self):
         for jurisdiction,provider in [('Germany','OpenRegister'),('United Kingdom','Companies House')]:
-            with self.subTest(jurisdiction=jurisdiction),patch('scripts.german_register.get_financials',side_effect=AssertionError('No financials')):
+            with self.subTest(jurisdiction=jurisdiction):
                 result=self.service.collect(self.request(self.client(jurisdiction)))
                 self.assertEqual(result.identity_verification_status,'verified');self.assertEqual(result.provider,provider)
                 self.assertEqual(result.status,'UNVERIFIED');self.assertTrue(result.synthetic_evidence)

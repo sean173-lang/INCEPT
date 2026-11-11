@@ -87,21 +87,3 @@ def research_company(company_name, country="Germany", *, registration_number=Non
     return get_tracker().execute("Tavily", "search_basic", {"query": query, "max_results": max_results}, retrieve,
                                  cache=True, mock={"company": "LEGALFLOW DEMO", "country": country,
                                                    "query": query, "sources": [], "coverage_note": "Synthetic development fixture."})
-
-
-if __name__ == "__main__":
-    company = input("Company name: ").strip()
-    country = input("Country (Germany/UK): ").strip() or "Germany"
-
-    print("\nLEGALFLOW — EXTERNAL COMPANY RESEARCH")
-    print("-" * 50)
-
-    report = research_company(company, country)
-
-    if not report["sources"]:
-        print("No relevant search results found.")
-
-    for source in report["sources"]:
-        print("\nTitle:", source["title"])
-        print("URL:", source["url"])
-        print("Summary:", source["content"])

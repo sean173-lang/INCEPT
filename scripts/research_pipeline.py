@@ -7,13 +7,13 @@ from scripts.company_service import ServiceError
 from scripts.local_rag import LocalRAG, QUERIES
 from scripts.research_schemas import RunPlan, ResearchReport, ReportSection, ReportClaim, ReportSource
 from scripts.service_schemas import ResearchRequest
-from scripts.due_diligence import DOCUMENT_REQUESTS
 from scripts.report_renderer import text
 from scripts.api_usage import use_tracker
 
+DOCUMENT_REQUESTS = ['Current register extract, constitutional documents, ownership and signing-authority evidence.', 'Original legal documents, case identifiers and dated regulator correspondence.', 'Current sanctions/insolvency screening with entity identifiers; not automatically performed.']
+
 MISSING = {
     'corporate_identity': 'Constitutional documents, beneficial ownership and signing authority have not been independently checked.',
-    'financial_disclosures': 'No company financial statements or figures were fetched; financial endpoints are disabled.',
     'litigation': 'Original claims, judgments and current litigation status have not been checked.',
     'regulatory_risks': 'No transaction facts, merger-control analysis, current sanctions or regulator decisions were verified.',
 }
@@ -136,7 +136,7 @@ class ResearchPipeline:
                                 verification_status='synthetic_record_consistency', confidence='high',
                                 confidence_basis='High confidence only in fixture-record consistency, not real-world identity.', source_ids=[source_id]))
                 risks = [ReportClaim(text=MISSING[topic], verification_status='missing_information', confidence='insufficient',
-                                    confidence_basis='Missing evidence cannot establish that wrongdoing or financial distress exists.',
+                                    confidence_basis='Missing evidence cannot establish that wrongdoing or legal liability exists.',
                                     source_ids=[coverage_id])]
                 if topic in ('litigation', 'regulatory_risks'):
                     for index, item in enumerate(evidence):

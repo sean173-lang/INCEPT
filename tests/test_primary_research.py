@@ -1,6 +1,5 @@
 """Offline primary-source support checks; fixtures are not live execution proof."""
 from datetime import datetime,timezone,timedelta
-import json
 from pathlib import Path
 import tempfile
 from fastapi.testclient import TestClient

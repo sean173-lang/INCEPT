@@ -1,11 +1,11 @@
 # Tavily Search dependency and safeguards
 
-Execution 26's temporary FastAPI helper used `/opt/anaconda3/bin/python`. The configured key was present, but `tavily-python` was not installed. It was already declared without a version in `requirements-service.txt`; this was an environment/dependency installation gap, not evidence of rejected credentials or a failed Tavily API request.
+Execution 26's temporary FastAPI helper used `/opt/anaconda3/bin/python`. The configured key was present, but `tavily-python` was not installed. It was already declared without a version in `requirements.txt`; this was an environment/dependency installation gap, not evidence of rejected credentials or a failed Tavily API request.
 
 SDK 0.8.5 is now installed in that interpreter and the requirement is bounded to `>=0.8.5,<0.9`. Reproduce installation using the interpreter that actually runs FastAPI:
 
 ```sh
-python -m pip install -r requirements-service.txt
+python -m pip install -r requirements.txt
 python -m unittest discover -s tests -q
 ```
 

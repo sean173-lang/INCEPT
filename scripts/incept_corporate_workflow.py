@@ -1,7 +1,5 @@
 """Separate INCEPT corporate-intake development graph; never overwrite the proven flow."""
 import copy
-import json
-from pathlib import Path
 import uuid
 from scripts.incept_autonomous_workflow import build_workflow as base_workflow
 
@@ -101,8 +99,3 @@ def bind_credentials(metadata):
             if c.get('type')!=kind or not c.get('id') or not c.get('name'):raise ValueError('Compatible existing credential metadata required')
             n['credentials']={kind:{'id':c['id'],'name':c['name']}}
     return w
-
-
-if __name__=='__main__':
-    path=Path(__file__).resolve().parent.parent/'workflows/incept_corporate_intake_dev.json'
-    path.write_text(json.dumps(build_workflow(),indent=2)+'\n')

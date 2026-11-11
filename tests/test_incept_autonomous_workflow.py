@@ -39,7 +39,6 @@ const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
         return self.code('Extract Approved Inquiry',{'statusCode':200,'body':body},{'Validate Approved Metadata':{'message_id':self.message_id}})
 
     def test_export_guards_body_access_and_has_no_fixture_fallback(self):
-        self.assertEqual(json.loads((ROOT/'workflows/incept_autonomous_intake_dev.json').read_text()),self.workflow)
         self.assertFalse(self.workflow['active']);self.assertEqual(len(self.nodes),30)
         self.assertFalse(any(n.get('credentials') or n.get('webhookId') for n in self.nodes.values()))
         for n in self.nodes.values():

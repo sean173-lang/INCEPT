@@ -7,9 +7,8 @@ import sqlite3
 from contextlib import closing
 
 CORPUS = Path(__file__).resolve().parent.parent / 'references' / 'corporate_due_diligence.json'
-TOPICS = ('corporate_identity', 'financial_disclosures', 'litigation', 'regulatory_risks')
+TOPICS = ('corporate_identity', 'litigation', 'regulatory_risks')
 QUERIES = {'corporate_identity': 'registration identity company number directors',
-           'financial_disclosures': 'financial accounts annual disclosure statements',
            'litigation': 'litigation claims judgment proceedings',
            'regulatory_risks': 'regulatory merger notification competition'}
 

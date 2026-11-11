@@ -1,19 +1,16 @@
 """Cost protection tests use temporary caches and provider mocks only."""
-import io
 import json
 import sys
 import tempfile
 import threading
-import time
 import unittest
-from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 from offline_support import OfflineTestCase
 from scripts.api_usage import UsageTracker, use_tracker, ApprovalRequired, BudgetExceeded, DuplicateRequestBlocked, UsageBlocked
-from scripts import german_register as de, company_search, company_research, legalflow_agent as agent
+from scripts import german_register as de, company_search, company_research
 
 
 class UsageTests(OfflineTestCase):
@@ -46,7 +43,7 @@ class UsageTests(OfflineTestCase):
         call = MagicMock(return_value={})
         tracker.execute('OpenRegister', 'company_details', 'one', call)
         with self.assertRaises(BudgetExceeded):
-            tracker.execute('OpenRegister', 'financials', 'two', call, approved=True)
+            tracker.execute('OpenRegister', 'company_details', 'two', call, approved=True)
         call.assert_called_once()
         self.assertEqual(tracker.run_credits, 10)
 
@@ -93,9 +90,9 @@ class UsageTests(OfflineTestCase):
         tracker = UsageTracker(approved=True)
         call = MagicMock(side_effect=RuntimeError('secret token'))
         with self.assertRaises(RuntimeError):
-            tracker.execute('OpenRegister', 'financials', 'id', call)
+            tracker.execute('OpenRegister', 'company_details', 'id', call)
         with self.assertRaises(DuplicateRequestBlocked):
-            tracker.execute('OpenRegister', 'financials', 'id', call)
+            tracker.execute('OpenRegister', 'company_details', 'id', call)
         self.assertEqual(tracker.run_credits, 10)
         call.assert_called_once()
         self.assertNotIn('secret', json.dumps(tracker.events))
@@ -104,9 +101,9 @@ class UsageTests(OfflineTestCase):
     def test_returned_failure_not_cached_or_reissued(self):
         tracker = UsageTracker(approved=True)
         call = MagicMock(return_value={'request_status': 'failed'})
-        tracker.execute('OpenRegister', 'financials', 'id', call, success=lambda v: False, cache=True)
+        tracker.execute('OpenRegister', 'company_details', 'id', call, success=lambda v: False, cache=True)
         with self.assertRaises(DuplicateRequestBlocked):
-            tracker.execute('OpenRegister', 'financials', 'id', call, cache=True)
+            tracker.execute('OpenRegister', 'company_details', 'id', call, cache=True)
         call.assert_called_once()
 
     def test_concurrent_duplicate_success_only_one_call(self):
@@ -187,45 +184,17 @@ class IntegrationUsageTests(OfflineTestCase):
             company_research.research_company('Demo', 'Germany', registration_number='123')
         sdk.search.assert_called_once()
 
-    def test_financial_cache_preserved_without_approval_or_credits(self):
-        from scripts.financial_cache import save_financials
-        save_financials('fixture', {'company_id': 'fixture', 'request_status': 'succeeded', 'raw': {'indicators': []}})
-        tracker = UsageTracker(max_openregister_credits=0)
-        with use_tracker(tracker), patch.object(de, '_get_financials') as call:
-            result = de.get_financials('fixture')
-        call.assert_not_called()
-        self.assertTrue(result['cache_hit'])
-        self.assertEqual(tracker.run_credits, 0)
-        self.assertTrue(tracker.events[0]['cache_hit'])
 
-    @patch.object(de, '_get_financials', return_value={'request_status': 'failed'})
-    def test_financial_budget_check_precedes_adapter(self, call):
-        with use_tracker(UsageTracker(max_openregister_credits=0)):
-            with self.assertRaises(BudgetExceeded):
-                de.get_financials('uncached', allow_paid=True)
-        call.assert_not_called()
 
-    @patch.object(de, 'API_KEY', 'fixture')
-    def test_financial_fresh_result_still_uses_existing_cache(self):
-        response = MagicMock(status_code=200)
-        response.json.return_value = {'indicators': [], 'reports': []}
-        tracker = UsageTracker(max_openregister_credits=10)
-        with use_tracker(tracker), patch.dict(sys.modules, {'openregister': None}), patch('requests.get', return_value=response) as request, redirect_stdout(io.StringIO()):
-            de.get_financials('fixture', allow_paid=True)
-            result = de.get_financials('fixture', allow_paid=True)
-        request.assert_called_once()
-        self.assertTrue(result['cache_hit'])
-        self.assertEqual(tracker.run_credits, 10)
 
     def test_development_all_integrations_do_not_touch_network(self):
         tracker = UsageTracker(development=True, max_openregister_credits=0, max_tavily_searches=0, max_session_spend=0)
-        with use_tracker(tracker), patch('requests.sessions.Session.request', side_effect=AssertionError('Network forbidden')), patch.object(de, 'get_client', side_effect=AssertionError('SDK forbidden')), patch.object(agent, 'OpenAI', side_effect=AssertionError('Model forbidden')):
+        with use_tracker(tracker), patch('requests.sessions.Session.request', side_effect=AssertionError('Network forbidden')), patch.object(de, 'get_client', side_effect=AssertionError('SDK forbidden')):
             self.assertTrue(company_search.search_companies('Demo'))
-            data = agent.get_german_company('DEMO', financials=True)
+            data = de.get_company('DEMO')
             research = company_research.research_company('Demo')
-            report = agent.generate_ai_report(data, research)
-            self.assertIn('DEVELOPMENT MODE', report)
-            self.assertIn('synthetic data', report)
+            self.assertEqual(data.model_dump()['id'],'DEMO')
+            self.assertIn('Synthetic',research['coverage_note'])
             self.assertEqual(tracker.run_credits, 0)
             self.assertEqual(tracker.run_searches, 0)
             self.assertEqual(tracker.summary()['unknown_cost_reservations'], 0)

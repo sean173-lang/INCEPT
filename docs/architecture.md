@@ -30,9 +30,9 @@ Reusable boundaries: `scripts/company_service.py` verifies details and registrat
 
 Identity jurisdiction does not select applicable law. The new workflow requires explicit governing law before German substantive research. UK/unknown substantive analysis remains unverified. Registry consistency neither proves authority to instruct nor replaces professional conflicts checks.
 
-The existing fixture-only research planner remains unchanged. The new helper bounds cached operations to three and external operations to zero. Gradio and approval execution are future work.
+The fixture-only corporate planner retains identity, litigation and regulatory topics; the discontinued financial topic is rejected. The new helper bounds cached operations to three and external operations to zero. Gradio and approval execution are future work.
 
-See [setup and evidence policy](incept_corporate_intelligence.md).
+See [setup and evidence policy](api_usage.md).
 
 
 ## Verification boundaries

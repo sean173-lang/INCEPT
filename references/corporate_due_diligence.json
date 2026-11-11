@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "documents": [
     {
       "id": "de-gmbhg-8",
@@ -15,21 +15,6 @@
       "content_kind": "curated_paraphrase",
       "keywords": "Registration identity shareholder directors authority Gesellschaftsvertrag Anmeldung",
       "text": "GmbHG section 8 identifies documents accompanying a registration application, including constitutional documents, evidence of director appointments and a shareholder list. The application also states a domestic business address and the nature and extent of directors’ representation powers. Due diligence should reconcile the register record with underlying documents; a company-name match alone does not establish identity or signing authority."
-    },
-    {
-      "id": "de-hgb-325",
-      "title": "HGB section 325: financial disclosure",
-      "jurisdiction": "Germany",
-      "topics": [
-        "financial_disclosures"
-      ],
-      "source_url": "https://www.gesetze-im-internet.de/hgb/__325.html",
-      "locator": "Section 325, paragraphs 1 and 1a",
-      "document_date": null,
-      "reviewed_at": "2026-11-10",
-      "content_kind": "curated_paraphrase",
-      "keywords": "financial accounts disclosure annual statements Jahresabschluss Offenlegung financial_disclosures",
-      "text": "HGB section 325 addresses disclosure of specified corporate accounting documents through the Unternehmensregister. The documents required depend on applicable preparation duties and related provisions. For diligence, request the relevant annual statements and accompanying reports and check reporting periods, amendments and applicable exemptions. A failed third-party financial API lookup does not establish non-publication or non-compliance."
     },
     {
       "id": "de-zpo-322",
@@ -60,21 +45,6 @@
       "content_kind": "curated_paraphrase",
       "keywords": "corporate identity company number register registration officers incorporation",
       "text": "Companies House provides public company information and filing history through its register and API. Its guidance lists company information available for research, including status, registered address, company type and filing dates. Diligence should reconcile the selected company number with the detail record and relevant filings. A search candidate is not independently certified legal identity."
-    },
-    {
-      "id": "uk-ca441",
-      "title": "Companies Act 2006 section 441: filing accounts",
-      "jurisdiction": "UK",
-      "topics": [
-        "financial_disclosures"
-      ],
-      "source_url": "https://www.legislation.gov.uk/ukpga/2006/46/section/441",
-      "locator": "Section 441; Part 15 Chapter 10",
-      "document_date": null,
-      "reviewed_at": "2026-11-10",
-      "content_kind": "curated_paraphrase",
-      "keywords": "financial accounts annual reports filing registrar disclosures financial_disclosures",
-      "text": "Section 441 concerns directors’ duty to deliver accounts and reports to the registrar for each financial year. The applicable documents and requirements must be checked against the relevant provisions and exemptions. Request signed accounts and reconcile them to filed records, periods and reporting scope. Missing provider figures do not by themselves establish a breach of filing obligations."
     },
     {
       "id": "uk-preaction",

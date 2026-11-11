@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from offline_support import OfflineTestCase
 from scripts.document_examples import scenarios,generate
 from scripts.onboarding_schemas import OnboardingRequest,ClientRecord,MatterRecord
-from scripts.onboarding import advance,intake_fingerprint
+from scripts.onboarding import advance
 from scripts.document_schemas import DocumentOptions
 from scripts.legal_documents import DocumentContext,DocumentRules,generate_documents,validate_vollmacht,validate_fee_agreement,validate_advance_invoice,cross_validate,NOTICE
 from scripts.http_service import create_app
