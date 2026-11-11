@@ -1,24 +1,23 @@
 # Project 3 submission checklist
 
-Based on the supplied requirements; the original course brief/rubric has not been located. Gradio is the next milestone, not implemented in this checkpoint.
+Current demo: [Gradio setup and verification](docs/gradio_demo.md). The original course rubric was not located, so grading compliance must be confirmed with the instructor. This table distinguishes current demonstration, historical real integrations and experimental AI.
 
-| Requirement | Verified status / limit |
+| Requirement | Evidence and honest status |
 |---|---|
-| n8n primary orchestration | Real execution 28: approved-message intake, read-only Google checks, local API and legal-source research |
-| Three real external integrations | Gmail, Google Sheets and Google Calendar verified in recorded runs; no new calls during cleanup |
-| LLM/model-based synthesis | **Callable optional OpenAI synthesis implemented; offline mocks tested. No live model execution verified.** A student example board describes LLM-written reports, but is not the grading rubric. Confirm the formal requirement. [Scope](docs/ai_synthesis.md) |
-| Autonomous research → synthesis → structured report | Bounded official BGB source selection/check plus local RAG/report assembly; not general autonomous legal advice |
-| German/UK corporate research | Preserved adapters and cache-only intake helper, offline routing/matching tests; unknown identity requires review |
-| Counterparty research | Recorded isolated execution 26 with one fresh UK profile; separate automated typed counterparties are not yet in canonical workflow |
-| RAG and source provenance | Local scoped references and 32 official document-law records; snippets, fixtures, registry facts and legal rules kept separate |
-| Two distinct generated reports | Three explicitly synthetic assessments and two principal/representative document bundles in examples/ |
-| German legal documents | Engine v2.0.0, immutable approval/issuance guards, validation and deterministic advance arithmetic; professional approval outstanding |
-| Error handling / idempotency | Retained offline regression tests; no external action executor |
-| Stack justification | [Decision](docs/stack_decision.md) |
-| GTM future sprints | [Three sprints](gtm_future_sprints.md) |
-| 5–7 minute demo | [Script](docs/demo_script.md); safely uses recorded proof and offline generation |
-| GitHub submission | Cleanup feature PR requires manual review; never auto-merged |
+| Working Gradio UI | Implemented: report, three v2 drafts, validation/missing information, five pending actions, explicit DEMO and saved-fixture mode |
+| n8n primary orchestration | Gradio HTTP callback → separate inactive ten-node n8n flow → real FastAPI → persisted execution **38**, successful; new IDs appear on later runs |
+| One-command launch | `python -m scripts.gradio_app`; existing local n8n needed only for a fresh orchestration run; saved mode works without it |
+| Three real external integrations | Gmail, Google Sheets and Google Calendar previously verified in real executions; recorded combined intake/research evidence in [execution 26](docs/live_integration_evidence.json), [execution 28](docs/incept_live_documents_v2_validation.json). No fresh Google claim for the Gradio run |
+| Autonomous research → report | Historical bounded official-source research and local RAG are preserved. Current reliable Gradio path uses local references and deterministic report assembly, not fresh autonomous web/model research |
+| Real AI reasoning / synthesis | **Not yet an accepted live synthesis.** Real extraction response was grounded, but synthesis in **34** was rejected. Source-exact v2 passes offline mock tests. Present as experimental, not completed live AI |
+| RAG and source attribution | Existing scoped local legal corpus, original source URLs/review dates and evidence labels retained; reference guidance separated from case findings |
+| German / UK corporate capabilities | Existing adapters/cache-only helpers and offline matching tests retained. Current fictional Gradio scenario does not require registry calls or claim real company verification |
+| Mandate Assessment | Real backend deterministic result or explicitly labeled saved synthetic backend fixture; citations and missing evidence visible |
+| Three legal documents | Existing engine v2.0.0; representative/mandatory details remain placeholders; all drafts unapproved and advance NOT_READY_FOR_ISSUANCE |
+| Error handling / idempotency | n8n validation branches, exact-workflow execution guard, real-trace requirement, explicit saved fallback, locks and persistent matter idempotency |
+| Human approval | Five actions pending; no outgoing messages, Google writes, mandate acceptance or invoice issuance; no approval executor |
+| Two sample reports | Existing distinct [assessment examples](examples/reports/individual_mandate_assessment.md) and [UK example](examples/reports/uk_company_mandate_assessment.md) retained; new fixed synthetic German bundle in `examples/gradio_demo/` |
+| 5–7 minute presentation | [Script](docs/demo_script.md), with truthful AI and historical-integration boundaries |
+| GitHub checkpoint | Demo feature branch; reviewed safe artifacts only; no automatic main merge |
 
-[Live evidence](docs/live_integration_evidence.json), [execution 28](docs/incept_live_documents_v2_validation.json), [Tavily](docs/tavily_live_validation.json), [document HTTP validation](docs/legal_document_http_validation.json).
-
-Retired financial prototypes are recoverable from Git, not part of the active product. Original live workflows/execution evidence remain private and unchanged. Publication excludes credentials, raw inbox data, databases, provider caches and signed URLs. Complete the cleanup/security review and verify the PR before manual merge. Legal approval, production auth/tenancy and structured e-invoicing remain unresolved.
+Production authentication/tenancy, professional legal approval, a reliable accepted live AI synthesis and instructor confirmation of the original rubric remain outstanding. The application is ready to demonstrate deterministic onboarding, n8n orchestration and document review; this does not guarantee every AI grading criterion is satisfied.

@@ -1,6 +1,19 @@
 # INCEPT — Legal Client Onboarding & Corporate Intelligence
 
-**Implementation boundary:** the validated canonical workflow remains deterministic. A separate, optional OpenAI synthesis helper and development workflow are implemented and offline-tested with mocks. **No live LLM execution has been verified.** Billing/approval flags and budgets default to blocking requests. Project 3 rubric compliance remains to be confirmed.
+## Run the INCEPT demonstration
+
+```sh
+python -m scripts.gradio_app
+```
+
+Open **http://127.0.0.1:7860**. The fixed fictional German-company scenario shows the complete Mandate Assessment, three document drafts, validation/missing information and five pending lawyer actions. **Run DEMO through n8n** uses the real local n8n → FastAPI structured-intake path; **Load saved DEMO fixture** is explicitly labeled and works without n8n or paid APIs. No AI/provider request or external action is needed. The advance remains unissued.
+
+[Setup and actual verification](docs/gradio_demo.md) · [5–7 minute presentation](docs/demo_script.md) · [Project 3 evidence checklist](PROJECT3_SUBMISSION_CHECKLIST.md).
+
+Experimental source-exact AI synthesis v2 is offline-tested and separate from this reliable deterministic demo. The last live synthesis was rejected; no accepted live AI report is claimed.
+
+
+**Implementation boundary:** the validated canonical workflow remains deterministic. A separate, optional OpenAI synthesis helper and development workflow are implemented and offline-tested with mocks. **No accepted live AI assessment has been verified.** Earlier model responses were rejected by validation. Billing/approval flags and budgets default to blocking requests. Project 3 rubric compliance remains to be confirmed.
 
 **Legal Tech / Corporate Law.** An Ironhack Project 3 development MVP for law firms and legal professionals. n8n orchestrates approved inquiry intake; Python/FastAPI supplies typed processing, evidence checks, local RAG and deterministic German draft documents.
 
@@ -34,8 +47,9 @@ Company jurisdiction does not establish governing law or authority to instruct. 
 | Document engine v2.0.0 | Versioned templates, 32 official source records, validation and issuance blockers; not professional legal approval |
 | UK substantive legal analysis | Unverified; lawyer review required; no automatic BGB application |
 | Separate counterparty orchestration | Demonstrated in the isolated execution-26 test; not a general typed counterparty branch in the canonical export |
-| Optional AI mandate synthesis | Strict structured output, supplied citations/exact quotes, conditional analysis and explicit fallback; offline mocks only. [Details](docs/ai_synthesis.md) |
-| Gradio / external action executor | Planned / not implemented |
+| Optional AI mandate synthesis | Strict structured output, supplied citations/exact quotes, conditional analysis and explicit fallback. V2 is offline-tested; the last live synthesis was rejected in execution 34. [Details](docs/ai_synthesis.md) |
+| Gradio interface | Implemented and verified through real local n8n execution **38**; explicit saved-fixture fallback |
+| External action executor | Not implemented; five actions remain pending lawyer approval |
 
 [Live evidence](docs/live_integration_evidence.json) · [Execution 28](docs/incept_live_documents_v2.md) · [Tavily evidence](docs/tavily_live_validation.json). No fixture is presented as a live response.
 

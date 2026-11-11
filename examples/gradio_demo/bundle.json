@@ -1,0 +1,478 @@
+{
+  "document_generation_context": {
+    "representative": null,
+    "representation_scope": "out_of_court",
+    "requested_ancillary_powers": [],
+    "place": "Musterort (Demo)",
+    "engagement_law": "Germany",
+    "firm_policy": {
+      "policy_id": "SYNTHETIC-LINDENBOGEN-2026-v1",
+      "supplied_for_demo_review": true,
+      "net_hourly_rate": "250.00",
+      "billing_method": "actual_minutes",
+      "billing_increment_minutes": null,
+      "time_recording": "Tätigkeitsnachweis mit Datum, bearbeitender Person, Tätigkeitsbeschreibung und tatsächlicher Dauer in Minuten; keine pauschale Aufrundung.",
+      "expenses_terms": "Auslagen werden nur nach vorheriger gesonderter Vereinbarung angesetzt; in diesem Entwurf ist keine Auslagenpauschale vereinbart.",
+      "payment_terms": "Synthetische Kanzleiregel zur Prüfung: Zahlung binnen 14 Kalendertagen nach Zugang einer ordnungsgemäßen, gesondert freigegebenen Abrechnung. Dieser Entwurf löst keine Zahlungsfrist aus.",
+      "other_professionals_terms": "Für andere Berufsträger sind keine Stundensätze vereinbart. Ein Einsatz mit zusätzlichen Kosten bedarf einer gesonderten Vereinbarung.",
+      "tax_identifier": null,
+      "payment_instructions": null,
+      "vat_configuration_confirmed_for_demo": true
+    },
+    "invoice_number": null,
+    "invoice_issue_date": null,
+    "payment_received_date": null,
+    "recipient_business_status": "business",
+    "supplier_domestic": true,
+    "recipient_domestic": true,
+    "previous_year_turnover_le_800000": null
+  },
+  "schema_version": 1,
+  "synthetic_data": true,
+  "status": "preview_pending_lawyer_approval",
+  "client": {
+    "name": "INCEPT DEMO GmbH (vollständig fiktiv)",
+    "address": "[Anschrift der fiktiven Gesellschaft noch zu ergänzen]",
+    "email": "intake@incept-demo.invalid",
+    "jurisdiction": "Germany",
+    "client_type": "company",
+    "registration_number": null,
+    "register_court": null,
+    "register_type": null,
+    "approved_provider_id": null,
+    "client_id": "demo-client-e8acf7b0cd3f458a858767e8fbd967d6",
+    "synthetic_data": true
+  },
+  "matter": {
+    "title": "Fiktive Dienstleistungsforderung — Erstprüfung",
+    "summary": "Die vollständig fiktive INCEPT DEMO GmbH behauptet eine offene Rechnung über 18.750 Euro aus Projektleistungen. Die ebenfalls fiktive Nordlicht Projektservice GmbH bestreitet die Forderung und behauptet unvollständige Leistungen. Laut synthetischem Intake wurde die Rechnung im Oktober gestellt; genaue Fälligkeit, Abnahme und Mahnung sind ungeklärt. Es liegt kein realer Unternehmensfall vor.",
+    "requested_scope": "Erste rechtliche Einschätzung der behaupteten Forderung und Anforderung von Vertrag, Rechnung, Leistungsnachweisen und Korrespondenz. Keine Klage oder externe Aktion ohne gesonderte anwaltliche Freigabe.",
+    "opposing_parties": [
+      "Nordlicht Projektservice GmbH (vollständig fiktiv)"
+    ],
+    "claimed_deadline": null,
+    "deadline_source": null,
+    "governing_law": "Germany",
+    "matter_id": "demo-matter-a0ffac9bdd17493b94e6b7db3ebcec90",
+    "client_id": "demo-client-e8acf7b0cd3f458a858767e8fbd967d6",
+    "status": "draft_pending_lawyer_review"
+  },
+  "advance": {
+    "hours": "5",
+    "net_hourly_rate": "250.00",
+    "currency": "EUR",
+    "net_fee": "1250.00",
+    "vat_mode": "taxable",
+    "vat_percent": "19",
+    "vat_amount": "237.50",
+    "gross_total": "1487.50",
+    "tax_status": "supplied_demo_treatment_unverified",
+    "work_performed": false
+  },
+  "documents": [
+    {
+      "document_version": 2,
+      "template_id": "de-vollmacht",
+      "template_version": "2.0.0",
+      "source_version": "2026-11-11.1/a0d88691a1f4",
+      "completeness_status": "MISSING_INFORMATION",
+      "validation_issues": [
+        {
+          "code": "representative",
+          "field": "document_options.representative",
+          "description": "Person, Funktion und Befugnisnachweis fehlen.",
+          "severity": "missing",
+          "source_ids": [
+            "bgb-164",
+            "bgb-167"
+          ]
+        }
+      ],
+      "missing_information": [
+        "document_options.representative"
+      ],
+      "lawyer_review_questions": [
+        "Vorlage und Einzelfall professionell prüfen; automatische Validierung ist keine Rechtsfreigabe."
+      ],
+      "legal_source_ids": [
+        "bgb-164",
+        "bgb-167",
+        "bgb-168",
+        "bgb-174",
+        "bgb-181"
+      ],
+      "ready_for_issuance": false,
+      "legally_approved": false,
+      "kind": "vollmacht",
+      "state": "pending_lawyer_approval",
+      "content_markdown": "# Rechtsanwaltsvollmacht\n\n**DEMO · ENTWURF · REQUIRES LAWYER REVIEW — nicht unterzeichnet, nicht wirksam freigegeben**\n\n## 1. Vollmachtgeber und anwaltliche Vertretung\n\n**Vollmachtgeber:** INCEPT DEMO GmbH \\(vollständig fiktiv\\)  \n**Anschrift:** \\[Anschrift der fiktiven Gesellschaft noch zu ergänzen\\]  \n**Vertreten durch:** [NAME, FUNKTION UND BEFUGNISNACHWEIS – ERFORDERLICH]\n\n**Bevollmächtigte Kanzlei:** DEMO Kanzlei Lindenbogen \\(fiktiv\\)  \n**Kanzleianschrift:** \\[Kanzleianschrift noch zu ergänzen\\]  \n**Benannte Rechtsanwältin / benannter Rechtsanwalt:** \\[Bearbeitende Person noch zu ergänzen\\]\n\n## 2. Bestimmte Angelegenheit\n\n**Aktenzeichen:** demo-matter-a0ffac9bdd17493b94e6b7db3ebcec90  \n**Angelegenheit:** Fiktive Dienstleistungsforderung — Erstprüfung  \n**Gegenpartei / Beteiligte:** Nordlicht Projektservice GmbH \\(vollständig fiktiv\\)\n\nGegenstand des Auftrags zur Prüfung: Erste rechtliche Einschätzung der behaupteten Forderung und Anforderung von Vertrag, Rechnung, Leistungsnachweisen und Korrespondenz. Keine Klage oder externe Aktion ohne gesonderte anwaltliche Freigabe.\n\n## 3. Vorgesehener Umfang\n\nVorgesehene Vollmachtserklärung (noch nicht abgegeben): Die oben bezeichnete Mandantschaft bevollmächtigt die genannte Kanzlei, handelnd durch die benannte Rechtsanwältin beziehungsweise den benannten Rechtsanwalt, ausschließlich zur außergerichtlichen Beratung und Vertretung in der unter Ziffer 2 bezeichneten Angelegenheit. Vor Erteilung und Verwendung ist die Erklärung anwaltlich freizugeben.\n\nDer Entwurf ermächtigt nicht zum Vergleichsabschluss, zur Entgegennahme von Geld oder Wertsachen, zur Erteilung einer Untervollmacht oder zu einem Insichgeschäft. Eine Befreiung von § 181 BGB ist nicht vorgesehen. Eine Prozessvollmacht wird mit diesem Entwurf nicht erteilt. Gewünschte weitergehende Befugnisse sind gesondert und ausdrücklich anwaltlich zu prüfen und zu gestalten.\n\n## 4. Erteilung und Verwendung\n\nDer Umfang einer Vollmacht ist von der internen Mandatsannahme zu unterscheiden. Die Vorlage oder Erzeugung dieses Entwurfs bestätigt weder eine Mandatsannahme noch eine bereits erteilte Vollmacht. Vor Verwendung sind insbesondere Vertretungsberechtigung, Erklärungsempfänger, Urkundenvorlage und etwaige besondere Form- oder Verfahrensanforderungen zu prüfen. Dieser Entwurf enthält keine Vergütungsvereinbarung.\n\n**Ort:** Musterort \\(Demo\\)  \n**Datum der Erklärung:** [BEI ERTEILUNG EINZUTRAGEN]  \n**Name / Funktion der unterzeichnenden Person:** [UNTERZEICHNENDE PERSON UND FUNKTION – ERFORDERLICH]\n\n**Unterschrift / gegebenenfalls gesondert geprüfte Autorisierung:** __________________________\n\n---\nEntwurfsdatum: 2026-11-11 · Vorlage 2.0.0 · Rechtsquellenstand 2026-11-11.1/a0d88691a1f4.  \nKeine externe Verwendung ohne anwaltliche Freigabe. Rechtsgrundlagen und Prüffragen stehen im gesonderten Validierungsbericht.\n"
+    },
+    {
+      "document_version": 2,
+      "template_id": "de-fee_agreement",
+      "template_version": "2.0.0",
+      "source_version": "2026-11-11.1/a0d88691a1f4",
+      "completeness_status": "MISSING_INFORMATION",
+      "validation_issues": [
+        {
+          "code": "representative",
+          "field": "document_options.representative",
+          "description": "Person, Funktion und Befugnisnachweis fehlen.",
+          "severity": "missing",
+          "source_ids": []
+        }
+      ],
+      "missing_information": [
+        "document_options.representative"
+      ],
+      "lawyer_review_questions": [
+        "Vorlage und Einzelfall professionell prüfen; automatische Validierung ist keine Rechtsfreigabe."
+      ],
+      "legal_source_ids": [
+        "rvg-3a",
+        "rvg-4b",
+        "rvg-9",
+        "ustg-12",
+        "ustg-19",
+        "bgb-126b",
+        "rvg-4",
+        "rvg-34",
+        "brao-49b"
+      ],
+      "ready_for_issuance": false,
+      "legally_approved": false,
+      "kind": "fee_agreement",
+      "state": "pending_lawyer_approval",
+      "content_markdown": "# Vergütungsvereinbarung\n\n**DEMO · ENTWURF · REQUIRES LAWYER REVIEW — gesonderte Vereinbarung, noch nicht abgeschlossen**\n\n## 1. Vertragsparteien und Mandat\n\n**Mandantschaft:** INCEPT DEMO GmbH \\(vollständig fiktiv\\), \\[Anschrift der fiktiven Gesellschaft noch zu ergänzen\\]  \n**Vertreten durch:** [NAME, FUNKTION UND BEFUGNISNACHWEIS – ERFORDERLICH]\n**Kanzlei:** DEMO Kanzlei Lindenbogen \\(fiktiv\\), \\[Kanzleianschrift noch zu ergänzen\\]  \n**Benannte anwaltliche Bearbeitung:** \\[Bearbeitende Person noch zu ergänzen\\]  \n**Aktenzeichen:** demo-matter-a0ffac9bdd17493b94e6b7db3ebcec90  \n**Angelegenheit:** Fiktive Dienstleistungsforderung — Erstprüfung  \n**Gegenpartei / Beteiligte:** Nordlicht Projektservice GmbH \\(vollständig fiktiv\\)\n\nDer vorgesehene Tätigkeitsumfang lautet: Erste rechtliche Einschätzung der behaupteten Forderung und Anforderung von Vertrag, Rechnung, Leistungsnachweisen und Korrespondenz. Keine Klage oder externe Aktion ohne gesonderte anwaltliche Freigabe.\n\nDie Anwendbarkeit des deutschen anwaltlichen Vergütungsrechts und die Zulässigkeit einer Stundenhonorarvereinbarung sind vor Abschluss für dieses Mandat zu prüfen. Die Vereinbarung ist von anderen Vereinbarungen deutlich abgesetzt und nicht Bestandteil der Vollmacht.\n\n## 2. Stundenhonorar und Umsatzsteuer\n\nVorgesehener Stundensatz für die benannte anwaltliche Bearbeitung: **250,00 EUR netto je Stunde**.\n\nAls ausdrücklich bereitgestellte, noch anwaltlich/steuerlich zu bestätigende Rechenannahme sind 19 % Umsatzsteuer vorgesehen. Der rechnerische Stundensatz einschließlich dieser Steuer beträgt 297,50 EUR. Grundlage laut Konfiguration: Ausdrücklich bestätigte synthetische Rechenkonfiguration: inländische steuerpflichtige anwaltliche Leistung, 19 Prozent; keine Feststellung für ein reales Mandat.\n\nEin Erfolgshonorar ist in diesem Entwurf nicht vereinbart. Weitere Vergütungstatbestände oder zusätzliche Stundensätze werden durch diesen Entwurf nicht festgelegt.\n\n## 3. Zeiterfassung und Abrechnungsgrundlage\n\nVorgesehen ist die minutengenaue Abrechnung des tatsächlichen Zeitaufwands ohne Aufrundung auf größere Zeiteinheiten.\n\n**Dokumentation des Zeitaufwands:** Tätigkeitsnachweis mit Datum, bearbeitender Person, Tätigkeitsbeschreibung und tatsächlicher Dauer in Minuten; keine pauschale Aufrundung.\n\n**Weitere Berufsträger:** Für andere Berufsträger sind keine Stundensätze vereinbart. Ein Einsatz mit zusätzlichen Kosten bedarf einer gesonderten Vereinbarung.\n\n## 4. Auslagen und Zahlung\n\n**Auslagenregelung:** Auslagen werden nur nach vorheriger gesonderter Vereinbarung angesetzt; in diesem Entwurf ist keine Auslagenpauschale vereinbart.\n\n**Zahlungsbedingungen:** Synthetische Kanzleiregel zur Prüfung: Zahlung binnen 14 Kalendertagen nach Zugang einer ordnungsgemäßen, gesondert freigegebenen Abrechnung. Dieser Entwurf löst keine Zahlungsfrist aus.\n\n## 5. Vorschüsse und Abrechnung\n\nEin Vorschuss betrifft voraussichtlich entstehende Vergütung und Auslagen; er ist keine Abrechnung bereits erbrachter Arbeit. Seine Angemessenheit ist gesondert zu prüfen. Tatsächlich vereinnahmte Vorschüsse sind bei der späteren Abrechnung zu berücksichtigen. Die gesonderte Vorschussanforderung basiert auf fünf Stunden als vorläufigem Rechenansatz und bestätigt keinen bereits entstandenen Vergütungsanspruch oder Zahlungseingang.\n\n## 6. Gesetzliche Vergütung und Kostenerstattung\n\nDas nach dieser Vereinbarung zu prüfende Stundenhonorar kann von der gesetzlichen Vergütung abweichen. Ob und in welchem Umfang gesetzliche Mindestvergütung, Beratungshilfe, Prozesskostenhilfe oder sonstige Beschränkungen entgegenstehen, ist vor Abschluss gesondert zu prüfen. Fehlerhafte Vereinbarungen können die durchsetzbare Vergütung begrenzen; eine automatische Wirksamkeitsbestätigung erfolgt nicht.\n\n**Hinweis zur Kostenerstattung (§ 3a RVG):** Die gegnerische Partei, ein Verfahrensbeteiligter oder die Staatskasse muss im Falle der Kostenerstattung regelmäßig nicht mehr als die gesetzliche Vergütung erstatten. Eine darüber hinaus vereinbarte Vergütung kann deshalb bei der Mandantschaft verbleiben.\n\n## 7. Abschluss und Freigabe\n\nVor Verwendung sind Textform, deutliche Absetzung, Anwendungsbereich und Inhalt dieser gesonderten Vereinbarung zu prüfen. Die Erstellung dieses Entwurfs ersetzt weder eine Annahmeerklärung noch die Mandatsannahme. Die nachstehenden Felder dienen der anwaltlich festzulegenden Dokumentation; sie erklären keine allgemeine Pflicht zur eigenhändigen Unterschrift.\n\n**Ort:** Musterort \\(Demo\\)  \n**Datum / Erklärung Mandantschaft:** __________________________  \n**Name und Funktion:** [UNTERZEICHNENDE PERSON UND FUNKTION – ERFORDERLICH]  \n**Datum / Erklärung Kanzlei:** __________________________\n\n---\nEntwurfsdatum: 2026-11-11 · Vorlage 2.0.0 · Rechtsquellenstand 2026-11-11.1/a0d88691a1f4.  \nNicht Bestandteil der Vollmacht. Keine Zahlungsaufforderung oder externe Freigabe.\n"
+    },
+    {
+      "document_version": 2,
+      "template_id": "de-advance_invoice",
+      "template_version": "2.0.0",
+      "source_version": "2026-11-11.1/a0d88691a1f4",
+      "completeness_status": "NOT_READY_FOR_ISSUANCE",
+      "validation_issues": [
+        {
+          "code": "representative",
+          "field": "document_options.representative",
+          "description": "Person, Funktion und Befugnisnachweis fehlen.",
+          "severity": "missing",
+          "source_ids": []
+        },
+        {
+          "code": "invoice_invoice_issue_date",
+          "field": "document_options.invoice_issue_date",
+          "description": "Pflichtangabe vor Ausstellung ergänzen: invoice_issue_date",
+          "severity": "missing",
+          "source_ids": [
+            "ustg-14"
+          ]
+        },
+        {
+          "code": "invoice_invoice_number",
+          "field": "document_options.invoice_number",
+          "description": "Pflichtangabe vor Ausstellung ergänzen: invoice_number",
+          "severity": "missing",
+          "source_ids": [
+            "ustg-14"
+          ]
+        },
+        {
+          "code": "invoice_firm_policy.tax_identifier",
+          "field": "document_options.firm_policy.tax_identifier",
+          "description": "Pflichtangabe vor Ausstellung ergänzen: firm_policy.tax_identifier",
+          "severity": "missing",
+          "source_ids": [
+            "ustg-14"
+          ]
+        },
+        {
+          "code": "einvoice_review",
+          "field": "document_options.recipient_business_status",
+          "description": "Fallangabe: inländisches B2B-Mandat. Strukturierte E-Rechnung nach § 14 UStG grundsätzlich zu prüfen. Für Umsätze 2025/2026 kann § 27 Abs. 38 UStG eine Übergangsregelung eröffnen; Leistungszeitraum, Ausgabezeitpunkt und erforderliche Zustimmung sind zu prüfen. Die BMF-FAQ enthält ergänzende Hinweise zu Anzahlungs-, Voraus- und Abschlagsrechnungen. Strukturierte Rechnungsfähigkeit: NICHT BESTÄTIGT.",
+          "severity": "review",
+          "source_ids": [
+            "ustg-14",
+            "ustg-27",
+            "bmf-einvoice"
+          ]
+        }
+      ],
+      "missing_information": [
+        "document_options.representative",
+        "document_options.invoice_issue_date",
+        "document_options.invoice_number",
+        "document_options.firm_policy.tax_identifier"
+      ],
+      "lawyer_review_questions": [
+        "Fallangabe: inländisches B2B-Mandat. Strukturierte E-Rechnung nach § 14 UStG grundsätzlich zu prüfen. Für Umsätze 2025/2026 kann § 27 Abs. 38 UStG eine Übergangsregelung eröffnen; Leistungszeitraum, Ausgabezeitpunkt und erforderliche Zustimmung sind zu prüfen. Die BMF-FAQ enthält ergänzende Hinweise zu Anzahlungs-, Voraus- und Abschlagsrechnungen. Strukturierte Rechnungsfähigkeit: NICHT BESTÄTIGT.",
+        "Vorlage und Einzelfall professionell prüfen; automatische Validierung ist keine Rechtsfreigabe."
+      ],
+      "legal_source_ids": [
+        "rvg-9",
+        "rvg-10",
+        "ustg-12",
+        "ustg-13",
+        "ustg-14",
+        "ustg-19",
+        "ustg-27",
+        "bmf-einvoice",
+        "bgb-126b"
+      ],
+      "ready_for_issuance": false,
+      "legally_approved": false,
+      "kind": "advance_invoice",
+      "state": "pending_lawyer_approval",
+      "content_markdown": "# Vorschussanforderung\n\n**DEMO · ENTWURF · NOT_READY_FOR_ISSUANCE · NICHT AUSGESTELLT**\n\n## Absender und Empfänger\n\n**Kanzlei:** DEMO Kanzlei Lindenbogen \\(fiktiv\\)  \n\\[Kanzleianschrift noch zu ergänzen\\]  \n**Anwaltliche Bearbeitung:** \\[Bearbeitende Person noch zu ergänzen\\]  \n**Steuernummer oder USt-IdNr.:** [STEUERNUMMER ODER UST-IDNR. – ERFORDERLICH]\n\n**Empfänger:** INCEPT DEMO GmbH \\(vollständig fiktiv\\)  \n\\[Anschrift der fiktiven Gesellschaft noch zu ergänzen\\]  \n**Vertreten durch:** [NAME, FUNKTION UND BEFUGNISNACHWEIS – ERFORDERLICH]\n\n**Aktenzeichen:** demo-matter-a0ffac9bdd17493b94e6b7db3ebcec90  \n**Angelegenheit:** Fiktive Dienstleistungsforderung — Erstprüfung  \n**Gegenpartei / Beteiligte:** Nordlicht Projektservice GmbH \\(vollständig fiktiv\\)  \n**Entwurfsdatum:** 2026-11-11  \n**Vorgesehenes Ausstellungsdatum (ungeprüft):** [AUSSTELLUNGSDATUM – ERFORDERLICH]  \n**Rechnungsnummer:** [EINMALIGE RECHNUNGSNUMMER – ERFORDERLICH]\n\n## Vorschuss auf künftige anwaltliche Tätigkeit\n\nVorgesehener Leistungsgegenstand: Erste rechtliche Einschätzung der behaupteten Forderung und Anforderung von Vertrag, Rechnung, Leistungsnachweisen und Korrespondenz. Keine Klage oder externe Aktion ohne gesonderte anwaltliche Freigabe.\n\nDer Vorschuss betrifft erwartete künftige anwaltliche Tätigkeit. Es werden **keine bereits erbrachten Leistungen** abgerechnet. Fünf Stunden sind ein vorläufiger Rechenansatz, keine Zusage eines bestimmten Aufwands. Der gesetzliche Anspruch auf einen angemessenen Vorschuss und die konkrete Höhe sind vor Anforderung anwaltlich zu prüfen.\n\n| Position | Menge | Netto-Stundensatz | Betrag netto |\n| --- | ---: | ---: | ---: |\n| Vorschuss auf voraussichtliche anwaltliche Tätigkeit | 5 Stunden | 250,00 EUR | 1.250,00 EUR |\n\n**Nettobetrag:** 1.250,00 EUR  \n**Umsatzsteuer:** 19 % · 237,50 EUR  \n**Voraussichtlicher Bruttovorschuss:** 1.487,50 EUR\n\nAls ausdrücklich bereitgestellte, noch anwaltlich/steuerlich zu bestätigende Rechenannahme sind 19 % Umsatzsteuer vorgesehen. Der rechnerische Stundensatz einschließlich dieser Steuer beträgt 297,50 EUR. Grundlage laut Konfiguration: Ausdrücklich bestätigte synthetische Rechenkonfiguration: inländische steuerpflichtige anwaltliche Leistung, 19 Prozent; keine Feststellung für ein reales Mandat.\n\n**Vorgelegtes Zahlungsdatum (ungeprüfte Angabe):** Kein Zahlungseingang bestätigt; tatsächlichen Zeitpunkt nur bei feststehender Vereinnahmung ergänzen.  \nEin Zahlungseingang oder Leistungszeitpunkt wird mit diesem Entwurf nicht bestätigt. Tatsächlich vereinnahmte Vorschüsse und gegebenenfalls darauf entfallende Steuer sind in einer späteren Abrechnung nachvollziehbar zu berücksichtigen. Eine endgültige Vergütungsberechnung nach § 10 RVG wird hiermit nicht ersetzt.\n\n## Zahlungsweg und elektronische Rechnung\n\n**Zahlungsbedingungen:** Synthetische Kanzleiregel zur Prüfung: Zahlung binnen 14 Kalendertagen nach Zugang einer ordnungsgemäßen, gesondert freigegebenen Abrechnung. Dieser Entwurf löst keine Zahlungsfrist aus.  \n**Zahlungsangaben aus bereitgestellter Kanzleikonfiguration:** Nicht bereitgestellt; keine Kontoverbindung und keine Zahlungsanweisung freigegeben.\n\nFallangabe: inländisches B2B-Mandat. Strukturierte E-Rechnung nach § 14 UStG grundsätzlich zu prüfen. Für Umsätze 2025/2026 kann § 27 Abs. 38 UStG eine Übergangsregelung eröffnen; Leistungszeitraum, Ausgabezeitpunkt und erforderliche Zustimmung sind zu prüfen. Die BMF-FAQ enthält ergänzende Hinweise zu Anzahlungs-, Voraus- und Abschlagsrechnungen. Strukturierte Rechnungsfähigkeit: NICHT BESTÄTIGT.\n\nDieses Markdown-Dokument ist keine strukturierte E-Rechnung. Die Wahl einer Bezeichnung oder ein PDF-Export ersetzt keine Prüfung der gesetzlichen Rechnungsanforderungen. Fehlende Pflichtangaben, Steuerbehandlung und gegebenenfalls zulässige Übergangsregelung sind vor Ausstellung zu klären.\n\n---\nVorlage 2.0.0 · Rechtsquellenstand 2026-11-11.1/a0d88691a1f4.  \n**Nur prüfbarer Entwurf. Nicht buchen, versenden oder bezahlen. Keine Rechnung oder Zahlungsanforderung wurde ausgegeben.**\n"
+    }
+  ],
+  "assessment": {
+    "review_warnings": [],
+    "title": "DEMO Mandate Assessment Report",
+    "conclusion": "lawyer_review_required",
+    "confidence": "insufficient_for_legal_conclusions",
+    "factual_findings": [
+      {
+        "description": "Unverified synthetic intake statement: Fiktive Mandantschaft laut Intake: INCEPT DEMO GmbH (vollständig fiktiv)",
+        "status": "unverified_intake_statement",
+        "source_ids": [
+          "intake:client"
+        ]
+      },
+      {
+        "description": "Unverified synthetic intake statement: Die vollständig fiktive INCEPT DEMO GmbH behauptet eine offene Rechnung über 18.750 Euro aus Projektleistungen. Die ebenfalls fiktive Nordlicht Projektservice GmbH bestreitet die Forderung und behauptet unvollständige Leistungen. Laut synthetischem Intake wurde die Rechnung im Oktober gestellt; genaue Fälligkeit, Abnahme und Mahnung sind ungeklärt. Es liegt kein realer Unternehmensfall vor.",
+        "status": "unverified_intake_statement",
+        "source_ids": [
+          "intake:matter"
+        ]
+      },
+      {
+        "description": "Unverified synthetic intake statement: Erste rechtliche Einschätzung der behaupteten Forderung und Anforderung von Vertrag, Rechnung, Leistungsnachweisen und Korrespondenz. Keine Klage oder externe Aktion ohne gesonderte anwaltliche Freigabe.",
+        "status": "unverified_intake_statement",
+        "source_ids": [
+          "intake:scope"
+        ]
+      }
+    ],
+    "guidance": [
+      {
+        "description": "The provision addresses professional confidentiality and conflicts involving representation in the same legal matter. Intake alone does not establish that confidentiality controls or a conflict check have been completed.",
+        "status": "reference_guidance",
+        "source_ids": [
+          "brao-43a:c037b0e9538de6b5"
+        ]
+      },
+      {
+        "description": "Authority is granted by a declaration to the representative or the third party. The actual scope and any special procedural requirements require lawyer review; a generated draft does not establish authority.",
+        "status": "reference_guidance",
+        "source_ids": [
+          "bgb-167:a9c66451cf92e60f"
+        ]
+      },
+      {
+        "description": "An appropriate advance may be requested for incurred and expected fees and expenses. A five-hour demo calculation does not establish that five hours is appropriate or that services have been performed.",
+        "status": "reference_guidance",
+        "source_ids": [
+          "rvg-9:78d7300a6c25517a"
+        ]
+      },
+      {
+        "description": "The provision generally calls for text form, a clearly identified separate remuneration agreement, separation from the power of attorney, and a warning concerning limits on reimbursement. Applicability and exceptions require lawyer review.",
+        "status": "reference_guidance",
+        "source_ids": [
+          "rvg-3a:6c52f5e7738e76c4"
+        ]
+      }
+    ],
+    "missing_information": [
+      "Original contract, correspondence and supporting documents have not been reviewed.",
+      "Identity, signing authority, conflict check and mandate acceptance are not verified.",
+      "Claim merits, applicable substantive law, limitation periods and procedural deadlines are not determined.",
+      "VAT applicability, fee agreement enforceability and appropriateness of the five-hour advance require lawyer review.",
+      "No supported deadline date is supplied; no deadline has been calculated.",
+      "Document vollmacht: MISSING_INFORMATION; missing fields: document_options.representative.",
+      "Document fee_agreement: MISSING_INFORMATION; missing fields: document_options.representative.",
+      "Document advance_invoice: NOT_READY_FOR_ISSUANCE; missing fields: document_options.representative, document_options.invoice_issue_date, document_options.invoice_number, document_options.firm_policy.tax_identifier."
+    ],
+    "sources": [
+      {
+        "source_id": "intake:client",
+        "kind": "synthetic_intake",
+        "locator": "client",
+        "content": "Fiktive Mandantschaft laut Intake: INCEPT DEMO GmbH (vollständig fiktiv)",
+        "url": null,
+        "reviewed_at": null,
+        "document_date": null
+      },
+      {
+        "source_id": "intake:matter",
+        "kind": "synthetic_intake",
+        "locator": "matter.summary",
+        "content": "Die vollständig fiktive INCEPT DEMO GmbH behauptet eine offene Rechnung über 18.750 Euro aus Projektleistungen. Die ebenfalls fiktive Nordlicht Projektservice GmbH bestreitet die Forderung und behauptet unvollständige Leistungen. Laut synthetischem Intake wurde die Rechnung im Oktober gestellt; genaue Fälligkeit, Abnahme und Mahnung sind ungeklärt. Es liegt kein realer Unternehmensfall vor.",
+        "url": null,
+        "reviewed_at": null,
+        "document_date": null
+      },
+      {
+        "source_id": "intake:scope",
+        "kind": "synthetic_intake",
+        "locator": "matter.requested_scope",
+        "content": "Erste rechtliche Einschätzung der behaupteten Forderung und Anforderung von Vertrag, Rechnung, Leistungsnachweisen und Korrespondenz. Keine Klage oder externe Aktion ohne gesonderte anwaltliche Freigabe.",
+        "url": null,
+        "reviewed_at": null,
+        "document_date": null
+      },
+      {
+        "source_id": "intake:fees",
+        "kind": "synthetic_intake",
+        "locator": "fees",
+        "content": "{\"net_hourly_rate\":\"250.00\",\"currency\":\"EUR\",\"vat_mode\":\"taxable\",\"vat_percent\":\"19\",\"vat_basis\":\"Ausdrücklich bestätigte synthetische Rechenkonfiguration: inländische steuerpflichtige anwaltliche Leistung, 19 Prozent; keine Feststellung für ein reales Mandat.\"}",
+        "url": null,
+        "reviewed_at": null,
+        "document_date": null
+      },
+      {
+        "source_id": "intake:opponents",
+        "kind": "synthetic_intake",
+        "locator": "matter.opposing_parties",
+        "content": "[\"Nordlicht Projektservice GmbH (vollständig fiktiv)\"]",
+        "url": null,
+        "reviewed_at": null,
+        "document_date": null
+      },
+      {
+        "source_id": "intake:deadline",
+        "kind": "synthetic_intake",
+        "locator": "matter.claimed_deadline",
+        "content": "{\"claimed_date\": null, \"source\": null}",
+        "url": null,
+        "reviewed_at": null,
+        "document_date": null
+      },
+      {
+        "source_id": "brao-43a:c037b0e9538de6b5",
+        "kind": "legal_reference",
+        "locator": "Section 43a, paragraphs 2 and 4",
+        "content": "The provision addresses professional confidentiality and conflicts involving representation in the same legal matter. Intake alone does not establish that confidentiality controls or a conflict check have been completed.",
+        "url": "https://www.gesetze-im-internet.de/brao/__43a.html",
+        "reviewed_at": "2026-11-10",
+        "document_date": null
+      },
+      {
+        "source_id": "bgb-167:a9c66451cf92e60f",
+        "kind": "legal_reference",
+        "locator": "Section 167, paragraphs 1–2",
+        "content": "Authority is granted by a declaration to the representative or the third party. The actual scope and any special procedural requirements require lawyer review; a generated draft does not establish authority.",
+        "url": "https://www.gesetze-im-internet.de/bgb/__167.html",
+        "reviewed_at": "2026-11-10",
+        "document_date": null
+      },
+      {
+        "source_id": "rvg-9:78d7300a6c25517a",
+        "kind": "legal_reference",
+        "locator": "Section 9",
+        "content": "An appropriate advance may be requested for incurred and expected fees and expenses. A five-hour demo calculation does not establish that five hours is appropriate or that services have been performed.",
+        "url": "https://www.gesetze-im-internet.de/rvg/__9.html",
+        "reviewed_at": "2026-11-10",
+        "document_date": null
+      },
+      {
+        "source_id": "rvg-3a:6c52f5e7738e76c4",
+        "kind": "legal_reference",
+        "locator": "Section 3a, paragraph 1",
+        "content": "The provision generally calls for text form, a clearly identified separate remuneration agreement, separation from the power of attorney, and a warning concerning limits on reimbursement. Applicability and exceptions require lawyer review.",
+        "url": "https://www.gesetze-im-internet.de/rvg/__3a.html",
+        "reviewed_at": "2026-11-10",
+        "document_date": null
+      }
+    ],
+    "corpus_version": "42de3acf63a2ed3191d8a3ba3db33f82913a9d5de1c0039cd653d45501475c79",
+    "content_markdown": "# DEMO Mandate Assessment Report\n\nDEMO / ENTWURF — fiktive Daten; nicht unterschrieben, nicht versandt; anwaltliche Freigabe erforderlich.\n\nConclusion: lawyer review required. Confidence: insufficient for legal conclusions.\n\n## Intake evidence — unverified\n\n- Unverified synthetic intake statement: Fiktive Mandantschaft laut Intake: INCEPT DEMO GmbH \\(vollständig fiktiv\\) [intake:client]\n- Unverified synthetic intake statement: Die vollständig fiktive INCEPT DEMO GmbH behauptet eine offene Rechnung über 18.750 Euro aus Projektleistungen. Die ebenfalls fiktive Nordlicht Projektservice GmbH bestreitet die Forderung und behauptet unvollständige Leistungen. Laut synthetischem Intake wurde die Rechnung im Oktober gestellt; genaue Fälligkeit, Abnahme und Mahnung sind ungeklärt. Es liegt kein realer Unternehmensfall vor. [intake:matter]\n- Unverified synthetic intake statement: Erste rechtliche Einschätzung der behaupteten Forderung und Anforderung von Vertrag, Rechnung, Leistungsnachweisen und Korrespondenz. Keine Klage oder externe Aktion ohne gesonderte anwaltliche Freigabe. [intake:scope]\n\n## Retrieved reference guidance — not findings about the matter\n\n- The provision addresses professional confidentiality and conflicts involving representation in the same legal matter. Intake alone does not establish that confidentiality controls or a conflict check have been completed. [brao-43a:c037b0e9538de6b5]\n- Authority is granted by a declaration to the representative or the third party. The actual scope and any special procedural requirements require lawyer review; a generated draft does not establish authority. [bgb-167:a9c66451cf92e60f]\n- An appropriate advance may be requested for incurred and expected fees and expenses. A five-hour demo calculation does not establish that five hours is appropriate or that services have been performed. [rvg-9:78d7300a6c25517a]\n- The provision generally calls for text form, a clearly identified separate remuneration agreement, separation from the power of attorney, and a warning concerning limits on reimbursement. Applicability and exceptions require lawyer review. [rvg-3a:6c52f5e7738e76c4]\n\n## Missing information\n\n- Original contract, correspondence and supporting documents have not been reviewed.\n- Identity, signing authority, conflict check and mandate acceptance are not verified.\n- Claim merits, applicable substantive law, limitation periods and procedural deadlines are not determined.\n- VAT applicability, fee agreement enforceability and appropriateness of the five-hour advance require lawyer review.\n- No supported deadline date is supplied; no deadline has been calculated.\n\n## Sources\n\n- intake:client: client; synthetic user-supplied intake, unverified.\n- intake:matter: matter.summary; synthetic user-supplied intake, unverified.\n- intake:scope: matter.requested\\_scope; synthetic user-supplied intake, unverified.\n- intake:fees: fees; synthetic user-supplied intake, unverified.\n- intake:opponents: matter.opposing\\_parties; synthetic user-supplied intake, unverified.\n- intake:deadline: matter.claimed\\_deadline; synthetic user-supplied intake, unverified.\n- brao-43a:c037b0e9538de6b5: Section 43a, paragraphs 2 and 4 — [Section 43a, paragraphs 2 and 4](https://www.gesetze-im-internet.de/brao/__43a.html); reviewed 2026-11-10; enactment date not supplied.\n- bgb-167:a9c66451cf92e60f: Section 167, paragraphs 1–2 — [Section 167, paragraphs 1–2](https://www.gesetze-im-internet.de/bgb/__167.html); reviewed 2026-11-10; enactment date not supplied.\n- rvg-9:78d7300a6c25517a: Section 9 — [Section 9](https://www.gesetze-im-internet.de/rvg/__9.html); reviewed 2026-11-10; enactment date not supplied.\n- rvg-3a:6c52f5e7738e76c4: Section 3a, paragraph 1 — [Section 3a, paragraph 1](https://www.gesetze-im-internet.de/rvg/__3a.html); reviewed 2026-11-10; enactment date not supplied.\n\n## Document drafting validation — no legal approval\n\n- vollmacht: **MISSING_INFORMATION**; template 2.0.0. Lawyer approval pending; no issuance.\n- fee_agreement: **MISSING_INFORMATION**; template 2.0.0. Lawyer approval pending; no issuance.\n- advance_invoice: **NOT_READY_FOR_ISSUANCE**; template 2.0.0. Lawyer approval pending; no issuance.\n"
+  },
+  "proposed_actions": [
+    {
+      "action_id": "1bbace16c15845738829940e7e4c7dd6",
+      "kind": "task",
+      "state": "pending_lawyer_approval",
+      "title": "Konfliktprüfung und Mandatsannahme",
+      "detail": "Gegenparteien und verbundene Beteiligte ergänzen; keine Annahme vor Prüfung.",
+      "source_ids": [
+        "intake:opponents"
+      ],
+      "due_date": null,
+      "candidate_date": null,
+      "recipient": null,
+      "subject": null,
+      "body": null,
+      "executed": false
+    },
+    {
+      "action_id": "adb1291aa4e04666a99df35d248480c0",
+      "kind": "task",
+      "state": "pending_lawyer_approval",
+      "title": "Unterlagen und Vertretungsbefugnis prüfen",
+      "detail": "Originalvertrag, Korrespondenz, Identität und Zeichnungsberechtigung anfordern.",
+      "source_ids": [
+        "intake:matter",
+        "intake:client"
+      ],
+      "due_date": null,
+      "candidate_date": null,
+      "recipient": null,
+      "subject": null,
+      "body": null,
+      "executed": false
+    },
+    {
+      "action_id": "3e3222177c91428caa939752c3e9f7fc",
+      "kind": "task",
+      "state": "pending_lawyer_approval",
+      "title": "Entwürfe und Steuerbehandlung prüfen",
+      "detail": "Vollmacht, Vergütung und Vorschuss freigeben; keine Rechnung ausstellen.",
+      "source_ids": [
+        "intake:fees"
+      ],
+      "due_date": null,
+      "candidate_date": null,
+      "recipient": null,
+      "subject": null,
+      "body": null,
+      "executed": false
+    },
+    {
+      "action_id": "6f49db7c7aa34adebecb3e0901f7e589",
+      "kind": "potential_deadline",
+      "state": "pending_lawyer_approval",
+      "title": "Mögliche Frist anwaltlich prüfen",
+      "detail": "Nur Kandidat laut Intake; keine berechnete oder bestätigte Frist und kein Kalendereintrag. Originaldokument, Zugang/Zustellung und Rechtsgrundlage prüfen.",
+      "source_ids": [
+        "intake:deadline"
+      ],
+      "due_date": null,
+      "candidate_date": null,
+      "recipient": null,
+      "subject": null,
+      "body": null,
+      "executed": false
+    },
+    {
+      "action_id": "cf1a0bc312f34bb189dd13d1ef75e844",
+      "kind": "draft_email",
+      "state": "pending_lawyer_approval",
+      "title": "DEMO Onboarding-E-Mail",
+      "detail": "Nur Entwurf; keine Zustellung und keine Mandatsannahme.",
+      "source_ids": [
+        "intake:client",
+        "intake:scope"
+      ],
+      "due_date": null,
+      "candidate_date": null,
+      "recipient": "intake@incept-demo.invalid",
+      "subject": "DEMO — Unterlagen zur Mandatsprüfung: Fiktive Dienstleistungsforderung — Erstprüfung",
+      "body": "Guten Tag INCEPT DEMO GmbH (vollständig fiktiv), wir haben Ihre fiktive Anfrage zur Angelegenheit Fiktive Dienstleistungsforderung — Erstprüfung als Demo erfasst. Bitte stellen Sie Originalunterlagen und Angaben zu möglichen Fristen bereit. Vollmacht, Stundenhonorar und Vorschuss sind ausschließlich ungeprüfte Entwürfe. Die Annahme des Mandats und jede externe Handlung bedürfen anwaltlicher Freigabe. Es wurde nichts versandt.",
+      "executed": false
+    }
+  ],
+  "external_actions_executed": false,
+  "paid_api_calls": 0
+}

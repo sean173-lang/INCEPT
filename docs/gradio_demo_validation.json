@@ -1,0 +1,71 @@
+{
+  "demo": "INCEPT Gradio structured synthetic onboarding",
+  "actual_gradio_http_queue_callback": true,
+  "n8n_execution_id": "38",
+  "workflow_id": "l430btlFiBP5bYQB",
+  "workflow_active": false,
+  "workflow_nodes": 10,
+  "executed_nodes": [
+    "Manual Intake Trigger",
+    "Fictional Intake",
+    "Validate Intake",
+    "Input Valid?",
+    "POST Onboarding Preview",
+    "Validate Onboarding Bundle",
+    "Bundle Valid?",
+    "Success Summary",
+    "Execution Summary"
+  ],
+  "n8n_status": "success",
+  "business_success": true,
+  "documents": {
+    "vollmacht": {
+      "template_version": "2.0.0",
+      "status": "MISSING_INFORMATION",
+      "approved": false,
+      "ready_for_issuance": false
+    },
+    "fee_agreement": {
+      "template_version": "2.0.0",
+      "status": "MISSING_INFORMATION",
+      "approved": false,
+      "ready_for_issuance": false
+    },
+    "advance_invoice": {
+      "template_version": "2.0.0",
+      "status": "NOT_READY_FOR_ISSUANCE",
+      "approved": false,
+      "ready_for_issuance": false
+    }
+  },
+  "advance": {
+    "net": "1250.00",
+    "vat": "237.50",
+    "gross": "1487.50",
+    "currency": "EUR",
+    "scope": "explicit synthetic demo calculation only"
+  },
+  "pending_actions": 5,
+  "provider_requests": 0,
+  "new_google_calls": 0,
+  "new_emails": 0,
+  "mandate_accepted": false,
+  "invoice_issued": false,
+  "ai_mode": "disabled; deterministic backend assessment",
+  "source": "real local FastAPI onboarding result",
+  "saved_fixture_http_callback_verified": true,
+  "saved_fixture_claims_new_execution": false,
+  "historical_workflows_unchanged": 21,
+  "historical_evidence_files_unchanged": 154,
+  "limits": [
+    "The current demo does not establish a live accepted AI synthesis or fresh external research.",
+    "Earlier Google API verification is historical evidence, separate from this run.",
+    "Local demonstration only; professional legal approval is outstanding."
+  ],
+  "repeat_execution_id": "39",
+  "repeat_n8n_status": "success",
+  "restart_and_repeat_verified": true,
+  "repeat_reused_same_matter": true,
+  "repeat_documents_and_amounts_unchanged": true,
+  "full_offline_tests_passed": 283
+}

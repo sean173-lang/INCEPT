@@ -1,0 +1,74 @@
+{
+  "document_options": {
+    "representative": null,
+    "representation_scope": "out_of_court",
+    "requested_ancillary_powers": [],
+    "place": "Musterort (Demo)",
+    "engagement_law": "Germany",
+    "firm_policy": {
+      "policy_id": "SYNTHETIC-LINDENBOGEN-2026-v1",
+      "supplied_for_demo_review": true,
+      "net_hourly_rate": "250.00",
+      "billing_method": "actual_minutes",
+      "billing_increment_minutes": null,
+      "time_recording": "Tätigkeitsnachweis mit Datum, bearbeitender Person, Tätigkeitsbeschreibung und tatsächlicher Dauer in Minuten; keine pauschale Aufrundung.",
+      "expenses_terms": "Auslagen werden nur nach vorheriger gesonderter Vereinbarung angesetzt; in diesem Entwurf ist keine Auslagenpauschale vereinbart.",
+      "payment_terms": "Synthetische Kanzleiregel zur Prüfung: Zahlung binnen 14 Kalendertagen nach Zugang einer ordnungsgemäßen, gesondert freigegebenen Abrechnung. Dieser Entwurf löst keine Zahlungsfrist aus.",
+      "other_professionals_terms": "Für andere Berufsträger sind keine Stundensätze vereinbart. Ein Einsatz mit zusätzlichen Kosten bedarf einer gesonderten Vereinbarung.",
+      "tax_identifier": null,
+      "payment_instructions": null,
+      "vat_configuration_confirmed_for_demo": true
+    },
+    "invoice_number": null,
+    "invoice_issue_date": null,
+    "payment_received_date": null,
+    "recipient_business_status": "business",
+    "supplier_domestic": true,
+    "recipient_domestic": true,
+    "previous_year_turnover_le_800000": null
+  },
+  "synthetic_data": true,
+  "idempotency_key": "incept-gradio-fictional-german-company-v1",
+  "client": {
+    "name": "INCEPT DEMO GmbH (vollständig fiktiv)",
+    "address": "[Anschrift der fiktiven Gesellschaft noch zu ergänzen]",
+    "email": "intake@incept-demo.invalid",
+    "jurisdiction": "Germany",
+    "client_type": "company",
+    "registration_number": null,
+    "register_court": null,
+    "register_type": null,
+    "approved_provider_id": null
+  },
+  "firm": {
+    "name": "DEMO Kanzlei Lindenbogen (fiktiv)",
+    "address": "[Kanzleianschrift noch zu ergänzen]",
+    "email": "kanzlei@lindenbogen.invalid",
+    "jurisdiction": "Germany",
+    "client_type": "unknown",
+    "registration_number": null,
+    "register_court": null,
+    "register_type": null,
+    "approved_provider_id": null,
+    "lawyer_name": "[Bearbeitende Person noch zu ergänzen]"
+  },
+  "matter": {
+    "title": "Fiktive Dienstleistungsforderung — Erstprüfung",
+    "summary": "Die vollständig fiktive INCEPT DEMO GmbH behauptet eine offene Rechnung über 18.750 Euro aus Projektleistungen. Die ebenfalls fiktive Nordlicht Projektservice GmbH bestreitet die Forderung und behauptet unvollständige Leistungen. Laut synthetischem Intake wurde die Rechnung im Oktober gestellt; genaue Fälligkeit, Abnahme und Mahnung sind ungeklärt. Es liegt kein realer Unternehmensfall vor.",
+    "requested_scope": "Erste rechtliche Einschätzung der behaupteten Forderung und Anforderung von Vertrag, Rechnung, Leistungsnachweisen und Korrespondenz. Keine Klage oder externe Aktion ohne gesonderte anwaltliche Freigabe.",
+    "opposing_parties": [
+      "Nordlicht Projektservice GmbH (vollständig fiktiv)"
+    ],
+    "claimed_deadline": null,
+    "deadline_source": null,
+    "governing_law": "Germany"
+  },
+  "fees": {
+    "net_hourly_rate": "250.00",
+    "currency": "EUR",
+    "vat_mode": "taxable",
+    "vat_percent": "19",
+    "vat_basis": "Ausdrücklich bestätigte synthetische Rechenkonfiguration: inländische steuerpflichtige anwaltliche Leistung, 19 Prozent; keine Feststellung für ein reales Mandat."
+  },
+  "draft_date": "2026-11-11"
+}

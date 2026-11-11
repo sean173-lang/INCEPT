@@ -30,7 +30,7 @@ Reusable boundaries: `scripts/company_service.py` verifies details and registrat
 
 Identity jurisdiction does not select applicable law. The new workflow requires explicit governing law before German substantive research. UK/unknown substantive analysis remains unverified. Registry consistency neither proves authority to instruct nor replaces professional conflicts checks.
 
-The fixture-only corporate planner retains identity, litigation and regulatory topics; the discontinued financial topic is rejected. The new helper bounds cached operations to three and external operations to zero. Gradio and approval execution are future work.
+The fixture-only corporate planner retains identity, litigation and regulatory topics; the discontinued financial topic is rejected. The new helper bounds cached operations to three and external operations to zero. Gradio now wraps a separate safe structured-intake demonstration; approval execution remains unimplemented. See [demo architecture](gradio_demo.md).
 
 See [setup and evidence policy](api_usage.md).
 
@@ -39,7 +39,7 @@ See [setup and evidence policy](api_usage.md).
 
 Execution 19 proves the approved German demo used the real Google integrations and bounded official-source research. Executions 20–23 prove separate inactive n8n copies process four synthetic scenarios through real local helpers; their Google and legislation nodes are fixture substitutions. These are distinct claims. Corporate source consistency is not fresh registry verification, a conflicts check or authority to instruct. The original imported corporate workflow remains unchanged; corrected development exports and isolated copies contain the UK guidance-validation fix.
 
-Historical LEGALFLOW M&A research and financial modules remain preserved and outside the INCEPT intake path. Gradio is planned, not implemented.
+Historical LEGALFLOW M&A research and financial modules remain preserved and outside the INCEPT intake path. Gradio wraps the separate structured DEMO workflow; see [launch and limits](gradio_demo.md).
 
 ## Optional AI synthesis development path
 
@@ -47,4 +47,4 @@ The existing canonical 37-node flow remains unchanged. A separate inactive 40-no
 
 The existing atomic onboarding preview creates protected document drafts before this optional synthesis stage. This intentionally preserves the working contract rather than moving generation behind the model. An unavailable/rejected model response retains the original deterministic assessment and explicitly labels AI analysis unavailable. Model output is distinct from source facts and source classifications; exact quotes/citations are validated, but semantic/legal correctness still needs professional review.
 
-Implementation and tests are offline with mock outputs; no live model run is claimed. See [AI synthesis architecture, schema, cost limits and reproduction](ai_synthesis.md).
+Version-2 synthesis tests use mocks. Earlier live synthesis returned output but was rejected in execution 34; no accepted live AI report is claimed. See [AI synthesis architecture, schema, cost limits and reproduction](ai_synthesis.md).
