@@ -86,6 +86,7 @@ class PrimaryResearchTests(OfflineTestCase):
         request=self.request(retrieved_at=datetime.now(timezone.utc).isoformat()).model_dump(mode='json')
         with tempfile.TemporaryDirectory() as tmp:
             app=create_app(cache_dir=None,ledger_path=None,onboarding_db=Path(tmp)/'preview.sqlite3')
+            app.state.ai_synthesis.resolver.receipt_dir=Path(tmp)/'receipts'
             with TestClient(app) as client:
                 result=client.post('/v1/onboarding/research/verify',json=request)
                 self.assertEqual(result.status_code,200,result.text);self.assertEqual(result.json()['status'],'verified')

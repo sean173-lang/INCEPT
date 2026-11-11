@@ -5,9 +5,9 @@
   "live_billing_verified": false,
   "reasoning_quality_live_verified": false,
   "sdk_version_tested": "3.46.0",
-  "full_test_count": 212,
-  "new_synthesis_tests": 23,
-  "module_imports": 32,
+  "full_test_count": 233,
+  "new_synthesis_tests": 44,
+  "module_imports": 34,
   "canonical_workflow_nodes": 37,
   "new_workflow_nodes": 40,
   "canonical_export_unchanged": true,
@@ -50,5 +50,9 @@
     "Quote/citation checks establish attribution, not semantic entailment.",
     "Original Ironhack rubric unavailable; LLM requirement unconfirmed.",
     "Live execution requires actual billing verification and explicit approval."
-  ]
+  ],
+  "audit_regression_count": 20,
+  "original_audit_probes_failed_before_fix": 4,
+  "audit_repairs": "offline_verified_no_live_requests",
+  "primary_receipts": "server_checked_submitted_wording_not_independent_http_attestation"
 }

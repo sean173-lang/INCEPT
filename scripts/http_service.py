@@ -35,7 +35,7 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
                verification_ttl=900, onboarding_db=DEFAULT_DB, corporate_cache_dir='data/api_cache', ai_service=None):
     if not development and not service_token:
         raise ValueError('Live mode requires a service authentication token')
-    synthesis=ai_service or SynthesisService()
+    synthesis=ai_service or SynthesisService(corporate_cache_dir=corporate_cache_dir,allow_demo=development)
     if synthesis.config.enabled and not service_token:
         raise ValueError('AI synthesis opt-in requires service authentication even in development')
     tracker = UsageTracker(approved=allow_paid, development=development,
@@ -138,7 +138,8 @@ def create_app(*, development=True, service_token=None, allow_paid=False,
         if not development:
             raise ServiceError(403,'development_required','Primary-source verification supports synthetic development intake only.')
         try:
-            return verify_research(request)
+            result=verify_research(request)
+            return synthesis.resolver.record_primary(result,request.bundle)
         except ValueError:
             raise ServiceError(422,'research_context_mismatch','Research source and bundle context could not be validated.') from None
 

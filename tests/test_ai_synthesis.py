@@ -93,7 +93,7 @@ class SynthesisTests(OfflineTestCase):
         raw,packet=self.output()
         altered=self.cases['germany_company'].model_copy(deep=True)
         altered.corporate_result.client_id='unrelated-client'
-        self.assertEqual(self.service().run(altered).reason,'invalid_evidence_context')
+        self.assertEqual(self.service().run(altered).reason,'evidence_provenance_rejected')
         altered=self.cases['individual'].model_copy(deep=True)
         altered.bundle.matter.client_id='unrelated-client'
         self.assertEqual(self.service().run(altered).reason,'invalid_evidence_context')
@@ -127,7 +127,7 @@ class SynthesisTests(OfflineTestCase):
         with self.assertRaises(ValueError):validate_synthesis(AISynthesis.model_validate(raw),packet)
         request=self.cases['individual'].model_copy(deep=True)
         next(s for s in request.bundle.assessment.sources if s.kind=='legal_reference').content+=' Invented legal text.'
-        self.assertEqual(self.service().run(request).reason,'invalid_evidence_context')
+        self.assertEqual(self.service().run(request).reason,'evidence_provenance_rejected')
 
     def test_contradictions_and_missing_authority_are_in_supplied_uncertainty_context(self):
         request=self.cases['germany_company'].model_copy(deep=True)
@@ -135,14 +135,16 @@ class SynthesisTests(OfflineTestCase):
         request.corporate_result.missing_evidence.append('Representative authority remains unverified.')
         # No deterministic system can force semantic quality merely from a mock.
         # Verify exact contrary evidence is passed, not removed or promoted.
+        with self.assertRaises(ValueError):evidence_packet(request)
+        self.assertEqual(self.service().run(request).reason,'evidence_provenance_rejected')
+        request=self.cases['individual'].model_copy(deep=True)
+        request.bundle.matter.summary='The client alleges fraud by the opposing party. The opposing party denies fraud.'
         packet=evidence_packet(request)
-        self.assertIn('Representative authority remains unverified',json.dumps(packet))
-        # Explicit corporate discrepancies must also reach the model.
-        self.assertIn('Conflicting reported registration number',json.dumps(packet))
+        self.assertTrue(packet['issue_support']['fraud_allegation']['contradictions'])
         result=self.service().run(request)
         self.assertEqual(result.status,'completed')
-        self.assertTrue(any('conflicting registration' in item.statement for item in result.synthesis.uncertainties_and_limitations))
-        self.assertIn('Conflicting reported registration number',result.assessment.content_markdown)
+        self.assertTrue(any(item.issue_category=='fraud_allegation' for item in result.synthesis.uncertainties_and_limitations))
+        self.assertIn('alleges fraud',result.assessment.content_markdown)
 
     def test_timeout_and_crash_reservations_block_restart_retry(self):
         call=MagicMock(side_effect=TimeoutError('private provider detail'))
@@ -235,6 +237,21 @@ class SynthesisTests(OfflineTestCase):
             output=self.code('Validate AI Synthesis Response',{'statusCode':200,'body':bad},{'Unified Corporate Mandate Report':base})
             self.assertEqual(output['ai_synthesis']['status'],'unavailable')
 
+    def test_n8n_repair_warnings_and_structured_state_checks(self):
+        request=self.cases['individual'];result=self.service().run(request).model_dump(mode='json')
+        base={'bundle':request.bundle.model_dump(mode='json'),'uncertainty':[]}
+        for reason in ('evidence_provenance_rejected','approval_or_issuance_language_rejected','unsupported_issue_or_adverse_content_rejected'):
+            failed=self.code('Validate AI Synthesis Response',{'statusCode':200,'body':{'status':'unavailable','reason':reason}}, {'Unified Corporate Mandate Report':base})
+            self.assertTrue(failed['uncertainty'])
+            self.assertTrue(failed['bundle']['assessment']['review_warnings'])
+            self.assertEqual(failed['bundle']['documents'],base['bundle']['documents'])
+        for mutate in (lambda r:r['synthesis'].update(invoice_issued=True),
+                       lambda r:r['synthesis']['mandate_summary'].update(action_state='issued'),
+                       lambda r:r['synthesis']['mandate_summary'].update(issue_category='unsupported-category')):
+            bad=copy.deepcopy(result);mutate(bad)
+            failed=self.code('Validate AI Synthesis Response',{'statusCode':200,'body':bad},{'Unified Corporate Mandate Report':base})
+            self.assertEqual(failed['ai_synthesis']['status'],'unavailable')
+
     def test_new_export_inactive_reproducible_and_canonical_unchanged(self):
         saved=json.loads(Path('workflows/incept_ai_synthesis_dev.json').read_text())
         graph=build_workflow();self.assertEqual(saved,graph);self.assertEqual(len(graph['nodes']),40);self.assertFalse(graph['active'])
@@ -308,8 +325,10 @@ class SynthesisTests(OfflineTestCase):
         primary=verify_research(PrimaryResearchRequest(synthetic_data=True,matter=matter,bundle=request.bundle,
             source_url=SOURCE_URL,retrieved_at=now.isoformat(),http_status=200,source_html=Path('tests/fixtures/bgb286_sanitized.html').read_text()),now=now)
         self.assertEqual(primary.status,'verified')
+        service=self.service()
+        primary=service.resolver.record_primary(primary,request.bundle)
         request.bundle.assessment=primary.enriched_assessment;request.primary_research=primary
-        before=request.model_dump_json();packet=evidence_packet(request)
+        before=request.model_dump_json();packet=evidence_packet(request,service.resolver)
         for rule in primary.verified_rules:
             self.assertEqual(packet['sources'][rule.source_id]['retrieved_at'],primary.retrieved_at)
             self.assertEqual(packet['sources'][rule.source_id]['source_sha256'],primary.source_sha256)

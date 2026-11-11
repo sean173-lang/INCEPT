@@ -74,48 +74,48 @@ Citation/quote validation checks attribution; it does not prove semantic entailm
 
 ### Mandate summary — unverified intake
 
-- Fiktive Intake-Angabe: Eine DEMO Lieferantin verlangt Zahlung aus einem angeblichen Liefervertrag. Vertrag, Rechnung und Korrespondenz wurden noch nicht vorgelegt. Die Berechtigung der Forderung ist ungeprüft. [synthesis:intake:matter]; unverified_intake.
+- Fiktive Intake-Angabe: Eine DEMO Lieferantin verlangt Zahlung aus einem angeblichen Liefervertrag. Vertrag, Rechnung und Korrespondenz wurden noch nicht vorgelegt. Die Berechtigung der Forderung ist ungeprüft. [synthesis:intake:matter]; unverified_intake; issue mandate_intake; not_performed_pending_lawyer_approval.
   Evidence excerpt: Fiktive Intake-Angabe: Eine DEMO Lieferantin verlangt Zahlung aus einem angeblichen Liefervertrag. Vertrag, Rechnung und Korrespondenz wurden noch nicht vorgelegt. Die Berechtigung der Forderung ist ungeprüft..
 
 ### Source information — retain evidence classification
 
-- INCEPT DEMO GmbH [synthesis:intake:client]; unverified_intake.
+- INCEPT DEMO GmbH [synthesis:intake:client]; unverified_intake; issue mandate_intake; not_performed_pending_lawyer_approval.
   Evidence excerpt: INCEPT DEMO GmbH.
 
 ### Preliminary legal questions
 
-- Which prerequisites and exceptions require review before applying this guidance to the matter? [brao-43a:c037b0e9538de6b5]; question.
+- Which prerequisites and exceptions require review before applying this guidance to the matter? [brao-43a:c037b0e9538de6b5]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: The provision addresses professional confidentiality and conflicts involving representation in the same legal matter. Intake alone does not establish that confidentiality controls or a conflict check have been completed. — [source](<https://www.gesetze-im-internet.de/brao/__43a.html>).
 
 ### Conditional AI analysis
 
-- If a dispute is described only in intake, the lawyer may need original facts and a completed conflicts review before treating guidance as applicable. [brao-43a:c037b0e9538de6b5, synthesis:intake:matter]; preliminary_analysis.
+- If a dispute is described only in intake, the lawyer may need original facts and a completed conflicts review before treating guidance as applicable. [brao-43a:c037b0e9538de6b5, synthesis:intake:matter]; preliminary_analysis; issue mandate_intake; not_performed_pending_lawyer_approval.
   Evidence excerpt: The provision addresses professional confidentiality and conflicts involving representation in the same legal matter. Intake alone does not establish that confidentiality controls or a conflict check have been completed. — [source](<https://www.gesetze-im-internet.de/brao/__43a.html>).
   Evidence excerpt: Fiktive Intake-Angabe: Eine DEMO Lieferantin verlangt Zahlung aus einem angeblichen Liefervertrag. Vertrag, Rechnung und Korrespondenz wurden noch nicht vorgelegt. Die Berechtigung der Forderung ist ungeprüft..
 
 ### Corporate information — cached reports / unverified leads
 
-- Legal name and supplied register constraints match the cached provider record: INCEPT DEMO GmbH [synthesis:corporate:a2132a577934f19c]; unverified_lead.
+- Legal name and supplied register constraints match the cached provider record: INCEPT DEMO GmbH [synthesis:corporate:a2132a577934f19c]; unverified_lead; issue corporate_identity; not_performed_pending_lawyer_approval.
   Evidence excerpt: Legal name and supplied register constraints match the cached provider record: INCEPT DEMO GmbH.
 
 ### Missing information
 
-- Which original contract, correspondence and trigger evidence should the lawyer request? [synthesis:intake:coverage]; question.
+- Which original contract, correspondence and trigger evidence should the lawyer request? [synthesis:intake:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified..
 
 ### Uncertainties and limitations
 
-- Which intake assertions, governing-law assumptions and source limitations remain unresolved? [synthesis:intake:coverage]; question.
+- Which intake assertions, governing-law assumptions and source limitations remain unresolved? [synthesis:intake:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified..
 
 ### Questions for lawyer review
 
-- What evidence is needed to review identity, conflicts and representative authority? [synthesis:intake:coverage]; question.
+- What evidence is needed to review identity, conflicts and representative authority? [synthesis:intake:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified..
-- What original evidence is needed to resolve corporate identity discrepancies and representative authority? [synthesis:corporate:coverage]; question.
+- What original evidence is needed to resolve corporate identity discrepancies and representative authority? [synthesis:corporate:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Register records do not establish the authority of the person instructing the firm..
 
 ### Proposed next steps — questions only; no execution
 
-- Should the lawyer review the original documents and resolve missing evidence before any external action? [synthesis:intake:coverage]; question.
+- Should the lawyer review the original documents and resolve missing evidence before any external action? [synthesis:intake:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified..

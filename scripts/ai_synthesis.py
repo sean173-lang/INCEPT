@@ -19,9 +19,10 @@ from scripts.company_service import normalized, registration_matches
 from scripts.onboarding_schemas import OnboardingBundle, MandateAssessment, AssessmentSource
 from scripts.corporate_intelligence import CorporateResult, public_url
 from scripts.local_rag import LocalRAG
-from scripts.onboarding import CORPUS
-from scripts.primary_research import RULES, SOURCE_URL, PrimaryResearchResult
+from scripts.primary_research import PrimaryResearchResult
 from scripts.report_renderer import text
+from scripts.ai_evidence import EvidenceResolver,ProvenanceError
+from scripts.ai_content_policy import IssueCategory,AssertionType,ActionState,support_for,validate_content,validate_contradictions,OUT_OF_SCOPE,ContentPolicyError,ApprovalAssertionError
 
 
 class Quote(Schema):
@@ -31,7 +32,10 @@ class Quote(Schema):
 
 class Statement(Schema):
     statement: str = Field(min_length=10, max_length=900)
-    evidence_status: Literal['unverified_intake', 'source_guidance', 'cached_report', 'unverified_lead', 'preliminary_analysis', 'question']
+    issue_category: IssueCategory
+    assertion_type: AssertionType
+    action_state: ActionState
+    evidence_status: Literal['unverified_intake', 'client_alleged', 'official_record_reported', 'source_guidance', 'cached_report', 'unverified_lead', 'preliminary_analysis', 'question']
     source_ids: list[str] = Field(min_length=1, max_length=4)
     evidence_quotes: list[Quote] = Field(min_length=1, max_length=4)
 
@@ -43,6 +47,10 @@ class AISynthesis(Schema):
     opposing_parties: list[str]
     governing_law: str
     lawyer_review_required: Literal[True]
+    mandate_accepted: Literal[False]
+    documents_approved: Literal[False]
+    invoice_issued: Literal[False]
+    external_actions_executed: Literal[False]
     mandate_summary: Statement
     factual_background: list[Statement] = Field(min_length=1, max_length=5)
     preliminary_legal_issues: list[Statement] = Field(max_length=5)
@@ -70,6 +78,7 @@ class SynthesisResponse(Schema):
     evidence_fingerprint: str
     synthesis: AISynthesis | None
     assessment: MandateAssessment
+    validated_issue_categories: list[IssueCategory] = Field(default_factory=list)
     cache_hit: bool = False
     input_token_upper_bound: int = 0
     output_token_limit: int = 0
@@ -98,6 +107,14 @@ confirm liability, conflict clearance, representative authority or a deadline.
 Never propose sending, approving, issuing, paying or changing contractual terms.
 Next steps are questions for a lawyer, not executable commands. Explicitly address
 missing facts, evidence contradictions, jurisdiction uncertainty and limitations.
+Use only issue_category values in issue_support. Every statement has assertion_type
+(source_excerpt, conditional_analysis or lawyer_review_request) and action_state
+not_performed_pending_lawyer_approval. The four top-level performed/approved/issued
+flags must all be false. Review requests must be genuine questions, not assertions
+with a question mark. Adverse allegations require exact complete evidence excerpts,
+CLIENT-ALLEGED/unverified attribution, or explicit uncertain lawyer-review questions
+citing the specific adverse support span. Never infer misconduct from late payment
+or insolvency status. Contradictions require uncertainty citing both sides.
 Return the strict JSON schema. All analysis is AI-generated and requires lawyer review.
 """
 
@@ -119,8 +136,9 @@ def canonical(value):
     return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
 
 
-def evidence_packet(request):
+def evidence_packet(request, resolver=None):
     """Project only necessary evidence; exclude contacts, fees, documents and actions."""
+    resolver=resolver or EvidenceResolver()
     b = request.bundle
     if b.matter.client_id != b.client.client_id:
         raise ValueError('Matter/client link mismatch')
@@ -140,30 +158,17 @@ def evidence_packet(request):
         'review_warnings': [w.model_dump() for w in b.assessment.review_warnings],
         'limitations': ['Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified.',
                        'No missing trigger dates can be supplied or confirmed.', 'Professional lawyer review is mandatory.']}), 'question')
-    known = {**LocalRAG(CORPUS).chunks, **LocalRAG().chunks}
-    # Only exact, known legal cards or reviewed primary wording qualify as guidance.
-    if context['governing_law'] == 'Germany' or context['governing_law'] == 'United Kingdom':
-        jurisdiction = 'Germany' if context['governing_law'] == 'Germany' else 'UK'
-        for source in b.assessment.sources:
-            if source.kind != 'legal_reference':
-                continue
-            card = known.get(source.source_id)
-            valid = bool(card and card['jurisdiction'] in (jurisdiction, 'EU') and source.content == card['text'] and source.url == card['source_url'] and source.locator == card['locator'])
-            primary = jurisdiction == 'Germany' and any(source.source_id.startswith('primary:bgb286:'+n+':') and source.content == quote and source.url == SOURCE_URL and source.locator == 'BGB §286('+n+')' for n,(quote,_) in RULES.items())
-            if not (valid or primary):
-                raise ValueError('Unrecognized or altered legal reference')
-            primary_event=request.primary_research if primary else None
-            if primary_event:
-                if primary_event.status not in ('verified','partially_verified') or primary_event.source_url!=SOURCE_URL or primary_event.http_status!=200 or not primary_event.source_sha256 or not re.fullmatch(r'[a-f0-9]{64}',primary_event.source_sha256):
-                    raise ValueError('Invalid primary-source provenance')
-                if not any(rule.source_id==source.source_id and rule.quote==source.content and source.source_id.endswith(primary_event.source_sha256[:16]) for rule in primary_event.verified_rules):
-                    raise ValueError('Primary-source identity/provenance mismatch')
-            add(source.source_id, source.content, 'source_guidance', url=source.url, locator=source.locator,
-                reviewed_at=source.reviewed_at, document_date=source.document_date, title=card['title'] if valid else source.locator,
-                retrieved_at=primary_event.retrieved_at if primary_event else None,source_sha256=primary_event.source_sha256 if primary_event else None,
-                scope='applicable_legal_guidance',acquisition='submitted_reference_not_independently_refetched')
+    # Validate metadata even for sources excluded by governing-law scope.
+    for source in b.assessment.sources:
+        if source.kind!='legal_reference':continue
+        trusted=resolver.legal(source,b,request.primary_research)
+        jurisdiction={'Germany':'Germany','United Kingdom':'UK'}.get(context['governing_law'])
+        if jurisdiction and trusted['jurisdiction'] in (jurisdiction,'EU'):
+            metadata={k:v for k,v in trusted.items() if k not in ('content','kind','source_id','jurisdiction')}
+            add(source.source_id,trusted['content'],'source_guidance',scope='applicable_legal_guidance',**metadata)
     corporate = request.corporate_result
     if corporate:
+        corporate,registry_record=resolver.corporate(corporate,b)
         if corporate.client_id != b.client.client_id or corporate.matter_id != b.matter.matter_id or b.client.client_type != 'company':
             raise ValueError('Corporate evidence role/context mismatch')
         if corporate.verified_legal_name and normalized(corporate.verified_legal_name) != normalized(b.client.name):
@@ -188,10 +193,21 @@ def evidence_packet(request):
             add('synthesis:registry-guidance:'+reference['chunk_id'],reference['text'],'source_guidance',
                 scope='registry_reference_only_not_substantive_matter_law',url=reference['source_url'],
                 locator=reference['locator'],reviewed_at=reference['reviewed_at'],document_date=reference['document_date'])
+        if registry_record and registry_record.provider=='Companies House':
+            status=registry_record.payload.get('company_status')
+            if status in ('liquidation','administration','receivership'):
+                add('synthesis:corporate:official-status:'+corporate.sources[0].source_id.split(':')[-1],
+                    'Companies House reports company status: '+status+'.','official_record_reported',
+                    retrieved_at=registry_record.retrieved_at,freshness=corporate.sources[0].freshness,
+                    url='https://find-and-update.company-information.service.gov.uk/company/'+registry_record.registry_identifier,
+                    original_source_id=corporate.sources[0].source_id,
+                    limitation='Historical provider report, not current verification or evidence of misconduct.')
         add('synthesis:corporate:coverage', canonical({'status': corporate.status, 'identity_status': corporate.identity_verification_status,
             'missing_evidence': corporate.missing_evidence, 'discrepancies': corporate.discrepancies, 'warnings': [w.model_dump() for w in corporate.warnings],
             'limitations': corporate.limitations, 'current_registry_verification': False}), 'question')
-    return {'context': context, 'sources': sources}
+    packet={'context': context, 'sources': sources}
+    packet['issue_support']=support_for(packet)
+    return packet
 
 
 def statements(output):
@@ -224,20 +240,25 @@ def validate_synthesis(output, packet):
         for quote in item.evidence_quotes:
             if quote.quote not in sources[quote.source_id]['content']:
                 raise ValueError('Quote does not match supplied evidence')
+        adverse=validate_content(item,field,packet)
         if field in questions:
-            if item.evidence_status != 'question' or not item.statement.endswith('?'):
+            if item.assertion_type!='lawyer_review_request' or item.evidence_status != 'question' or not item.statement.endswith('?'):
                 raise ValueError('Review issue must remain a question')
         elif field == 'source_supported_analysis':
-            if item.evidence_status != 'preliminary_analysis' or not item.statement.startswith('If ') or not any(term in item.statement for term in (' may ', ' could ')) or not ids & legal or not any(id=='synthesis:intake:matter' or id.startswith('synthesis:corporate:') and id!='synthesis:corporate:coverage' for id in ids):
+            if adverse:
+                if item.assertion_type!='lawyer_review_request' or item.evidence_status!='question':raise ValueError('Adverse analysis requires lawyer review question')
+            elif item.assertion_type!='conditional_analysis':raise ValueError('Analysis type mismatch')
+            if not adverse and (item.evidence_status != 'preliminary_analysis' or not item.statement.startswith('If ') or not any(term in item.statement for term in (' may ', ' could ')) or not ids & legal or not any(id=='synthesis:intake:matter' or id.startswith('synthesis:corporate:') and id!='synthesis:corporate:coverage' for id in ids)):
                 raise ValueError('Unsupported legal conclusion')
         else:
+            if item.assertion_type!='source_excerpt':raise ValueError('Factual assertion type mismatch')
             if not any(item.statement == q.quote for q in item.evidence_quotes):
                 raise ValueError('Factual statements must be extractive')
-            if any(sources[id]['classification'] != item.evidence_status for id in ids):
+            if not adverse and any(sources[id]['classification'] != item.evidence_status for id in ids):
                 raise ValueError('Evidence status escalation')
-        if field=='mandate_summary' and (item.evidence_status!='unverified_intake' or ids!={'synthesis:intake:matter'}):
+        if field=='mandate_summary' and (item.evidence_status not in ('unverified_intake','client_alleged') or ids!={'synthesis:intake:matter'}):
             raise ValueError('Mandate summary must describe supplied intake matter')
-        if field=='factual_background' and (item.evidence_status!='unverified_intake' or not ids<={'synthesis:intake:client','synthesis:intake:matter','synthesis:intake:opponents'}):
+        if field=='factual_background' and (item.evidence_status not in ('unverified_intake','client_alleged') or not ids<={'synthesis:intake:client','synthesis:intake:matter','synthesis:intake:opponents'}):
             raise ValueError('Background cannot promote guidance or coverage into case facts')
         if field == 'corporate_intelligence_observations' and not all(id.startswith('synthesis:corporate:') and id != 'synthesis:corporate:coverage' for id in ids):
             raise ValueError('Corporate observation lacks corporate evidence')
@@ -259,6 +280,7 @@ def validate_synthesis(output, packet):
                 raise ValueError('Generated court authority forbidden')
             if re.search(r'\b(?:is liable|liability is established|has authority|no conflict exists|deadline is|mandate is accepted|legally approved|send email|issue invoice|create event)\b', item.statement, re.I):
                 raise ValueError('Prohibited legal conclusion or external action')
+    validate_contradictions(output,packet)
     return output
 
 
@@ -280,8 +302,10 @@ class AIConfig:
 
 
 class SynthesisService:
-    def __init__(self, config=None, *, ledger_path='data/ai_synthesis/requests.sqlite3', transport=None):
+    def __init__(self, config=None, *, ledger_path='data/ai_synthesis/requests.sqlite3', transport=None,
+                 corporate_cache_dir='data/api_cache',allow_demo=True,resolver=None):
         self.config=config or AIConfig.from_environment(); self.ledger_path=Path(ledger_path)
+        self.resolver=resolver or EvidenceResolver(corporate_cache_dir,self.ledger_path.parent/'evidence_receipts',allow_demo=allow_demo)
         self.mocked=transport is not None
         self.transport=transport or self.openai_call; self.lock=RLock()
 
@@ -316,11 +340,20 @@ class SynthesisService:
                 assessment.content_markdown+='\n## AI analysis unavailable\n\nDeterministic assessment retained; no usable AI analysis is claimed. Reason: '+reason+'. Lawyer review required.\n'
             return SynthesisResponse(status=status,reason=reason,execution_mode='mock' if self.mocked else 'live' if output or live_request else 'disabled',model_used=bool(output) and not self.mocked,live_request=live_request,
                 model=self.config.model or None,evidence_fingerprint=fingerprint,synthesis=output,assessment=assessment,
-                cache_hit=cached,input_token_upper_bound=input_bound,output_token_limit=self.config.max_output_tokens,usage=usage)
+                validated_issue_categories=list(packet['issue_support']) if packet else [],cache_hit=cached,input_token_upper_bound=input_bound,output_token_limit=self.config.max_output_tokens,usage=usage)
         try:
-            packet=evidence_packet(request); fingerprint=hashlib.sha256(canonical(packet).encode()).hexdigest()
+            packet=evidence_packet(request,self.resolver); fingerprint=hashlib.sha256(canonical(packet).encode()).hexdigest()
+        except ProvenanceError:
+            response=result('unavailable','evidence_provenance_rejected')
+            from scripts.review_warnings import ReviewWarning
+            warning=ReviewWarning(warning_id='ai:evidence_provenance_rejected',category='provenance',message='Submitted evidence could not be validated against server records; do not rely on its provenance until lawyer review.',source_ids=[])
+            response.assessment.review_warnings.append(warning)
+            response.assessment.content_markdown+='\n'+warning.message+'\n'
+            return response
         except Exception:
             return result('unavailable','invalid_evidence_context')
+        if re.search(OUT_OF_SCOPE,request.bundle.matter.title+' '+request.bundle.matter.summary+' '+request.bundle.matter.requested_scope,re.I):
+            return result('unavailable','issue_outside_controlled_taxonomy_requires_lawyer_review')
         if packet['context']['client_type']=='unknown':
             return result('unavailable','insufficient_client_identity')
         if re.search(r'ignore.{0,30}(previous|system|above).{0,20}instructions|system prompt|api.?key|you are now|developer message|override.{0,20}safeguard', canonical(packet), re.I):
@@ -364,10 +397,10 @@ class SynthesisService:
                     if not isinstance(raw,str) or len(raw.encode())>100000:
                         raise ValueError('Unsupported output')
                     output=validate_synthesis(AISynthesis.model_validate_json(raw),packet)
-                except Exception:
+                except Exception as error:
                     with closing(sqlite3.connect(self.ledger_path)) as db:
                         db.execute("UPDATE requests SET state='failed' WHERE approval=? AND key=?",(c.approval_id,key));db.commit()
-                    return result('unavailable','ai_response_unavailable_or_rejected')
+                    return result('unavailable','approval_or_issuance_language_rejected' if isinstance(error,ApprovalAssertionError) else 'unsupported_issue_or_adverse_content_rejected' if isinstance(error,ContentPolicyError) else 'ai_response_unavailable_or_rejected')
                 with closing(sqlite3.connect(self.ledger_path)) as db:
                     db.execute("UPDATE requests SET state='completed',output=? WHERE approval=? AND key=?",(output.model_dump_json(),c.approval_id,key));db.commit()
                 return result('completed','validated_preliminary_ai_synthesis',output,usage=usage)
@@ -396,7 +429,8 @@ def render_ai(output, packet, *, mocked=False):
         lines+=['','### '+label,'']
         values=[output.mandate_summary] if field=='mandate_summary' else getattr(output,field)
         for item in values:
-            lines.append('- '+text(item.statement)+' ['+', '.join(text(i) for i in item.source_ids)+']; '+item.evidence_status+'.')
+            label={'client_alleged':'CLIENT-ALLEGED — NOT VERIFIED','official_record_reported':'HISTORICAL OFFICIAL RECORD — not a misconduct finding'}.get(item.evidence_status,item.evidence_status)
+            lines.append('- '+text(item.statement)+' ['+', '.join(text(i) for i in item.source_ids)+']; '+label+'; issue '+item.issue_category+'; '+item.action_state+'.')
             for q in item.evidence_quotes:
                 source=packet['sources'][q.source_id]
                 lines.append('  Evidence excerpt: '+text(q.quote)+((' — [source](<'+source['url']+'>)') if source.get('url') else '')+'.')

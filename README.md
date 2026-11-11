@@ -105,3 +105,5 @@ The document/approval gates distinguish data completeness from legal readiness. 
 - [Cleanup inventory and dependency decisions](docs/repository_cleanup_inventory.md)
 
 INCEPT evolved from LEGALFLOW. Its reusable identity/research work and Git history are preserved; obsolete financial prototypes are recoverable through Git rather than retained in an archive. Existing Python module names are retained where they still serve active dependencies.
+
+AI synthesis audit repairs: [server provenance, bounded issue support, and immutable approval states](docs/ai_synthesis_audit_repairs.md). Offline mocks do not establish live reasoning quality or legal approval.

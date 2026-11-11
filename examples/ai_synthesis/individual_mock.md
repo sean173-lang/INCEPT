@@ -66,22 +66,22 @@ Citation/quote validation checks attribution; it does not prove semantic entailm
 
 ### Mandate summary — unverified intake
 
-- Synthetic individual requests review of an alleged private service-contract payment demand. Original contract and receipt evidence are missing. [synthesis:intake:matter]; unverified_intake.
+- Synthetic individual requests review of an alleged private service-contract payment demand. Original contract and receipt evidence are missing. [synthesis:intake:matter]; unverified_intake; issue mandate_intake; not_performed_pending_lawyer_approval.
   Evidence excerpt: Synthetic individual requests review of an alleged private service-contract payment demand. Original contract and receipt evidence are missing..
 
 ### Source information — retain evidence classification
 
-- DEMO Individual \(fictional\) [synthesis:intake:client]; unverified_intake.
+- DEMO Individual \(fictional\) [synthesis:intake:client]; unverified_intake; issue mandate_intake; not_performed_pending_lawyer_approval.
   Evidence excerpt: DEMO Individual \(fictional\).
 
 ### Preliminary legal questions
 
-- Which prerequisites and exceptions require review before applying this guidance to the matter? [brao-43a:c037b0e9538de6b5]; question.
+- Which prerequisites and exceptions require review before applying this guidance to the matter? [brao-43a:c037b0e9538de6b5]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: The provision addresses professional confidentiality and conflicts involving representation in the same legal matter. Intake alone does not establish that confidentiality controls or a conflict check have been completed. — [source](<https://www.gesetze-im-internet.de/brao/__43a.html>).
 
 ### Conditional AI analysis
 
-- If a dispute is described only in intake, the lawyer may need original facts and a completed conflicts review before treating guidance as applicable. [brao-43a:c037b0e9538de6b5, synthesis:intake:matter]; preliminary_analysis.
+- If a dispute is described only in intake, the lawyer may need original facts and a completed conflicts review before treating guidance as applicable. [brao-43a:c037b0e9538de6b5, synthesis:intake:matter]; preliminary_analysis; issue mandate_intake; not_performed_pending_lawyer_approval.
   Evidence excerpt: The provision addresses professional confidentiality and conflicts involving representation in the same legal matter. Intake alone does not establish that confidentiality controls or a conflict check have been completed. — [source](<https://www.gesetze-im-internet.de/brao/__43a.html>).
   Evidence excerpt: Synthetic individual requests review of an alleged private service-contract payment demand. Original contract and receipt evidence are missing..
 
@@ -91,20 +91,20 @@ Unavailable / no supported analysis supplied.
 
 ### Missing information
 
-- Which original contract, correspondence and trigger evidence should the lawyer request? [synthesis:intake:coverage]; question.
+- Which original contract, correspondence and trigger evidence should the lawyer request? [synthesis:intake:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified..
 
 ### Uncertainties and limitations
 
-- Which intake assertions, governing-law assumptions and source limitations remain unresolved? [synthesis:intake:coverage]; question.
+- Which intake assertions, governing-law assumptions and source limitations remain unresolved? [synthesis:intake:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified..
 
 ### Questions for lawyer review
 
-- What evidence is needed to review identity, conflicts and representative authority? [synthesis:intake:coverage]; question.
+- What evidence is needed to review identity, conflicts and representative authority? [synthesis:intake:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified..
 
 ### Proposed next steps — questions only; no execution
 
-- Should the lawyer review the original documents and resolve missing evidence before any external action? [synthesis:intake:coverage]; question.
+- Should the lawyer review the original documents and resolve missing evidence before any external action? [synthesis:intake:coverage]; question; issue missing_evidence; not_performed_pending_lawyer_approval.
   Evidence excerpt: Intake assertions, identity, representative authority, conflicts, liability and deadlines are not legally verified..
