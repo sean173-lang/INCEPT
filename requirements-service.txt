@@ -10,4 +10,4 @@ openai>=1,<3
 # Only needed for approved live cache misses; development requires neither SDK.
 openregister-sdk
 # The existing Tavily integration imports this package lazily.
-tavily-python
+tavily-python>=0.8.5,<0.9

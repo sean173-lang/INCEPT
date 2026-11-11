@@ -114,3 +114,50 @@ class CorporateIntelligenceTests(OfflineTestCase):
             self.assertEqual(r.status_code,200,r.text);self.assertEqual(r.json()['provider'],'Companies House')
             forbidden=self.request().model_dump(mode='json');forbidden['max_external_requests']=1
             self.assertEqual(client.post('/v1/onboarding/corporate-intelligence',json=forbidden).status_code,422)
+
+    def test_tavily_failure_preserves_registry_and_redacts_exception(self):
+        with patch('scripts.company_service.CompanyService.research',side_effect=TimeoutError('sensitive-provider-detail')):
+            r=self.service.collect(self.request())
+        self.assertEqual(r.status,'UNVERIFIED');self.assertEqual(r.identity_verification_status,'verified')
+        self.assertTrue(r.findings);self.assertTrue(any('registry findings retained' in gap for gap in r.missing_evidence))
+        self.assertNotIn('sensitive-provider-detail',r.model_dump_json())
+
+    def test_public_search_lead_dates_urls_and_unrelated_filtering(self):
+        from scripts.service_schemas import ResearchResponse,CompanyIdentity,AnnotatedSource,ResearchSource
+        company=CompanyIdentity(provider='OpenRegister',name='INCEPT DEMO GmbH',provider_company_id='DEMO-INCEPT-DE',jurisdiction='Germany',registration_number='DEMO-246468')
+        def item(name,url,usable,identity):
+            return AnnotatedSource(source=ResearchSource(title=name,url=url,content=name,published_date='2026-10-01',retrieved_at='2026-11-11T00:00:00+00:00'),source_type='third_party',identity=identity,freshness='recent',usable=usable,registration_number_match=False,legal_evidence='unverified_search_excerpt',litigation_status='unknown',verified_legal_finding=False)
+        response=ResearchResponse(verification_id='a'*32,company=company,sources=[item('INCEPT DEMO GmbH company background','https://example.invalid/company',True,'possible_match'),item('Unrelated entity','https://example.invalid/other',False,'unrelated')],missing_evidence=[],coverage_note='Mocked bounded search',development=True)
+        with patch('scripts.company_service.CompanyService.research',return_value=response):r=self.service.collect(self.request())
+        self.assertEqual(len(r.background_leads),1);self.assertEqual(r.background_leads[0].category,'UNVERIFIED')
+        source=r.sources[-1];self.assertEqual(source.url,'https://example.invalid/company');self.assertEqual(source.retrieved_at,'2026-11-11T00:00:00+00:00');self.assertEqual(source.published_date,'2026-10-01');self.assertEqual(source.freshness,'recent')
+        self.assertIn('https://example.invalid/company',r.section_markdown);self.assertNotIn('https://example.invalid/other',r.section_markdown)
+
+
+    def test_three_result_limit_reaches_existing_research_adapter(self):
+        from scripts.company_research import research_company
+        from scripts.company_research import build_research_query
+        query=build_research_query('INCEPT DEMO GmbH','Germany',registration_number='DEMO-246468',register_court='Synthetic Berlin court')
+        key=UsageTracker.key('Tavily','search_basic',{'query':query,'max_results':3})
+        response={'company':'INCEPT DEMO GmbH','sources':[{'title':'SYNTHETIC INCEPT DEMO GmbH background','content':'INCEPT DEMO GmbH public information (synthetic test only)','url':'https://example.invalid/company','retrieved_at':'2026-11-11T00:00:00+00:00'}]}
+        original=CacheOnlyTracker.__init__
+        def seeded(tracker,*args,**kwargs):
+            original(tracker,*args,**kwargs);tracker.records[key]=response
+        with patch.object(CacheOnlyTracker,'__init__',seeded):
+            r=self.service.collect(self.request(max_search_results=3))
+        self.assertEqual(len(r.background_leads),1)
+        self.assertIn('https://example.invalid/company',r.section_markdown)
+        self.assertTrue(r.sources[-1].synthetic)
+        self.assertEqual(r.sources[-1].freshness,'unknown')
+        self.assertEqual(r.sources[-1].category,'UNVERIFIED')
+        self.assertTrue(any('SYNTHETIC' in claim.description for claim in r.background_leads))
+        self.assertTrue(all(claim.category=='UNVERIFIED' for claim in r.background_leads))
+
+
+    def test_source_urls_with_underscores_remain_traceable(self):
+        from scripts.corporate_intelligence import CorporateResult,CorporateSource,public_url
+        url='https://example.invalid/path/source_with_underscores.pdf'
+        r=CorporateResult(client_id='demo',matter_id='demo',status='UNAVAILABLE',identity_verification_status='unverified',sources=[CorporateSource(source_id='web:1',provider='Tavily cached excerpt',source_type='third_party',locator='Synthetic source URL',url=url,category='UNVERIFIED',freshness='unknown',synthetic=True)])
+        self.assertIn('[source](<'+url+'>)',self.service.render(r).section_markdown)
+        self.assertIsNone(public_url('https://example.invalid/<bad>'))
+        self.assertIsNone(public_url('https://example.invalid/\nunsafe'))

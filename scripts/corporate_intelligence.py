@@ -28,6 +28,7 @@ class CorporateRequest(Schema):
     source_policy: Literal['cache_only','approved_demo_fixture']='cache_only'
     max_external_requests: Literal[0]=0
     max_cached_operations: int=Field(default=3,ge=1,le=3)
+    max_search_results: int=Field(default=5,ge=1,le=5)
 
     @field_validator('synthetic_data',mode='before')
     @classmethod
@@ -45,6 +46,7 @@ class CorporateClaim(Schema):
 class CorporateSource(Schema):
     source_id: str
     provider: str
+    source_type: Literal['official','third_party','unknown']|None=None
     locator: str
     retrieved_at: str|None=None
     url: str|None=None
@@ -113,6 +115,7 @@ def supported_jurisdiction(value):return {'Germany':'Germany','UK':'UK','United 
 
 def public_url(value):
     try:
+        if not isinstance(value,str) or any(ord(c)<=32 or c in '<>\\' for c in value):return None
         p=urlsplit(value or '')
         if p.scheme not in ('http','https') or not p.hostname or p.username or p.password:return None
         if any(w in p.query.lower() for w in ('token','signature','x-amz','credential','secret')):return None
@@ -166,7 +169,7 @@ class CorporateIntelligence:
         service=CompanyService(tracker)
         source_id='corporate:'+hashlib.sha256(json.dumps(raw,sort_keys=True).encode()).hexdigest()[:16]
         result.synthetic_evidence=synthetic
-        result.sources=[CorporateSource(source_id=source_id,provider=provider,locator=source_locator,retrieved_at=retrieved,
+        result.sources=[CorporateSource(source_id=source_id,provider=provider,source_type='official' if provider=='Companies House' else 'third_party',locator=source_locator,retrieved_at=retrieved,
              category='UNVERIFIED' if synthetic else 'CACHED',freshness='stale' if stale else 'recent_cache_not_current_verification',synthetic=synthetic)]
         try:
             with use_tracker(tracker):
@@ -189,13 +192,20 @@ class CorporateIntelligence:
                 if stale:result.missing_evidence.append('Cached record is older than 30 days; current identity/status/officer information requires fresh authorized verification.')
                 if not result.management:result.missing_evidence.append('No dated officer/director evidence is available in this cached record.')
                 try:
-                    background=service.research(ResearchRequest(verification_id=verified.verification_id))
+                    background=service.research(ResearchRequest(verification_id=verified.verification_id,max_results=request.max_search_results))
+                    if background.development:
+                        result.synthetic_evidence=True
+                        result.missing_evidence.append('Public research contains SYNTHETIC TEST DATA; no live web findings are established.')
                     for index,item in enumerate(background.sources):
+                        if not item.usable:
+                            result.missing_evidence.append('Public search result excluded: identity/content/source evidence insufficient ('+item.identity+').')
+                            continue
                         source=item.source;sid='corporate:background:'+str(index)
-                        result.sources.append(CorporateSource(source_id=sid,provider='Tavily cached excerpt',locator=source.title or 'Untitled search lead',url=public_url(source.url),published_date=source.published_date,retrieved_at=None,category='UNVERIFIED',freshness='search_date_not_retrieval_date',synthetic=synthetic))
-                        result.background_leads.append(CorporateClaim(description='Unverified public search lead: '+(source.title or 'Untitled'),category='UNVERIFIED',source_ids=[sid]))
+                        result.sources.append(CorporateSource(source_id=sid,provider='Tavily cached excerpt',source_type=item.source_type,locator=source.title or 'Untitled search lead',url=public_url(source.url),published_date=source.published_date,retrieved_at=source.retrieved_at,category='UNVERIFIED',freshness=item.freshness,synthetic=synthetic or background.development))
+                        result.background_leads.append(CorporateClaim(description=('SYNTHETIC TEST DATA — ' if synthetic or background.development else '')+'Unverified public search lead: '+(source.title or 'Untitled'),category='UNVERIFIED',source_ids=[sid]))
                     result.missing_evidence+=background.missing_evidence
                 except UsageBlocked:result.missing_evidence.append('Bounded Tavily cache unavailable; no paid research request was attempted.')
+                except Exception as error:result.missing_evidence.append('Public research unavailable ('+type(error).__name__+'); registry findings retained. No automatic retry.')
         except Exception as error:
             result.status='UNAVAILABLE';result.identity_verification_status='verification_failed';result.missing_evidence.append('Cached provider verification unavailable ('+type(error).__name__+'); no provider call made.')
         finally:result.cached_operations=tracker.operations
@@ -212,6 +222,6 @@ class CorporateIntelligence:
                  [text(x) for x in result.discrepancies],
                  ['- '+text(x.description)+' ['+', '.join(x.source_ids)+']' for x in result.background_leads],
                  [text(x) for x in result.missing_evidence],
-                 [text(s.source_id)+': '+text(s.provider)+'; '+text(s.locator)+'; retrieved '+text(s.retrieved_at)+'; published '+text(s.published_date)+'; '+s.category+'; '+s.freshness+((' — '+text(s.url)) if s.url else '') for s in result.sources]+result.limitations]
+                 [text(s.source_id)+': '+text(s.provider)+'; '+text(s.locator)+'; retrieved '+text(s.retrieved_at)+'; published '+text(s.published_date)+'; source type '+text(s.source_type)+'; '+s.category+'; '+s.freshness+((' — [source](<'+public_url(s.url)+'>)') if public_url(s.url) else '') for s in result.sources]+result.limitations]
         for title,items in zip(sections,content):lines+=['','### '+title,'']+(items or ['UNAVAILABLE / REQUIRES LAWYER REVIEW.'])
         result.section_markdown='\n'.join(lines)+'\n';return result

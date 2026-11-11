@@ -185,8 +185,9 @@ class CompanyService:
         company, evidence_company, timestamp = verified
         if self.clock() - timestamp >= self.verification_ttl:
             raise ServiceError(409, 'verification_expired', 'The verification handle expired; verify again before research.')
+        options = {'max_results': request.max_results} if request.max_results != 5 else {}
         research = company_research.research_company(company.name, company.jurisdiction,
-                    registration_number=company.registration_number, register_court=company.register_court)
+                    registration_number=company.registration_number, register_court=company.register_court, **options)
         validation = validate_evidence(evidence_company, research)
         return ResearchResponse(verification_id=request.verification_id, company=company,
                                 sources=validation['sources'], missing_evidence=validation['missing_evidence'],

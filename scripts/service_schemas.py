@@ -87,6 +87,7 @@ class VerificationResponse(Schema):
 
 class ResearchRequest(Schema):
     verification_id: str = Field(pattern=r'^[a-f0-9]{32}$')
+    max_results: int = Field(default=5, ge=1, le=5)
 
 
 class ResearchSource(Schema):
@@ -95,6 +96,7 @@ class ResearchSource(Schema):
     content: str | None = None
     score: float | None = None
     published_date: str | None = None
+    retrieved_at: str | None = None
 
 
 class AnnotatedSource(Schema):

@@ -26,6 +26,7 @@ The repository and historical Python modules retain the LEGALFLOW name.
 | Local RAG and source attribution | **IMPLEMENTED:** curated references, uncertainty and source IDs; review dates are not enactment dates |
 | Individual/company routing and optional German/UK corporate intelligence | **FIXTURE VERIFIED:** four real n8n executions 20–23 using synthetic ingress/Google data and real local helpers; no live registry verification |
 | OpenRegister / Companies House / Tavily reuse | **CACHE-ONLY in new intake path:** no cache-miss network request or financial endpoint permitted |
+| Tavily Basic Search | **LIVE VERIFIED:** one approved basic request, three real sources, local evidence/report integration; [sanitized proof](docs/tavily_live_validation.json). No new n8n execution |
 | UK substantive legal assessment | **NOT VERIFIED:** requires lawyer review; no automatic German BGB application |
 | Real sending, scheduling, billing or approval execution | **DISABLED / NOT IMPLEMENTED** |
 | Gradio | **PLANNED**, separate next milestone |
