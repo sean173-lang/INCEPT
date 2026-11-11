@@ -72,6 +72,11 @@ class SearchResponse(Schema):
 class CompanyIdentity(Candidate):
     provider: Literal['OpenRegister', 'Companies House']
     retrieved_at: str | None = None
+    cache_accessed_at: str | None = None
+    cache_hit: bool = False
+    cache_age_seconds: float | None = None
+    freshness: str = 'unknown'
+    evidence_status: Literal['provider_reported_unverified', 'synthetic_unverified', 'legacy_unverified'] = 'legacy_unverified'
 
 
 class VerificationResponse(Schema):

@@ -2,6 +2,7 @@
 from datetime import date
 from decimal import Decimal
 from typing import Literal
+from scripts.review_warnings import ReviewWarning
 from pydantic import Field, field_validator, model_validator
 from scripts.service_schemas import Schema
 from scripts.document_schemas import DocumentOptions,DocumentIssue,Status
@@ -156,6 +157,7 @@ class AssessmentSource(Schema):
 
 
 class MandateAssessment(Schema):
+    review_warnings: list[ReviewWarning] = Field(default_factory=list)
     title: str='DEMO Mandate Assessment Report'
     conclusion: Literal['lawyer_review_required']='lawyer_review_required'
     confidence: Literal['insufficient_for_legal_conclusions']='insufficient_for_legal_conclusions'

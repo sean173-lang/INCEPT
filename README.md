@@ -1,4 +1,6 @@
-# INCEPT — AI-Powered Legal Client Onboarding & Corporate Intelligence
+# INCEPT — Legal Client Onboarding & Corporate Intelligence
+
+**Implementation boundary:** the active workflow is rule-based, with local reference retrieval and controlled templates. It currently makes no LLM call; autonomous orchestration does not establish model-based legal reasoning. Project 3 rubric compliance remains to be confirmed.
 
 **Legal Tech / Corporate Law.** An Ironhack Project 3 development MVP for law firms and legal professionals. n8n orchestrates approved inquiry intake; Python/FastAPI supplies typed processing, evidence checks, local RAG and deterministic German draft documents.
 

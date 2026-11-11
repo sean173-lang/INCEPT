@@ -1,7 +1,6 @@
 """Small operations for n8n; no orchestration, RAG or autonomous tool loop."""
 import re
 import uuid
-from datetime import datetime, timezone
 from threading import RLock
 import time
 import unicodedata
@@ -117,7 +116,7 @@ class CompanyService:
                 retrieved_at = getattr(record, 'retrieved_at', None)
             else:
                 raw = companies_house.get_company_profile(selected_id.upper())
-                retrieved_at = datetime.now(timezone.utc).isoformat()
+                retrieved_at = getattr(raw, 'retrieved_at', None)
         except Exception as error:
             status = getattr(error, 'status_code', None)
             if status is None:
@@ -125,6 +124,8 @@ class CompanyService:
             if status == 404:
                 return result('not_found', 'The provider did not return company details for this identifier.')
             raise
+        if getattr(record if german else raw, 'evidence_status', None) == 'legacy_unverified':
+            return result('verification_failed', 'Legacy cached details lack sufficient provenance; authorized source verification is required.')
         if not isinstance(raw, dict):
             raise ServiceError(502, 'unsupported_provider_response', 'The provider returned an unsupported details response.')
         register = (raw.get('company_register') or {}) if german else {}
@@ -138,7 +139,12 @@ class CompanyService:
             registration_number=scalar(register.get('register_number') if german else identifier),
             register_court=scalar(register.get('register_court')) if german else None,
             register_type=scalar(register.get('register_type')) if german else None,
-            provider='OpenRegister' if german else 'Companies House', retrieved_at=scalar(retrieved_at))
+            provider='OpenRegister' if german else 'Companies House', retrieved_at=scalar(retrieved_at),
+            cache_accessed_at=getattr(record if german else raw, 'cache_accessed_at', None),
+            cache_hit=getattr(record if german else raw, 'cache_hit', False),
+            cache_age_seconds=getattr(record if german else raw, 'cache_age_seconds', None),
+            freshness=getattr(record if german else raw, 'freshness', 'unknown'),
+            evidence_status=getattr(record if german else raw, 'evidence_status', 'legacy_unverified'))
         checks = {
             'provider_identifier_matches': (identifier == selected_id if german else
                                             isinstance(identifier, str) and identifier.upper() == selected_id.upper()),

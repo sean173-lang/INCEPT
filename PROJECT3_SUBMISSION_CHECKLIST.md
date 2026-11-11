@@ -1,11 +1,12 @@
 # Project 3 submission checklist
 
-Based on the supplied requirements; the original course brief is not stored locally. Gradio is the next milestone, not implemented in this checkpoint.
+Based on the supplied requirements; the original course brief/rubric has not been located. Gradio is the next milestone, not implemented in this checkpoint.
 
 | Requirement | Verified status / limit |
 |---|---|
 | n8n primary orchestration | Real execution 28: approved-message intake, read-only Google checks, local API and legal-source research |
 | Three real external integrations | Gmail, Google Sheets and Google Calendar verified in recorded runs; no new calls during cleanup |
+| LLM/model-based synthesis | **Not implemented in the active path.** A locally available student example board describes LLM-written reports, but it is not a grading rubric. Confirm the requirement before submission. |
 | Autonomous research → synthesis → structured report | Bounded official BGB source selection/check plus local RAG/report assembly; not general autonomous legal advice |
 | German/UK corporate research | Preserved adapters and cache-only intake helper, offline routing/matching tests; unknown identity requires review |
 | Counterparty research | Recorded isolated execution 26 with one fresh UK profile; separate automated typed counterparties are not yet in canonical workflow |

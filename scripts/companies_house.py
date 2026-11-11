@@ -3,6 +3,7 @@ import re
 import requests
 from dotenv import load_dotenv
 from scripts.api_usage import get_tracker
+from scripts.corporate_cache import captured_record, adapter_snapshot
 
 # ==========================================
 # INCEPT — Companies House corporate identity
@@ -54,8 +55,18 @@ def _api_request(endpoint, params=None):
 def api_request(endpoint, params=None):
     _validate_endpoint(endpoint,params)
     from scripts.development_fixtures import uk_response
-    return get_tracker().execute("Companies House", "public_data", {"endpoint": endpoint, "params": params},
-                                 lambda: _api_request(endpoint, params), mock=lambda: uk_response(endpoint, params))
+    tracker = get_tracker()
+    profile = re.fullmatch(r'/company/([A-Za-z0-9]{8})', endpoint)
+    if profile:
+        identifier = profile.group(1).upper()
+        endpoint = '/company/' + identifier
+        with tracker.lock:
+            value = tracker.execute("Companies House", "public_data", {"endpoint": endpoint, "params": params},
+                lambda: captured_record("Companies House", identifier, _api_request(endpoint, params)), cache=True,
+                mock=lambda: captured_record("Companies House", identifier, uk_response(endpoint, params), synthetic=True))
+            return adapter_snapshot(value, "Companies House", identifier, tracker)
+    return tracker.execute("Companies House", "public_data", {"endpoint": endpoint, "params": params},
+                           lambda: _api_request(endpoint, params), mock=lambda: uk_response(endpoint, params))
 
 
 # ==========================================

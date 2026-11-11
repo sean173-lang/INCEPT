@@ -40,3 +40,7 @@ The service is the existing loopback helper on port 8003 with development mode a
 The live run passed the 315-test baseline. Four additional offline checkpoint tests verify export reproducibility, sanitization, manual/read-only node configuration and v2 approval/issuance guards. They execute no external API or n8n workflow. A fresh execution is not claimed by this checkpoint.
 
 The backend is ready for controlled Gradio **draft-review** integration. Gradio is not implemented here; template/legal approval, representative evidence, tax configuration and valid issuance details remain outstanding. No automatic external-action execution is authorized. Checkpoint publication is feature-branch only, with no merge into main.
+
+## Post-audit structured warning repair
+
+The reproducible export remains a 37-node inactive/manual graph. Its final `Unified Corporate Mandate Report` node now merges categorized corporate warnings into `assessment.review_warnings`, appropriate missing-information fields and final uncertainty, with stable deduplication. This is an offline-tested code update, not a new execution-28 result. The existing running n8n workflow and private execution evidence have not been modified. All v2 document, approval and issuance guards remain in the export.

@@ -49,6 +49,7 @@ class CorporateIntelligenceTests(OfflineTestCase):
                 self.assertEqual(result.management[0]['source_id'],result.sources[0].source_id)
                 self.assertIn('Corporate Client Intelligence',result.section_markdown)
                 self.assertEqual(result.section_markdown.count('### '),7)
+                self.assertTrue(result.warnings)
                 source_ids={s.source_id for s in result.sources}
                 self.assertTrue(all(set(f.source_ids)<=source_ids for f in result.findings))
                 self.assertTrue(all(r['jurisdiction'] in ('Germany','EU') if jurisdiction=='Germany' else r['jurisdiction'] in ('UK','EU') for r in result.reference_guidance))
@@ -75,7 +76,9 @@ class CorporateIntelligenceTests(OfflineTestCase):
 
     def cached(self,when):
         entry=json.loads(DEMO.read_text())['records']['DEMO-INCEPT-DE']
-        value={'payload':entry['record'],'retrieved_at':when,'provenance':{'provider':'OpenRegister','origin':'live_provider_response','synthetic':False}}
+        from scripts.corporate_cache import captured_record
+        value=captured_record('OpenRegister','DEMO-INCEPT-DE',entry['record'])
+        value['retrieved_at']=when
         key=UsageTracker.key('OpenRegister','company_details','DEMO-INCEPT-DE')
         JsonCache(self.root).put(key,value)
         return self.request().model_copy(update={'source_policy':'cache_only'})
