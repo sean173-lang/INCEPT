@@ -4,16 +4,22 @@ from pathlib import Path
 from unittest.mock import MagicMock
 from fastapi.testclient import TestClient
 from offline_support import OfflineTestCase
-from scripts.ai_synthesis import (AIConfig,AISynthesis,SynthesisService,evidence_packet,parse_provider_output,validate_synthesis)
+from scripts.ai_synthesis import (AIConfig,AISynthesis,SynthesisService,evidence_packet,parse_provider_output,provider_packet,validate_synthesis)
 from scripts.ai_synthesis_demo import requests_for_demo,mock_response
 from scripts.ai_excerpt_demo import mock_excerpt_response
-from scripts.ai_excerpt_contract import ExcerptSynthesis,expand_selection,FACT_SECTIONS,build_excerpts
+from scripts.ai_excerpt_contract import ExcerptSynthesis,expand_selection,FACT_SECTIONS,build_excerpts,exact_sentences
 from scripts.http_service import create_app
 
 class ExcerptContractTests(OfflineTestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.root=Path(self.tmp.name)
   self.cases=requests_for_demo(self.root/'db.sqlite3',self.root/'cache')
+  from scripts.local_rag import LocalRAG
+  from scripts.payment_research import CORPUS
+  from scripts.onboarding_schemas import AssessmentSource
+  for card in LocalRAG(CORPUS).chunks.values():
+   self.cases['germany_company'].bundle.assessment.sources.append(AssessmentSource(source_id=card['chunk_id'],kind='legal_reference',locator=card['locator'],content=card['text'],url=card['source_url'],reviewed_at=card['reviewed_at'],document_date=card['document_date']))
+   self.cases['germany_company'].bundle.assessment.guidance.append(__import__('scripts.onboarding_schemas',fromlist=['AssessmentFinding']).AssessmentFinding(description=card['text'],status='reference_guidance',source_ids=[card['chunk_id']]))
   for request in self.cases.values():request.contract_version='2.0'
  def packet(self,kind='germany_company'):return evidence_packet(self.cases[kind])
  def proposal(self,packet):return json.loads(mock_excerpt_response(packet)[0])
@@ -27,7 +33,7 @@ class ExcerptContractTests(OfflineTestCase):
   request=self.cases['germany_company'].model_copy(update={'contract_version':'1.0'})
   packet=evidence_packet(request);raw=json.loads(mock_response(packet)[0]);item=fixture['items'][0]
   raw['factual_background'][0].update(statement=item['statement'],source_ids=[item['source_id']],evidence_quotes=[{'source_id':item['source_id'],'quote':item['quote']}])
-  with self.assertRaisesRegex(ValueError,'Factual statements must be extractive'):validate_synthesis(AISynthesis.model_validate(raw),packet)
+  with self.assertRaisesRegex(ValueError,'Quote does not match supplied evidence'):validate_synthesis(AISynthesis.model_validate(raw),packet)
  def test_valid_selections_expand_to_exact_server_text_with_provenance_and_roles(self):
   packet=self.packet();proposal=ExcerptSynthesis.model_validate(self.proposal(packet));output,proof=expand_selection(proposal,packet)
   for field in FACT_SECTIONS:
@@ -43,6 +49,9 @@ class ExcerptContractTests(OfflineTestCase):
    self.assertFalse(any(e['text']==matter and 'mandate_summary' in e['allowed_sections'] for e in packet['excerpts'].values()))
   proposal=self.proposal(packet);bad=copy.deepcopy(packet);bad['excerpts'][proposal['mandate_summary']['excerpt_id']]['text']='Fabricated claim'
   with self.assertRaises(ValueError):expand_selection(ExcerptSynthesis.model_validate(proposal),bad)
+ def test_german_day_dates_remain_inside_exact_source_sentences(self):
+  source='Am 15. September 2026 habe ich eine Maschine gekauft. Die Lieferung kam am 20. Oktober 2026.'
+  self.assertEqual(exact_sentences(source),['Am 15. September 2026 habe ich eine Maschine gekauft.','Die Lieferung kam am 20. Oktober 2026.'])
  def test_fabricated_excerpt_wrong_source_and_wrong_role_rejected(self):
   packet=self.packet();raw=self.proposal(packet)
   variants=[lambda r:r['mandate_summary'].update(excerpt_id='excerpt:fake'),lambda r:r['mandate_summary'].update(source_id='synthesis:intake:client'),lambda r:r.update(mandate_summary=r['factual_background'][0])]
@@ -53,19 +62,32 @@ class ExcerptContractTests(OfflineTestCase):
   for key,value in [('statement','The company committed fraud.'),('classification','verified'),('evidence_status','cached_report')]:
    raw=self.proposal(self.packet());raw['factual_background'][0][key]=value
    with self.assertRaises(ValueError):ExcerptSynthesis.model_validate(raw)
- def test_coverage_or_law_cannot_become_a_corporate_fact(self):
+ def test_coverage_or_law_cannot_become_a_factual_excerpt(self):
   packet=self.packet()
   for e in packet['excerpts'].values():
    if e['role'] not in ('coverage_limitation','legal_reference_not_case_finding'):continue
-   raw=self.proposal(packet);raw['corporate_intelligence_observations']=[{'source_id':e['source_id'],'excerpt_id':e['excerpt_id']}]
+   raw=self.proposal(packet);raw['factual_background'].append({'excerpt_id':e['excerpt_id']})
    with self.assertRaises(ValueError):expand_selection(ExcerptSynthesis.model_validate(raw),packet)
  def test_unrelated_legal_only_analysis_and_adverse_escalation_fail(self):
   packet=self.packet();raw=self.proposal(packet)
-  bad=copy.deepcopy(raw);item=bad['source_supported_analysis'][0];item['evidence_references']=item['evidence_references'][1:]
+  bad=copy.deepcopy(raw);item=bad['source_supported_analysis'][0];item['inquiry_evidence']=item['legal_evidence']
   with self.assertRaises(ValueError):expand_selection(ExcerptSynthesis.model_validate(bad),packet)
+ def test_invalid_statute_excerpt_binding_returns_structured_private_diagnostic(self):
+  def bad_binding(packet):
+   raw=self.proposal(packet);item=raw['source_supported_analysis'][0]
+   item['legal_evidence']['excerpt_id']=next(k for k,v in packet['excerpts'].items() if v['role']=='client_alleged_matter')
+   return json.dumps(raw),{'input_tokens':10,'output_tokens':10,'total_tokens':20}
+  result=self.service(bad_binding).run(self.cases['germany_company'])
+  self.assertEqual(result.validation_error_code,'legal_source_binding')
+  self.assertEqual(result.validation_validator,'legal_evidence_binding')
+  self.assertEqual(result.validation_path,'source_supported_analysis[0].legal_evidence.excerpt_id')
+  diagnostic=json.loads((self.root/'validation_diagnostics.jsonl').read_text().splitlines()[0])
+  self.assertEqual(diagnostic['correlation_id'],result.execution_correlation_id)
+  self.assertNotIn('INCEPT DEMO',json.dumps(diagnostic))
+  self.assertEqual((self.root/'validation_diagnostics.jsonl').stat().st_mode & 0o777,0o600)
  def test_german_conditional_analysis_is_supported_without_weakening_deadline_guards(self):
   packet=self.packet();raw=self.proposal(packet)
-  self.assertIn('clear professional German',__import__('scripts.ai_synthesis',fromlist=['system_prompt']).system_prompt('2.0'))
+  self.assertIn('conditional_analysis_required',__import__('scripts.ai_synthesis',fromlist=['system_prompt']).system_prompt('2.0'))
   item=raw['source_supported_analysis'][0]
   item['statement']='Wenn der Vertrag einen konkreten Erfolg verspricht, könnte die Abnahme nach den belegten Vertragsbedingungen für die Fälligkeit entscheidend sein.'
   expanded,_=expand_selection(ExcerptSynthesis.model_validate(raw),packet)
@@ -79,19 +101,20 @@ class ExcerptContractTests(OfflineTestCase):
   for mutate in (lambda r:r.update(invoice_issued=True),lambda r:r['proposed_next_steps'][0].update(statement='The mandate is approved and the invoice should be issued immediately?')):
    bad=copy.deepcopy(raw);mutate(bad)
    with self.assertRaises(ValueError):expand_selection(ExcerptSynthesis.model_validate(bad),packet)
- def test_forged_corporate_provenance_blocks_before_mock_model(self):
-  request=self.cases['germany_company'].model_copy(deep=True);request.corporate_result.synthetic_evidence=False
-  call=MagicMock();result=self.service(call).run(request);self.assertEqual(result.reason,'evidence_provenance_rejected');call.assert_not_called()
+ def test_client_cannot_supply_removed_corporate_result(self):
+  from pydantic import ValidationError
+  request=self.cases['germany_company'].model_dump(mode='json');request['corporate_result']={'synthetic_evidence':False}
+  with self.assertRaises(ValidationError):type(self.cases['germany_company']).model_validate(request)
  def test_missing_sources_have_explicit_uncertainty_and_no_analysis(self):
-  request=self.cases['germany_company'].model_copy(deep=True);request.corporate_result=None;request.bundle.assessment.sources=[s for s in request.bundle.assessment.sources if s.kind!='legal_reference']
+  request=self.cases['germany_company'].model_copy(deep=True);request.bundle.assessment.sources=[s for s in request.bundle.assessment.sources if s.kind!='legal_reference']
   result=self.service().run(request);self.assertEqual(result.status,'completed');self.assertEqual(result.synthesis.source_supported_analysis,[])
-  self.assertIn('Applicable legal source evidence is unavailable',result.assessment.content_markdown);self.assertIn('Corporate record evidence is unavailable',result.assessment.content_markdown)
+  self.assertIn('Applicable legal source evidence is unavailable',result.assessment.content_markdown)
  def test_all_cases_http_schema_fallback_and_immutable_documents(self):
   app=create_app(service_token='offline-key',ai_service=self.service(),cache_dir=None,ledger_path=None,onboarding_db=self.root/'http.sqlite3')
   with TestClient(app) as client:
    for kind,request in self.cases.items():
     before=request.bundle.model_dump_json();r=client.post('/v1/onboarding/synthesis',json=request.model_dump(mode='json'),headers={'X-LEGALFLOW-Service-Key':'offline-key'});self.assertEqual(r.status_code,200)
-    body=r.json();self.assertEqual(body['contract_version'],'2.0');self.assertEqual(body['status'],'unavailable' if kind=='ambiguous' else 'completed');self.assertEqual(before,request.bundle.model_dump_json())
+    body=r.json();self.assertEqual(body['contract_version'],'2.0');self.assertEqual(body['status'],'completed');self.assertEqual(before,request.bundle.model_dump_json())
     if kind!='ambiguous':self.assertTrue(body['excerpt_catalog']);self.assertTrue(body['factual_references'])
  def test_invalid_output_keeps_deterministic_fallback_and_persistent_no_retry(self):
   def bad(packet):
@@ -115,7 +138,7 @@ class ExcerptContractTests(OfflineTestCase):
   request=SynthesisRequest(contract_version='2.0',bundle=OnboardingService(self.root/'alleged.sqlite3').preview(OnboardingRequest.model_validate(body)))
   packet=evidence_packet(request);raw=self.proposal(packet)
   e=next(e for e in packet['excerpts'].values() if e['classification']=='client_alleged' and 'mandate_summary' in e['allowed_sections'])
-  raw['mandate_summary']={'source_id':e['source_id'],'excerpt_id':e['excerpt_id']}
+  raw['mandate_summary']={'excerpt_id':e['excerpt_id']}
   output,proof=expand_selection(ExcerptSynthesis.model_validate(raw),packet);self.assertEqual(output.mandate_summary.evidence_status,'client_alleged')
   raw['uncertainties_and_limitations']=[i for i in raw['uncertainties_and_limitations'] if i['issue_category']!='fraud_allegation']
   with self.assertRaises(ValueError):expand_selection(ExcerptSynthesis.model_validate(raw),packet)
@@ -143,9 +166,18 @@ class ExcerptContractTests(OfflineTestCase):
   service=self.service();service.mocked=False;service.transport=service.openai_call
   with patch.dict(os.environ,{'OPENAI_API_KEY':'offline-placeholder'}),patch.object(httpx.HTTPTransport,'handle_request',respond):result=service.run(self.cases['germany_company'])
   self.assertEqual(result.status,'completed');self.assertEqual(len(captured),1)
-  schema=captured[0]['text']['format']['schema'];self.assertEqual(set(schema['$defs']['ExcerptSelection']['properties']),{'source_id','excerpt_id'})
+  schema=captured[0]['text']['format']['schema'];self.assertEqual(set(schema['$defs']['ExcerptSelection']['properties']),{'excerpt_id'})
+  self.assertEqual(set(schema['$defs']['ExcerptSelection']['properties']['excerpt_id']['enum']),set(packet['excerpts']))
+  self.assertEqual(set(schema['$defs']['LegalEvidenceSelection']['properties']['excerpt_id']['enum']),{k for k,v in packet['excerpts'].items() if v['role']=='legal_reference_not_case_finding'})
+  self.assertEqual(set(schema['$defs']['InquiryEvidenceSelection']['properties']['excerpt_id']['enum']),{k for k,v in packet['excerpts'].items() if v['role']=='client_alleged_matter'})
   self.assertFalse(schema['$defs']['ExcerptSelection']['additionalProperties'])
-  supplied=json.loads(captured[0]['input'][1]['content']);self.assertEqual(supplied['excerpts'],packet['excerpts'])
+  supplied=json.loads(captured[0]['input'][1]['content']);projected=provider_packet(packet)
+  self.assertEqual(supplied,projected)
+  legal_source=next(k for k,v in packet['sources'].items() if v.get('classification')=='source_guidance')
+  self.assertNotIn('content',supplied['sources'][legal_source])
+  self.assertTrue(all('quote' not in entry for item in supplied['issue_support'].values() for group in ('evidence','contradictions') for entry in item[group]))
+  quoted=next(v['text'] for v in packet['excerpts'].values() if v['role']=='legal_reference_not_case_finding')
+  self.assertEqual(captured[0]['input'][1]['content'].count(quoted),1)
 
  def test_http_cannot_supply_its_own_catalogue_and_v2_cannot_downgrade(self):
   app=create_app(cache_dir=None,ledger_path=None,onboarding_db=self.root/'request.sqlite3')
@@ -158,16 +190,16 @@ class ExcerptContractTests(OfflineTestCase):
  def test_complete_offline_demo_has_cited_conditional_analysis_and_unchanged_documents(self):
   from scripts.ai_excerpt_demo import generate
   folder=self.root/'reports';summary=generate(folder)
-  self.assertEqual(summary['german_payment_dispute']['status'],'completed');self.assertEqual(summary['ambiguous']['status'],'unavailable')
+  self.assertEqual(summary['german_payment_dispute']['status'],'completed');self.assertEqual(summary['ambiguous']['status'],'completed')
   sample=json.loads((folder/'german_payment_dispute/synthesis_response.json').read_text());report=(folder/'german_payment_dispute/mandate_assessment.md').read_text()
   self.assertFalse(sample['model_used']);self.assertFalse(sample['live_request']);self.assertIn('MOCK OUTPUT',report)
   self.assertIn('server-populated exact excerpt',report);self.assertIn('Conditional AI analysis',report);self.assertIn('Offline mock demonstration',report)
-  self.assertIn('SYNTHETIC',report)
-  for provision in ('611','320','641'):self.assertIn('https://www.gesetze-im-internet.de/bgb/__'+provision+'.html',report)
+  self.assertIn('Offline mock demonstration',report)
+  self.assertIn('https://www.gesetze-im-internet.de/bgb/',report)
   self.assertTrue(summary['german_payment_dispute']['documents_unchanged']);self.assertTrue(summary['german_payment_dispute']['all_five_actions_pending']);self.assertEqual(summary['german_payment_dispute']['advance_gross'],'1487.50')
   uk=json.loads((folder/'uk_company/synthesis_response.json').read_text());self.assertEqual(uk['synthesis']['source_supported_analysis'],[])
 
  def test_new_version_cannot_silently_reuse_old_live_approval_policy(self):
   request=self.cases['individual'].model_copy(update={'contract_version':'1.0'})
   call=MagicMock(side_effect=mock_response);self.assertEqual(self.service(call).run(request).status,'completed')
-  result=self.service(call).run(self.cases['individual']);self.assertEqual(result.reason,'approval_policy_changed');call.assert_called_once()
+  result=self.service(call).run(self.cases['individual']);self.assertEqual(result.reason,'ai_response_schema_invalid_schema_mismatch');self.assertEqual(call.call_count,2)

@@ -11,7 +11,7 @@ BODY='Guten Tag, dies ist eine simulierte Testanfrage für die fiktive INCEPT DE
 
 def email():return EmailInquiry(synthetic_data=True,message_id='abcdef123456',sender='project@example.invalid',recipient='project@example.invalid',subject='Fictional inquiry',body=BODY)
 def output():
- return {'client_type':'company','company_name':{'text':'INCEPT DEMO GmbH'},'jurisdiction_clue':{'text':'Deutschland'},'sender_name':None,'sender_role':None,'counterparty':{'text':'Nordlicht Projektservice GmbH'},'matter_summary':{'text':'Die ebenfalls fiktive Nordlicht Projektservice GmbH bestreitet unsere Rechnung über 18.750 Euro.'},'requested_assistance':{'text':'Bitte prüfen Sie unsere Möglichkeiten und welche Unterlagen Sie benötigen.'},'alleged_facts':[{'text':'Die Leistungen seien nicht vollständig erbracht worden.'}],'dates':[{'text':'ungefähr aus September'},{'text':'im Oktober'}],'monetary_amounts':[{'text':'18.750 Euro'}],'supporting_documents_mentioned':[{'text':'Rechnung'}],'missing_information':['Welche Originalunterlagen liegen vor?'],'uncertainty':['Wer darf die Gesellschaft vertreten?']}
+ return {'client_name':{'text':'INCEPT DEMO GmbH'},'counterparty':{'text':'Nordlicht Projektservice GmbH'},'matter_summary':{'text':'Die ebenfalls fiktive Nordlicht Projektservice GmbH bestreitet unsere Rechnung über 18.750 Euro.'},'requested_assistance':{'text':'Bitte prüfen Sie unsere Möglichkeiten und welche Unterlagen Sie benötigen.'},'alleged_facts':[{'text':'Die Leistungen seien nicht vollständig erbracht worden.'}],'dates':[{'text':'ungefähr aus September'},{'text':'im Oktober'}],'monetary_amounts':[{'text':'18.750 Euro'}],'supporting_documents_mentioned':[{'text':'Rechnung'}],'missing_information':['Welche Originalunterlagen liegen vor?'],'uncertainty':['Wer darf die Gesellschaft vertreten?']}
 
 class NaturalIntakeTests(OfflineTestCase):
  def setUp(self):
@@ -21,12 +21,12 @@ class NaturalIntakeTests(OfflineTestCase):
  def test_exact_german_excerpts_preserve_roles_approximate_dates_and_amount(self):
   result=self.service().run(email());self.assertEqual(result['status'],'completed');self.assertFalse(result['sender_authority_verified']);self.assertFalse(result['model_used']);self.assertEqual(result['extraction']['dates'][0]['text'],'ungefähr aus September');self.assertEqual(result['extraction']['monetary_amounts'][0]['text'],'18.750 Euro')
  def test_fabricated_dates_representatives_and_amounts_rejected(self):
-  for key,value in [('sender_name',{'text':'Real Director'}),('dates',[{'text':'2026-10-01'}]),('monetary_amounts',[{'text':'0 Euro'}])]:
+  for key,value in [('client_name',{'text':'Real Director'}),('dates',[{'text':'2026-10-01'}]),('monetary_amounts',[{'text':'0 Euro'}])]:
    raw=output();raw[key]=value
    with self.assertRaises(ValueError):validate_extraction(ExtractedInquiry.model_validate(raw),email())
  def test_duplicate_across_restart_uses_cache_and_failed_attempt_never_retries(self):
   call=MagicMock(return_value=(json.dumps(output()),None));self.assertEqual(self.service(call).run(email())['status'],'completed');self.assertTrue(self.service(call).run(email())['cache_hit']);call.assert_called_once()
-  altered=email().model_copy(update={'body':BODY+' Zusätzliche Angaben.'});self.assertEqual(self.service(call).run(altered)['status'],'unavailable');call.assert_called_once()
+  altered=email().model_copy(update={'body':BODY+' Zusätzliche Angaben.'});self.assertEqual(self.service(call).run(altered)['status'],'completed');call.assert_called_with(altered)
  def test_failure_reserves_slot_without_retry(self):
   call=MagicMock(side_effect=TimeoutError());self.service(call).run(email());self.service(call).run(email());call.assert_called_once()
  def test_metadata_and_injection_block_before_transport(self):
@@ -105,8 +105,7 @@ class NaturalIntakeTests(OfflineTestCase):
  def test_actual_email_shape_maps_without_inventing_dates_or_authority(self):
   # Shape from the approved fictional case, never a captured model response.
   original=email();raw=output();validated=validate_extraction(ExtractedInquiry.model_validate(raw),original)
-  self.assertIsNone(validated.sender_name);self.assertIsNone(validated.sender_role)
-  self.assertNotEqual(validated.company_name.text,validated.counterparty.text)
+  self.assertNotEqual(validated.client_name.text,validated.counterparty.text)
   self.assertEqual(validated.monetary_amounts[0].text,'18.750 Euro')
 
  def test_grounding_discards_paraphrase_and_restores_only_original_source_spans(self):
@@ -122,7 +121,7 @@ class NaturalIntakeTests(OfflineTestCase):
 
  def test_grounding_cannot_repair_invented_identity_or_amount(self):
   from scripts.natural_intake import ground_extraction_proposal
-  raw=output();raw['company_name']={'text':'Real Company GmbH'}
+  raw=output();raw['client_name']={'text':'Real Company GmbH'}
   with self.assertRaises(ValueError):ground_extraction_proposal(ExtractedInquiry.model_validate(raw),email())
   raw=output();raw['monetary_amounts']=[{'text':'0 Euro'}]
   out,audit=ground_extraction_proposal(ExtractedInquiry.model_validate(raw),email());self.assertEqual(out.monetary_amounts,[])

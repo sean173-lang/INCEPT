@@ -11,6 +11,11 @@ class Schema(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True, allow_inf_nan=False)
 
 
+class ServiceError(Exception):
+    def __init__(self,status_code,code,message):
+        super().__init__(message);self.status_code=status_code;self.code=code;self.message=message
+
+
 class CompanyInput(Schema):
     company_name: str = Field(min_length=1, max_length=200)
     jurisdiction: Jurisdiction

@@ -7,14 +7,7 @@ import unicodedata
 
 from scripts import company_search, companies_house, german_register, company_research
 from scripts.evidence_validator import validate_evidence
-from scripts.service_schemas import Candidate, CompanyIdentity, SearchResponse, VerificationResponse, ResearchResponse
-
-
-class ServiceError(Exception):
-    def __init__(self, status_code, code, message):
-        self.status_code = status_code
-        self.code = code
-        self.message = message
+from scripts.service_schemas import Candidate, CompanyIdentity, SearchResponse, VerificationResponse, ResearchResponse, ServiceError
 
 
 def normalized(value):

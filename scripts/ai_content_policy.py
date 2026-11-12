@@ -17,8 +17,8 @@ class ApprovalAssertionError(ContentPolicyError):
     pass
 
 
-IssueCategory=Literal['mandate_intake','payment_dispute','representation_authority','conflict_review','corporate_identity',
-    'missing_evidence','jurisdiction','fraud_allegation','creditor_evasion_allegation','criminal_allegation',
+IssueCategory=Literal['mandate_intake','german_contract_law','representation_authority','conflict_review',
+    'missing_evidence','fraud_allegation','creditor_evasion_allegation','criminal_allegation',
     'insolvency_misconduct_allegation','dishonesty_allegation','corporate_record_status']
 AssertionType=Literal['source_excerpt','conditional_analysis','lawyer_review_request']
 ActionState=Literal['not_performed_pending_lawyer_approval']
@@ -30,7 +30,6 @@ PATTERNS={
  'insolvency_misconduct_allegation':r'\b(?:insolvency misconduct|wrongful trading|fraudulent trading|insolvenzverschlepp\w*)',
  'dishonesty_allegation':r'\b(?:dishonest\w*|intentional deception|deceiv\w*|deceit\w*|lied|lüg\w*|täusch\w*)',
 }
-OUT_OF_SCOPE=r'\b(?:patent\w*|trademark\w*|copyright\w*|markenverletz\w*|urheber\w*|employment dismissal|kartell\w*|antitrust)\b'
 NEGATIVE=r'\b(?:no|not|never|denies|denied|rejects|withdrawn|withdraws|unfounded|kein\w*|nicht|bestreitet|bestritten|zurückgenommen)\b'
 ALLEGED=r'\b(?:alleg\w*|suspect\w*|claims?|accus\w*|charged|convict\w*|investigated|committed|perpetrated|behaupt\w*|vorwurf\w*|vorwürf\w*|vermut\w*|wirft|begangen)\b'
 
@@ -46,24 +45,17 @@ def support_for(packet):
     sources=packet['sources']
     all_ids=list(sources)
     result={category:{'source_ids':all_ids,'evidence':[],'contradictions':[]} for category in
-        ('mandate_intake','representation_authority','conflict_review','missing_evidence','jurisdiction')}
+        ('mandate_intake','german_contract_law','representation_authority','conflict_review','missing_evidence')}
     matter='synthesis:intake:matter'
     matter_data=json.loads(sources[matter]['content'])
     text=' '.join(str(v) for v in matter_data.values())
-    if re.search(r'payment|invoice|contract|zahlung|rechnung|forderung|vertrag',text,re.I):
-        result['payment_dispute']={'source_ids':[matter],'evidence':[],'contradictions':[]}
-    if packet['context']['client_type']=='company':
-        result['corporate_identity']={'source_ids':all_ids,'evidence':[],'contradictions':[]}
+    if re.search(r'kauf|liefer|mangel|vertrag|zahlung|rechnung|forderung|schadensersatz|defekt',text,re.I):
+        result['german_contract_law']={'source_ids':[matter],'evidence':[],'contradictions':[]}
     observations=[]
     for id,source in sources.items():
         classification=source['classification']
         if id==matter:
             values=list(matter_data.values())
-        elif id.startswith('synthesis:corporate:') and id!='synthesis:corporate:coverage' and classification=='unverified_lead' and json.loads(source['content']).get('provider')=='Tavily cached excerpt':
-            values=json.loads(source['content']).get('observations',[])
-        elif classification=='official_record_reported':
-            values=[]
-            result['corporate_record_status']={'source_ids':[id],'evidence':[{'source_id':id,'quote':source['content'],'status':'official_record_reported'}],'contradictions':[]}
         else:continue
         for value in values:
             for sentence in re.split(r'(?<=[.!?])\s+',value):
@@ -89,7 +81,13 @@ def support_for(packet):
 
 
 def genuine_review_request(text):
-    return text.endswith('?') and bool(re.match(r'^(?:Should|What|Which|How|Is|Are|Does|Do|Would|Could|Can|[Ww]\w*|Ob|Ist|Sind|Seid|Bist|Soll\w*|Kann\w*|Könn\w*|Muss\w*|Müss\w*|Darf\w*|Wär\w*|Besteht|Bestehen|Liegt|Liegen|Gibt|Lässt|Lassen|Handelt|Erfüllt|Kommt|Verlangt|Bedarf|Erfordert|Unter welchen|Inwiefern)\b',text,re.I))
+    # Structured-output providers sometimes preserve a short list/question label.
+    # Ignore that presentation prefix while still requiring a real German/English
+    # interrogative and terminal question mark.
+    value=re.sub(r'^\s*(?:(?:[-*•]\s*)|(?:\d+[.)]\s*)|(?:(?:frage|prüffrage)\s*:\s*))','',text,flags=re.I)
+    if not value.rstrip().endswith('?'):
+        return False
+    return bool(re.match(r'^(?:Should|What|Which|How|Is|Are|Does|Do|Would|Could|Can|[Ww]\w*|Ist|Sind|Seid|Bist|Soll\w*|Kann\w*|Könn\w*|Muss\w*|Müss\w*|Darf\w*|Wär\w*|Besteht|Bestehen|Liegt|Liegen|Gibt|Lässt|Lassen|Handelt|Erfüllt|Kommt|Verlangt|Bedarf|Erfordert|Ab wann|Bis wann|Unter welchen|Inwiefern)\b',value,re.I))
 
 
 def check_approval_language(text):
@@ -115,7 +113,6 @@ def validate_content(item,field,packet):
     if category not in support:raise ContentPolicyError('Issue outside supported taxonomy')
     ids=set(item.source_ids)
     detected=adverse_categories(item.statement)
-    if re.search(OUT_OF_SCOPE,norm(item.statement)):raise ContentPolicyError('Issue outside controlled legal scope')
     for detected_category in detected:
         if detected_category not in support:raise ContentPolicyError('Unsupported adverse allegation')
         eligible=support[detected_category]['evidence']

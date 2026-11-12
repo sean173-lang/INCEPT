@@ -4,7 +4,9 @@ from scripts.gmail_workspace import GmailWorkspace,KINDS
 from scripts.workspace_runtime import WorkspaceError
 from scripts.report_renderer import text
 
-FIELDS=[('name','Claimed client / company name'),('client_type','Client type'),('address','Client address — leave blank if unknown'),('jurisdiction','Client jurisdiction — only if known'),('governing_law','Explicit matter governing law — never inferred from company country'),('counterparty','Claimed counterparty'),('counterparty_address','Counterparty address — only if known'),('counterparty_representative','Counterparty representative — only if known'),('scope','Requested assistance / scope'),('sender_role','Sender’s claimed role — not verified'),('registration_number','Registration number — only if supplied'),('register_court','Register court — only if supplied'),('representative_name','Representative named in supplied evidence'),('representative_role','Representative role in supplied evidence'),('authority_reference','Authority evidence reference — if reviewed'),('authority_checked','Authority evidence reviewed'),('place','Place of signing / drafting — if supplied'),('firm_name','Law-firm name'),('firm_address','Law-firm address'),('lawyer_name','Responsible lawyer name'),('firm_policy_id','Firm fee policy identifier — optional document drafting'),('hourly_rate','Supplied net hourly rate — optional document drafting'),('advance_hours','Supplied proposed advance hours — optional document drafting'),('vat_mode','VAT treatment: unknown, taxable or exempt'),('vat_percent','Supplied VAT percentage'),('vat_basis','Basis for supplied VAT treatment'),('billing_method','Billing method: unknown, actual minutes or specified increment'),('billing_increment_minutes','Specified billing increment in minutes'),('time_recording','Time recording policy'),('expenses_terms','Expense terms'),('payment_terms','Payment terms'),('other_professionals_terms','Other professional fee terms'),('tax_identifier','Firm tax identifier'),('payment_instructions','Firm payment instructions'),('vat_configuration_confirmed','VAT configuration reviewed by responsible lawyer')]
+INTAKE_FIELDS=[('name','Mandant/in — Name, falls aus der Nachricht ersichtlich'),('email','Kontakt-E-Mail'),('address','Anschrift, falls angegeben'),('counterparty','Gegenseite, falls angegeben'),('scope','Gewünschte Unterstützung')]
+DOCUMENT_FIELDS=[('representative_name','Vertretende Person'),('representative_role','Rolle laut Unterlagen'),('authority_reference','Nachweisreferenz'),('authority_checked','Nachweis anwaltlich geprüft'),('place','Ort'),('firm_name','Kanzlei'),('firm_address','Kanzleianschrift'),('lawyer_name','Verantwortliche/r Anwältin/Anwalt'),('firm_policy_id','Honorarregelung: Referenz'),('hourly_rate','Vorgegebener Nettostundensatz'),('advance_hours','Vorgegebene Vorschussstunden'),('vat_mode','Umsatzsteuer: unknown, taxable, exempt'),('vat_percent','Vorgegebener Umsatzsteuersatz'),('vat_basis','Grundlage der Umsatzsteuerangabe'),('billing_method','Abrechnungsmethode'),('billing_increment_minutes','Abrechnungsschritt in Minuten'),('time_recording','Zeiterfassung'),('expenses_terms','Auslagenregelung'),('payment_terms','Zahlungsbedingungen'),('other_professionals_terms','Weitere Kosten'),('tax_identifier','Steuernummer'),('payment_instructions','Zahlungsangaben'),('vat_configuration_confirmed','Umsatzsteuer anwaltlich geprüft')]
+FIELDS=INTAKE_FIELDS+DOCUMENT_FIELDS
 
 
 def synthesis_runtime_summary(case):
@@ -51,7 +53,7 @@ def build_workspace_app(workspace=None):
    return [[r['from'],r['date'],r['subject'],r['snippet']] for r in rows],gr.update(choices=choices,value=current if current else None),'Connected Gmail: **'+text(account)+'** · real read execution #'+eid+' · '+str(len(rows))+' messages.'
   except WorkspaceError as e:return gr.update(),gr.update(),text(str(e))
  def defaults(profile):
-  return [profile.get(key,False if key in ('authority_checked','vat_configuration_confirmed') else 'unknown' if key in ('client_type','jurisdiction','governing_law','vat_mode','billing_method') else None if key=='billing_increment_minutes' else '') for key,_ in FIELDS]
+  return [profile.get(key,False if key in ('authority_checked','vat_configuration_confirmed') else 'unknown' if key in ('vat_mode','billing_method') else None if key=='billing_increment_minutes' else '') for key,_ in FIELDS]
  def empty_view(status='Select an email, then click ANALYZE.'):
   values=list(view());values[0]=status;return tuple(values)
  def select(mid):
@@ -90,7 +92,7 @@ def build_workspace_app(workspace=None):
   except Exception as error:
    if stage=='assessment_display':reason='The backend returned an assessment, but the report display failed. No document generation was requested.'
    elif isinstance(error,WorkspaceError):reason=str(error)
-   elif isinstance(error,ValueError):reason='Some client details are invalid. Check name/type, jurisdiction and any authority evidence in ANALYSIS → Advanced details.'
+   elif isinstance(error,ValueError):reason='The selected inquiry or optional draft inputs failed validation. Check the supplied details and preserved n8n diagnostics.'
    else:reason='AI analysis could not be completed. Inspect the preserved execution diagnostics before retrying.'
    # Persistent visible status, never a toast-only error or a silent fixture.
    from pathlib import Path
@@ -138,12 +140,10 @@ def build_workspace_app(workspace=None):
   fields={}
   def field(key):
    label=dict(FIELDS)[key]
-   if key=='client_type':c=gr.Dropdown(['unknown','individual','company'],value='unknown',label=label)
-   elif key=='vat_mode':c=gr.Dropdown(['unknown','taxable','exempt'],value='unknown',label=label)
+   if key=='vat_mode':c=gr.Dropdown(['unknown','taxable','exempt'],value='unknown',label=label)
    elif key=='billing_method':c=gr.Dropdown(['unknown','actual_minutes','specified_increment'],value='unknown',label=label)
    elif key=='billing_increment_minutes':c=gr.Number(label=label,precision=0,value=None)
    elif key=='vat_configuration_confirmed':c=gr.Checkbox(label=label,value=False)
-   elif key in ('jurisdiction','governing_law'):c=gr.Dropdown(['unknown','Germany','United Kingdom'],value='unknown',label=label)
    elif key=='authority_checked':c=gr.Checkbox(label=label,value=False)
    else:c=gr.Textbox(label=label,lines=2 if key in ('address','scope','authority_reference') else 1)
    fields[key]=c;return c
@@ -158,13 +158,12 @@ def build_workspace_app(workspace=None):
     test_confirm=gr.Checkbox(label='I authorize processing this selected inquiry by the configured external AI provider',value=False)
     analyze_button=gr.Button('ANALYZE',variant='primary',elem_id='analyze-button')
    with gr.Tab('ANALYSIS',id='analysis'):
-    with gr.Accordion('Client details — edit and save',open=True):
-     with gr.Row():field('name');field('client_type')
-     field('address')
-     with gr.Row():field('counterparty');field('sender_role')
+    with gr.Accordion('Mandantenangaben — fehlende Angaben leer lassen',open=True):
+     with gr.Row():field('name');field('email')
+     with gr.Row():field('address');field('counterparty')
      field('scope')
-     with gr.Accordion('Advanced details: law, company, representative and firm',open=False):
-      keys=[k for k,_ in FIELDS if k not in fields]
+     with gr.Accordion('Optionale Angaben für getrennte Dokumententwürfe',open=False):
+      keys=[k for k,_ in DOCUMENT_FIELDS]
       for start in range(0,len(keys),2):
        with gr.Row():
         for key in keys[start:start+2]:field(key)

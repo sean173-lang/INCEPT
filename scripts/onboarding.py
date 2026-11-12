@@ -8,7 +8,7 @@ from pathlib import Path
 import sqlite3
 import uuid
 
-from scripts.company_service import ServiceError
+from scripts.service_schemas import ServiceError
 from scripts.local_rag import LocalRAG
 from scripts.report_renderer import text
 from scripts.onboarding_schemas import (OnboardingRequest, OnboardingBundle, ClientRecord, MatterRecord,

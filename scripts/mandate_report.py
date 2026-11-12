@@ -9,7 +9,7 @@ from scripts.local_rag import LocalRAG
 from scripts.payment_research import CORPUS
 from scripts.report_renderer import text
 
-VERSION='selected-mandate-de-v7'
+VERSION='german-intake-source-exact-v9'
 
 
 def excerpts(body):
@@ -191,32 +191,26 @@ def render_ai(case,message,analysis,metadata):
     usage=metadata.get('usage') if isinstance(metadata.get('usage'),dict) else {}
     token_text='; '.join(text(k)+': '+text(v) for k,v in usage.items() if isinstance(v,(int,float)) and not isinstance(v,bool)) or 'Tokenverbrauch nicht gemeldet'
     origin='validierte LLM-Auswertung aus Cache' if metadata.get('cache_hit') else 'validierte Live-LLM-Auswertung'
-    lines=['# Vorläufige Mandatsanalyse','','**KI-Analyse angenommen · '+origin+' · '+model+' · source-exact contract v2.**',
-      '**Anwaltliche Prüfung erforderlich. Keine Mandatsannahme, Freigabe, Rechnungsstellung oder externe Handlung.**',
-      '**Attribution und Quellenzitate wurden validiert; das beweist weder die Wahrheit einer Parteibehauptung noch die rechtliche Richtigkeit.**','',
-      '## A. MANDATSÜBERBLICK','',
-      '- **Mandantschaft:** '+text(client.get('name') or bundle['client']['name'])+'; Anschrift: '+text(client.get('address') or 'nicht angegeben')+' (Intake, nicht unabhängig geprüft).',
-      '- **Gegenseite:** '+text(client.get('counterparty') or ', '.join(bundle['matter'].get('opposing_parties',[])) or 'nicht angegeben')+'; Anschrift: '+text(client.get('counterparty_address') or 'nicht angegeben')+' (Intake, nicht unabhängig geprüft).',
-      '- **Vertretung:** Mandantschaft '+text(client.get('representative_name') or 'keine Person angegeben')+'; Rolle/Vollmacht '+text(client.get('representative_role') or 'nicht verifiziert')+'. Gegenseite '+text(client.get('counterparty_representative') or 'keine Person angegeben; Befugnis ungeprüft')+'.',
-      '- **Betrag / Anliegen:** '+text(', '.join(dict.fromkeys(re.findall(r'\b\d[\d.,]*(?:\s*(?:Euro|EUR)|\s*€)',message['body'],re.I))) or 'kein sicher ermittelbarer Betrag')+'; '+text(client.get('scope') or bundle['matter'].get('requested_scope') or 'Prüfungsumfang offen')+'.',
-      '- **Rechtsordnung:** '+text(bundle['matter'].get('governing_law') or 'nicht bestätigt')+'; Anwendbarkeit anwaltlich zu prüfen.','']
+    scope=text(client.get('scope') or bundle['matter'].get('requested_scope') or '')
+    if len(scope)>300:scope='ausgewählte Gmail-Anfrage'
+    lines=['# Vorläufige Mandatsanalyse','','**Vorläufige OpenAI-Analyse · '+model+' · anwaltliche Prüfung erforderlich.**','',
+      '## A. Mandant und Beteiligte','',
+      '- **Mandant/in:** '+text(client.get('name') or bundle['client'].get('name') or 'nicht angegeben')+' · Kontakt: '+text(client.get('email') or bundle['client'].get('email') or 'nicht angegeben')+' · Anschrift: '+text(client.get('address') or bundle['client'].get('address') or 'nicht angegeben')+'.',
+      '- **Gegenseite:** '+text(client.get('counterparty') or ', '.join(bundle['matter'].get('opposing_parties',[])) or 'nicht angegeben')+'.',
+      '- **Gewünschte Unterstützung:** '+(scope or 'aus der Nachricht zu bestimmen')+'.','']
     lines+=section('mandate_summary','KI-ausgewählter Mandatsanlass','Kein quellengestützter Mandatsanlass ausgewählt.')
-    lines+=['','## B. SACHVERHALT','', '**Vom Modell ausgewählte Originalauszüge; Parteivortrag bleibt ungeprüft.**','']
-    lines+=section('factual_background','Fakten und Chronologie','Keine quellengestützten Tatsachenauszüge ausgewählt.')
-    lines+=['','### Fehlende Belege und offene Tatsachen','']
-    lines+=section('missing_information','Vom Modell erkannte Informationslücken','Keine zusätzlichen Informationslücken ausgewählt.')
-    lines+=['','## C. RECHTLICHE WÜRDIGUNG','']
-    lines+=section('preliminary_legal_issues','Rechtsfragen','Keine durch die verfügbaren Quellen gestützte Rechtsfrage ausgewählt.')
-    lines+=section('source_supported_analysis','Bedingte Anwendung auf diesen Fall','Mangels einschlägiger validierter Rechtsquelle keine materielle Rechtsanalyse angenommen.',statements['source_supported_analysis'][:1])
-    lines+=['','## D. VORLÄUFIGES ERGEBNIS','',
-      'Die nachfolgenden Positionen sind bedingte Modellabwägungen, keine Feststellungen und keine Erfolgsprognose.','']
-    lines+=section('source_supported_analysis','Weitere Anspruchs- und Gegenpositionen','Keine weitere bedingte Position über die oben dargestellte Anwendung hinaus.',statements['source_supported_analysis'][1:])
-    lines+=section('uncertainties_and_limitations','Nicht abschließend beurteilbare Punkte','Keine zusätzlichen Unsicherheiten ausgewählt.')
-    lines+=['','## E. HANDLUNGSEMPFEHLUNGEN','',
-      'Priorisierte anwaltliche Prüffragen; die Analyse führt keine Handlung aus.','']
-    lines+=section('proposed_next_steps','Nächste Schritte','Keine quellengestützte nächste Prüffrage ausgewählt.')
-    lines+=section('questions_requiring_lawyer_review','Ausdrücklich anwaltlich zu prüfen','Keine zusätzliche anwaltliche Prüffrage ausgewählt.')
-    lines+=['','## F. RECHTSQUELLEN','']
+    lines+=['','## B. Sachverhalt','', '**Originalauszüge aus der ausgewählten Nachricht; Parteivortrag, nicht unabhängig geprüft.**','']
+    lines+=section('factual_background','Wesentliche Tatsachen und zeitlicher Ablauf','Keine quellengestützten Tatsachenauszüge ausgewählt.')
+    lines+=section('missing_information','Fehlende Belege und offene Tatsachen','Keine zusätzlichen Informationslücken ausgewählt.')
+    lines+=['','## C. Rechtliche Würdigung','']
+    lines+=section('preliminary_legal_issues','Relevante Rechtsfragen','Keine quellengestützte Rechtsfrage ausgewählt.')
+    lines+=section('source_supported_analysis','Bedingte Anwendung der Rechtsquellen','Keine validierte materielle Rechtsanalyse angenommen.',statements['source_supported_analysis'])
+    lines+=['','## D. Vorläufiges Ergebnis','']
+    lines+=section('uncertainties_and_limitations','Unsicherheiten und Gegenargumente','Keine weiteren Unsicherheiten ausgewählt.')
+    lines+=['','## E. Handlungsempfehlungen','']
+    lines+=section('proposed_next_steps','Nächste Schritte für anwaltliche Prüfung','Keine nächste Prüffrage ausgewählt.')
+    lines+=section('questions_requiring_lawyer_review','Weitere anwaltliche Prüffragen','Keine weiteren Prüffragen ausgewählt.')
+    lines+=['','## F. Rechtsquellen','']
     proofs={}
     for proof in case.get('legal_research',[]):
         src=proof.get('source') or {}
@@ -228,13 +222,9 @@ def render_ai(case,message,analysis,metadata):
         locator=text(source.get('locator') or sid);url=source.get('url') or ''
         label=('['+locator+']('+url+')') if str(url).startswith('https://') else locator
         if proof.get('status')=='wording_verified' and re.fullmatch(r'[a-f0-9]{64}',proof.get('source_sha256','')):
-            lines.append('- **'+label+'** — amtlicher Wortlaut, serverseitig geprüft; Relevanz laut KI: '+text(' '.join(dict.fromkeys(used_for.get(sid,[]))))+'; Abruf '+text(proof.get('retrieved_at','unbekannt'))+'; HTTP '+text(proof.get('http_status','unbekannt'))+'; Quelldokument-SHA-256 `'+proof['source_sha256']+'`.')
+            lines.append('- **'+label+'** — amtlicher Wortlaut abgerufen und geprüft; Abruf '+text(proof.get('retrieved_at','unbekannt'))+'.')
         else:
             lines.append('- **'+label+'** — Relevanz laut KI: '+text(' '.join(dict.fromkeys(used_for.get(sid,[]))))+'; Quelle ist im AI-Evidenzsatz enthalten, konkrete Abrufprovenienz nicht bestätigt. Anwaltliche Nachprüfung erforderlich.')
-    lines+=['','## KI-STATUS UND GRENZEN','',
-      '**AI acceptance:** '+text(metadata.get('reason') or 'validated_preliminary_ai_synthesis')+'; model_used=true; execution_mode=live; cache_hit='+str(bool(metadata.get('cache_hit')))+'.',
-      '**Nutzungsmetadaten:** '+token_text+'. Kostendarstellung: '+text(metadata.get('cost_display') or 'Cost unknown')+'; Abrechnung nicht bestätigt.',
-      'Die KI erhielt nur das validierte Intake und die zugeordneten Rechtsquellenauszüge. Anhänge wurden nicht inhaltlich ausgewertet. Originalvertrag, Rechnung, Leistungs-/Abnahmebelege, Zugangsdaten, Zahlungsabreden und Vertretungsnachweise bleiben anwaltlich zu prüfen.','']
     audit={'report_version':VERSION,'analysis_origin':origin,'model':metadata.get('model'),'contract_version':'2.0',
            'message_sha256':hashlib.sha256(message['body'].encode()).hexdigest(),'ai_source_ids':used_ids,
            'legal_source_ids':legal_ids,'live_request':metadata.get('live_request'),'cache_hit':metadata.get('cache_hit')}

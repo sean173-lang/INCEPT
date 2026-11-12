@@ -1,0 +1,26 @@
+{
+  "completed": {
+    "status": "completed",
+    "output_text": "{}",
+    "usage": {"input_tokens": 120, "output_tokens": 40, "total_tokens": 160}
+  },
+  "incomplete_max_output": {
+    "status": "incomplete",
+    "incomplete_details": {"reason": "max_output_tokens"},
+    "usage": {"input_tokens": 120, "output_tokens": 8000, "output_tokens_details": {"reasoning_tokens": 0}, "total_tokens": 8120}
+  },
+  "failed": {
+    "status": "failed",
+    "error": {"code": "server_error", "message": "Sanitized fixture message"},
+    "usage": {"input_tokens": 120, "output_tokens": 0, "total_tokens": 120}
+  },
+  "refused": {
+    "status": "completed",
+    "output": [{"content": [{"type": "refusal", "refusal": "Sanitized fixture refusal"}]}],
+    "usage": {"input_tokens": 120, "output_tokens": 10, "total_tokens": 130}
+  },
+  "unexpected": {
+    "status": "queued",
+    "usage": null
+  }
+}

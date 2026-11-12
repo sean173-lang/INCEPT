@@ -1,9 +1,5 @@
-"""Selected-message workspace; existing n8n/FastAPI do the actual processing.
-
-Local synthetic-matter pilot only. Gmail is real; model requests are controlled
-by the existing FastAPI synthesis opt-in, budget ledger and service authentication.
-Release records authorize transmission of a specific complete draft, never legal
-approval, mandate acceptance or invoice issuance. Sending is self-account only.
+"""Selected Gmail inquiries flow through authenticated n8n and FastAPI for analysis.
+Documents and any confirmed reply remain separate lawyer-reviewed operations.
 """
 from contextlib import closing
 from datetime import datetime,timezone
@@ -143,15 +139,15 @@ class GmailWorkspace:
   record=self.transport.run_graph(message_graph(mid,self.transport.binding()));message=decode_message(gmail_result(results(record,'Read Selected Gmail Message')[0],'read'));self.store.put('message:'+mid,message)
   return message,record['id'],self.prefill(message)
  def prefill(self,message):
-  profile={'name':'','address':'','client_type':'unknown','jurisdiction':'unknown','governing_law':'unknown','counterparty':'','scope':'','sender_role':'','registration_number':'','register_court':'','representative_name':'','representative_role':'','authority_reference':'','authority_checked':False,'firm_name':'','firm_address':'','lawyer_name':''}
+  profile={'name':'','email':'','address':'','counterparty':'','scope':'','representative_name':'','representative_role':'','authority_reference':'','authority_checked':False,'firm_name':'','firm_address':'','lawyer_name':''}
   profile.setdefault('extraction_note','Selected message will be extracted and grounded to its original text before analysis.')
   return profile
  def payload(self,message,profile,authorized):
   if authorized is not True:raise DemoError('External AI processing was not authorized for this inquiry.')
   if len(message['body'])>6000:raise DemoError('Selected message exceeds the source-grounded analysis limit; no content was truncated.')
   client_name=textline(profile.get('name')) or None
-  client_type=profile.get('client_type') if profile.get('client_type') in ('individual','company') else 'unknown'
-  governing_law=profile.get('governing_law') if profile.get('governing_law') in ('Germany','United Kingdom') else 'unknown'
+  client_type='unknown'
+  governing_law='unknown'
   firm=None
   if all(textline(profile.get(k)) for k in ('firm_name','firm_address','lawyer_name')):
    firm=FirmInput(name=textline(profile['firm_name']),address=textline(profile['firm_address']),email=None,
@@ -180,11 +176,10 @@ class GmailWorkspace:
         'evidence_reference':textline(profile.get('authority_reference')) or None}
   if firm or policy or rep or textline(profile.get('place')):
    options=DocumentOptions(representative=rep,place=textline(profile.get('place')) or None,
-      recipient_business_status='business' if client_type=='company' else 'consumer' if client_type=='individual' else 'unknown',
-      engagement_law='Germany' if governing_law=='Germany' else 'unknown',firm_policy=policy).model_dump(mode='json')
+      recipient_business_status='unknown',engagement_law='unknown',firm_policy=policy).model_dump(mode='json')
   body={'synthetic_data':False,'idempotency_key':'gmail-'+message['id']+'-'+digest({'message_id':message['id'],'body':message['body'],'profile':profile})[:24],
-    'client':{'name':client_name,'address':textline(profile.get('address')) or None,'email':None,'client_type':client_type,
-      'jurisdiction':profile.get('jurisdiction') if profile.get('jurisdiction') in ('Germany','United Kingdom','UK') else 'unknown',
+    'client':{'name':client_name,'address':textline(profile.get('address')) or None,'email':textline(profile.get('email')) or parseaddr(message.get('from',''))[1] or None,'client_type':client_type,
+      'jurisdiction':'unknown',
       'registration_number':textline(profile.get('registration_number')) or None,'register_court':textline(profile.get('register_court')) or None},
     'firm':firm,'matter':{'title':textline(message['subject'])[:190] or 'Anfrage','summary':message['body'],
       'requested_scope':textline(profile.get('scope')) or message['body'][:900],
@@ -203,17 +198,12 @@ class GmailWorkspace:
   if len(extraction_rows)!=1 or extraction_rows[0].get('message_id')!=mid:
    raise DemoError('Selected-message extraction did not return a validated result. n8n execution '+str(extraction_record.get('id','unknown'))+' diagnostics were preserved.')
   extraction=extraction_rows[0]['extraction']
-  extracted_name=extraction.get('company_name') or extraction.get('sender_name')
-  profile={**profile,'name':extracted_name.get('text') if extracted_name else '',
-           'client_type':extraction.get('client_type') or 'unknown',
-           'counterparty':(extraction.get('counterparty') or {}).get('text',''),
-           'scope':(extraction.get('requested_assistance') or {}).get('text',''),
-           'sender_role':(extraction.get('sender_role') or {}).get('text',''),
-           'extraction_note':'Live '+str(extraction_rows[0].get('model') or 'OpenAI')+' extraction; identity and party roles are grounded to exact source excerpts, not independently verified.'}
-  jurisdiction=(extraction.get('jurisdiction_clue') or {}).get('text','').lower()
-  if jurisdiction in ('deutschland','germany','bundesrepublik deutschland'):profile['jurisdiction']='Germany'
-  elif jurisdiction in ('united kingdom','uk','england','wales','scotland','northern ireland'):profile['jurisdiction']='United Kingdom'
-  else:profile['jurisdiction']='unknown'
+  extracted_name=extraction.get('client_name')
+  profile={**profile,'name':textline(profile.get('name')) or (extracted_name.get('text') if extracted_name else ''),
+           'email':textline(profile.get('email')) or parseaddr(message.get('from',''))[1],
+           'counterparty':textline(profile.get('counterparty')) or (extraction.get('counterparty') or {}).get('text',''),
+           'scope':textline(profile.get('scope')) or (extraction.get('requested_assistance') or {}).get('text',''),
+           'extraction_note':'Live '+str(extraction_rows[0].get('model') or 'OpenAI')+' extraction; names and facts are validated against exact source excerpts.'}
   payload=self.payload(message,profile,authorized);case_id='case-'+mid;revision=digest(payload);previous=self.store.get(case_id)
   from scripts.ai_synthesis import AIConfig
   analysis_version=VERSION+':source-exact-2.0'
@@ -236,7 +226,7 @@ class GmailWorkspace:
   if bundle.client.name!=payload['client']['name'] or bundle.matter.summary!=payload['matter']['summary'] or bundle.matter.opposing_parties!=payload['matter']['opposing_parties']:raise DemoError('Backend result does not match this selected email/intake.')
   if any(d.ready_for_issuance or d.legally_approved for d in bundle.documents) or any(a.executed for a in bundle.proposed_actions):raise DemoError('Approval safeguard violation.')
   case={'id':case_id,'message_id':mid,'source_body_sha256':hashlib.sha256(message['body'].encode()).hexdigest(),'revision':revision,'analysis_cache_key':cache_key,'profile':profile,'payload':payload,'bundle':bundle.model_dump(mode='json'),'execution_id':record['id'],'extraction_execution_id':extraction_record['id'],'workflow_id':record['workflowId'],'legal_research':result['legal_research'],'reused':False,'documents_generated':False}
-  case['bundle']['assessment']['content_markdown']+='\n## Selected-email provenance and limitations\nSource: Gmail message '+mid+'; sender '+parseaddr(message['from'])[1]+'. Email statements are unverified allegations. Sender is not a verified company representative. '+profile.get('extraction_note','Message content was submitted for source-grounded extraction.')+'\nNo registry verification was performed. Missing dates remain unknown.\n'
+  case['bundle']['assessment']['content_markdown']+='\n\n*Quelle: ausgewählte Gmail-Nachricht '+mid+'. Angaben aus der Nachricht sind Parteivortrag und nicht unabhängig geprüft.*\n'
   from scripts.mandate_report import render_ai
   case['assessment_audit_original']=case['bundle']['assessment']['content_markdown']
   status=result.get('ai_synthesis') or {'status':'unavailable','reason':'ai_synthesis_status_missing','model_used':False,'execution_mode':'disabled','live_request':False}
@@ -260,6 +250,8 @@ class GmailWorkspace:
    self.store.put('failed-analysis:'+mid+':'+record['id'],diagnostic)
    fields=status.get('validation_fields',[])
    detail='; validator: '+str(status.get('validation_error_type')) if status.get('validation_error_type') else ''
+   if status.get('validation_error_code'):detail+='; validation code: '+str(status.get('validation_error_code'))
+   if status.get('validation_error_message'):detail+='; validation detail: '+str(status.get('validation_error_message'))
    if isinstance(fields,list) and fields:detail+='; failed fields: '+', '.join(str(v) for v in fields)
    raise DemoError('AI analysis could not be completed; source-exact validation did not pass ('+reason+detail+'). n8n execution '+str(record['id'])+' diagnostics were preserved.')
   case['bundle']['assessment']['content_markdown']=report
