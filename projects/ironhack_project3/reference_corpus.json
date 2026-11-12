@@ -1,0 +1,22 @@
+[
+  {
+    "id": "RAG-METHOD-01",
+    "title": "Corporate identity verification",
+    "text": "Match the exact registered entity using its legal name and register identifier. Distinguish registry-derived fields from third-party reports. A registry match does not establish current status unless the source provides a retrieval timestamp."
+  },
+  {
+    "id": "RAG-SOURCE-02",
+    "title": "Source reliability",
+    "text": "Prefer official company and registry sources for identity and registered details. Label search snippets as unverified leads. Record source URL, retrieval timestamp, and any publication date. Do not convert absence of a search result into evidence that an event did not occur."
+  },
+  {
+    "id": "RAG-DILIGENCE-03",
+    "title": "Meeting preparation checklist",
+    "text": "Confirm corporate identity, business model, products and services, material public developments, management context, and information gaps. Separate verified source facts from interpretation. Frame follow-up questions as questions, not allegations."
+  },
+  {
+    "id": "RAG-LIMIT-04",
+    "title": "Scope limitations",
+    "text": "Public-source company research is not a legal opinion, conflict check, solvency conclusion, sanctions screening, or verification of management authority. State coverage and evidence limitations explicitly."
+  }
+]

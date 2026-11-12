@@ -1,0 +1,16 @@
+flowchart TD
+  F[CompanyScope production form] --> V[Normalize and validate]
+  W[Authenticated POST webhook] --> V
+  M[Manual Trigger] --> D[Manual company input] --> V
+  V --> O[OpenRegister exact identity and company details]
+  O --> T[Tavily public web search]
+  T --> R[Local RAG methodology]
+  R --> A[OpenAI Responses API with structured output]
+  A --> C[Source and content validation]
+  C --> S[Save Markdown report]
+  S --> B{Entrypoint}
+  B -->|Form| H[Safe themed HTML report result]
+  B -->|Manual or webhook| J[Existing JSON result]
+  O -. identity or provider failure .-> E[Stage-specific error]
+  T -. provider failure .-> E
+  A -. incomplete or invalid response .-> E
