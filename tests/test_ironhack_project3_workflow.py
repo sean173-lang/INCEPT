@@ -14,6 +14,7 @@ class Project3WorkflowTests(unittest.TestCase):
         self.nodes = {node["name"]: node for node in self.workflow["nodes"]}
 
     def test_both_triggers_feed_the_shared_input_and_pipeline(self):
+        self.assertEqual(self.workflow["name"], "INCEPT — Company Research Agent")
         edges = self.workflow["connections"]
         self.assertEqual(edges["Webhook Trigger"]["main"][0][0]["node"], "Normalize Input")
         self.assertEqual(edges["Manual Trigger"]["main"][0][0]["node"], "Set Demo Company")
@@ -25,12 +26,21 @@ class Project3WorkflowTests(unittest.TestCase):
 
     def test_webhook_uses_last_node_response_and_no_webhook_only_node(self):
         self.assertEqual(self.nodes["Webhook Trigger"]["parameters"]["responseMode"], "lastNode")
+        self.assertEqual(self.nodes["Webhook Trigger"]["parameters"]["path"], "ironhack-company-research")
         self.assertFalse(any(node["type"].endswith("respondToWebhook") for node in self.nodes.values()))
 
     def test_browser_form_is_required_and_joins_the_shared_pipeline(self):
         form = self.nodes["Company Research Form"]
         self.assertEqual(form["type"], "n8n-nodes-base.formTrigger")
+        self.assertEqual(form["parameters"]["formTitle"], "CompanyScope")
+        self.assertIn("Company research, made simple.", form["parameters"]["formDescription"])
+        self.assertEqual(
+            form["parameters"]["formDescription"].replace("\\n", "\n"),
+            "Company research, made simple.\nResearch German companies using official registry data, public web sources and AI-assisted analysis. Generate structured, source-referenced company reports in one workflow.",
+        )
         self.assertEqual(form["parameters"]["options"]["path"], "incept-company-research")
+        self.assertEqual(form["parameters"]["options"]["buttonLabel"], "Generate Company Report")
+        self.assertTrue(form["parameters"]["options"]["customCss"])
         self.assertEqual(form["parameters"]["responseMode"], "lastNode")
         self.assertEqual(form["parameters"]["authentication"], "n8nUserAuth")
         self.assertTrue(form["parameters"]["requireExecuteAccess"])
@@ -47,6 +57,26 @@ class Project3WorkflowTests(unittest.TestCase):
         self.assertIn("company_name", self.nodes["OpenRegister Search"]["parameters"]["url"])
         self.assertEqual(self.nodes["Form Result"]["parameters"]["operation"], "completion")
         self.assertIn("$json.report_file", self.nodes["Form Result"]["parameters"]["completionMessage"])
+        self.assertIn("$json.message", self.nodes["Form Result"]["parameters"]["completionMessage"])
+        self.assertTrue(self.nodes["Form Result"]["parameters"]["options"]["customCss"])
+        self.assertIn("CompanyScope", self.nodes["Form Result"]["parameters"]["completionTitle"])
+
+    def test_premium_theme_is_css_only_responsive_and_uses_existing_form_selectors(self):
+        css = self.nodes["Company Research Form"]["parameters"]["options"]["customCss"]
+        self.assertIn("--color-background: #070a18", css)
+        self.assertIn("radial-gradient", css)
+        self.assertIn(".card", css)
+        self.assertIn(".form-header h1", css)
+        self.assertIn(".form-input:focus", css)
+        self.assertIn("#submit-btn:hover", css)
+        self.assertIn("#submitted-form", css)
+        self.assertIn("@media only screen and (max-width: 600px)", css)
+        self.assertIn("prefers-reduced-motion", css)
+        self.assertNotRegex(css, r"(?i)<\s*/?\s*(?:script|style|form|input|button)")
+        self.assertNotRegex(css, r"(?i)@import|javascript:|url\s*\(")
+        self.assertNotRegex(css, r"(?is)\.test-notice\s*\{[^}]*display\s*:\s*none")
+        self.assertEqual(css, self.nodes["Form Result"]["parameters"]["options"]["customCss"])
+        self.assertEqual(len(self.workflow["nodes"]), 33)
 
     def test_unknown_company_has_a_clear_failure_branch(self):
         false_branch = self.workflow["connections"]["Entity Match?"]["main"][1][0]["node"]

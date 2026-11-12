@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = Path(__file__).resolve().parent / "workflow.json"
 CORPUS = Path(__file__).resolve().parent / "reference_corpus.json"
 PROMPT = Path(__file__).resolve().parent / "prompts" / "corporate_intelligence_v1.md"
+FORM_THEME = Path(__file__).resolve().parent / "form_theme.css"
 TAVILY_PARSER = Path(__file__).resolve().parent / "tavily_parser.js"
 MARKDOWN_RENDERER = Path(__file__).resolve().parent / "markdown_renderer.js"
 PATH = "ironhack-company-research"
@@ -38,8 +39,8 @@ def build(credentials=None):
     form = node("Company Research Form", "formTrigger", {
         "authentication": "n8nUserAuth", "requireExecuteAccess": True,
         "trustedSource": "n8n-internal", "path": FORM_PATH,
-        "formTitle": "Company Research Request",
-        "formDescription": "Enter the company name to create a public-source research briefing.",
+        "formTitle": "CompanyScope",
+        "formDescription": "Company research, made simple.\\nResearch German companies using official registry data, public web sources and AI-assisted analysis. Generate structured, source-referenced company reports in one workflow.",
         "formFields": {"values": [{
             "fieldName": "company_name", "fieldLabel": "Company name", "fieldType": "text",
             "placeholder": "e.g. SAP SE", "requiredField": True,
@@ -48,7 +49,8 @@ def build(credentials=None):
             "placeholder": "e.g. HRB 100653", "requiredField": False,
         }]},
         "responseMode": "lastNode",
-        "options": {"path": FORM_PATH, "buttonLabel": "Research company", "appendAttribution": False},
+        "options": {"path": FORM_PATH, "buttonLabel": "Generate Company Report", "appendAttribution": False,
+                    "customCss": FORM_THEME.read_text(encoding="utf-8").strip()},
     }, 2.6)
 
     validate = node("Normalize Input", "code", {"mode": "runOnceForAllItems", "jsCode": """
@@ -227,9 +229,9 @@ return [{json:{ok:true,n8n_execution_id:String($execution.id),entrypoint: $('Nor
     form_error_if = node("Form Error?", "if", {"conditions": {"options": {"caseSensitive": True, "leftValue": "", "typeValidation": "strict", "version": 2}, "conditions": [{"leftValue": "={{ $json.entrypoint === 'form' }}", "rightValue": True, "operator": {"type": "boolean", "operation": "true", "singleValue": True}}], "combinator": "and"}, "options": {}}, 2.2)
     form_completion = node("Form Result", "form", {
         "operation": "completion", "respondWith": "text",
-        "completionTitle": "={{ $json.ok ? 'Research complete' : 'Research could not be completed' }}",
+        "completionTitle": "={{ $json.ok ? 'CompanyScope — Report complete' : 'CompanyScope — Report not completed' }}",
         "completionMessage": "={{ $json.ok ? ('Research for '+$json.company.name+' is complete. Report: '+$json.report_file) : ('Research failed: '+($json.message||$json.error_code||'Unknown error')) }}",
-        "options": {"appendAttribution": False},
+        "options": {"appendAttribution": False, "customCss": FORM_THEME.read_text(encoding="utf-8").strip()},
     }, 2.5)
     return_report = node("Return Report", "code", {"mode": "runOnceForAllItems", "jsCode": "return [{json:$input.first().json}];"}, 2)
     return_error = node("Return Error", "code", {"mode": "runOnceForAllItems", "jsCode": "return [{json:$input.first().json}];"}, 2)

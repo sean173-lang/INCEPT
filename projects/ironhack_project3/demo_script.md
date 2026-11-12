@@ -4,7 +4,7 @@ This script is designed for a live run. The two saved reports provide backup evi
 
 ## 0:00–0:40 — Problem and user
 
-“Corporate lawyers preparing an initial client or counterparty meeting often gather registry and public-web information manually. INCEPT gives them a short, cited starting briefing. It is public-source research, not a legal opinion.”
+"CompanyScope is an autonomous company research and report generation agent. It helps lawyers prepare for an initial company or counterparty meeting with structured reports based on official registry data, public web sources and AI-assisted analysis. It is public-source research, not a legal opinion."
 
 ## 0:40–1:20 — Architecture and stack
 

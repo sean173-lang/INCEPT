@@ -1,8 +1,12 @@
-# INCEPT — Autonomous Company Research Agent
+# CompanyScope — Autonomous Company Research and Report Generation Agent
+
+**Company research, made simple.**
+
+Research German companies using official registry data, public web sources and AI-assisted analysis. Generate structured, source-referenced company reports in one workflow.
 
 ## Problem and target user
 
-Lawyers preparing an initial meeting with a German corporate client or researching a commercial counterparty often have to gather registry identity, company background, recent public information, and research questions from separate tools. This MVP automates a bounded public-source briefing for that legal-services workflow.
+CompanyScope is an autonomous company research and report generation agent for lawyers preparing an initial meeting with a German corporate client or researching a commercial counterparty. It automates a bounded public-source briefing using official registry data, public web sources and AI-assisted analysis.
 
 The output is **not a legal opinion**, conflict check, sanctions screen, solvency conclusion, or proof of authority.
 
@@ -25,7 +29,7 @@ flowchart TD
   A -. incomplete / refusal / request failure .-> E
 ```
 
-The n8n workflow is the only orchestrator. One permanent active workflow, **INCEPT — Company Research Agent** (ID `61tsMgiWvpjit2st`), serves manual runs, the company form, and `POST /webhook/ironhack-company-research`. All three inputs feed the same normalizer and research pipeline. Provider calls have automatic retries disabled. The response reports a failed stage instead of substituting mock or demo data.
+The user-facing product is CompanyScope. Its existing n8n workflow remains **INCEPT — Company Research Agent** (ID `61tsMgiWvpjit2st`) as the stable technical workflow name and identifier. That one permanent active workflow serves manual runs, the CompanyScope production form, and `POST /webhook/ironhack-company-research`. All three inputs feed the same normalizer and research pipeline. Provider calls have automatic retries disabled. The response reports a failed stage instead of substituting mock or demo data.
 
 OpenAI uses a versioned corporate-intelligence prompt and strict Structured Outputs schema to produce cited company analysis, public findings, analytical observations, information gaps, and research actions. The report renderer builds fixed Markdown headings and validates that every model claim has a known evidence ID. Registry facts are rendered from OpenRegister; web findings remain explicitly labeled unverified leads. Source-ID validation cannot automatically prove that every cited source semantically supports every sentence, so the report says that professional review is required.
 
@@ -94,7 +98,7 @@ Run commands from the repository root. Keep API keys in the ignored root `.env`;
 
 5. Use the browser form while the workflow is active:
 
-   - Production URL: `http://localhost:5678/form/incept-company-research`
+   - **Production form URL:** `http://localhost:5678/form/incept-company-research` (use the Production URL; the test URL is only for n8n editor testing)
    - Sign in to the n8n instance with a user that can execute this workflow, then enter a company name and submit. The required company-name field and optional register-number field map to the shared input. A unique exact OpenRegister match continues automatically. When exact matching fails but plausible registry candidates are present, the form returns a numbered list with registered name, register number, and court. Restart with the exact registered name; if the name is duplicated, provide its register number. Candidate suggestions are never selected automatically. No matching candidates produces a clear not-found response.
    - The form requires n8n user authentication and workflow execute permission, so an unauthenticated visitor cannot trigger paid research.
 

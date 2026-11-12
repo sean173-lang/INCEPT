@@ -1,0 +1,215 @@
+:root {
+  --font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-size-body: 14px;
+  --font-size-label: 13px;
+  --font-size-input: 16px;
+  --font-size-header: clamp(42px, 8vw, 64px);
+  --font-size-paragraph: 15px;
+  --font-size-link: 12px;
+  --font-size-error: 13px;
+  --color-background: #070a18;
+  --color-test-notice-text: #f6d28a;
+  --color-test-notice-bg: rgba(34, 28, 64, 0.86);
+  --color-test-notice-border: rgba(246, 210, 138, 0.3);
+  --color-card-bg: rgba(15, 22, 46, 0.82);
+  --color-card-border: rgba(165, 180, 255, 0.18);
+  --color-card-shadow: rgba(24, 39, 104, 0.44);
+  --color-link: #aebbe0;
+  --color-header: #f7f8ff;
+  --color-label: #dfe6ff;
+  --color-input-border: rgba(157, 174, 226, 0.25);
+  --color-input-text: #f5f7ff;
+  --color-input-bg: rgba(7, 12, 29, 0.76);
+  --color-focus-border: #9b83ff;
+  --color-submit-btn-bg: #675cff;
+  --color-submit-btn-text: #ffffff;
+  --color-error: #ff9cad;
+  --color-required: #a99aff;
+  --color-clear-button-bg: #8995b7;
+  --color-html-text: #dfe6ff;
+  --color-html-link: #9e9aff;
+  --border-radius-card: 24px;
+  --border-radius-input: 14px;
+  --padding-container-top: 0px;
+  --padding-card: 38px;
+  --padding-form-input: 16px;
+  --container-width: 560px;
+  --submit-btn-height: 58px;
+  --box-shadow-card: 0 26px 90px rgba(1, 4, 18, 0.55);
+  --opacity-placeholder: 0.58;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  color: #f5f7ff;
+  background:
+    radial-gradient(ellipse at 12% 8%, rgba(105, 73, 255, 0.28), transparent 38%),
+    radial-gradient(ellipse at 88% 20%, rgba(39, 111, 255, 0.23), transparent 34%),
+    radial-gradient(ellipse at 55% 100%, rgba(51, 62, 155, 0.17), transparent 42%),
+    linear-gradient(145deg, #060816 0%, #0b1027 52%, #080d1e 100%);
+  background-attachment: fixed;
+}
+
+.container {
+  width: min(94vw, 560px);
+  padding: clamp(28px, 8vh, 76px) 0;
+}
+
+.card,
+#submitted-form {
+  color: #f5f7ff;
+  background: linear-gradient(145deg, rgba(20, 29, 59, 0.88), rgba(11, 17, 38, 0.88));
+  border: 1px solid rgba(164, 180, 255, 0.2);
+  border-radius: 24px;
+  box-shadow: 0 26px 90px rgba(1, 4, 18, 0.55), 0 0 44px rgba(91, 87, 255, 0.1);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+}
+
+.form-header h1 {
+  font-size: clamp(42px, 8vw, 64px);
+  font-weight: 750;
+  letter-spacing: 0.2em;
+  line-height: 1.08;
+  padding-left: 0.2em;
+  color: #c8c5ff;
+  background: linear-gradient(100deg, #f7f8ff 4%, #bcb3ff 48%, #83b7ff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.form-header p {
+  max-width: 34em;
+  margin: 0 auto;
+  color: #b8c4e7;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.inputs-wrapper {
+  padding-top: 34px;
+  padding-bottom: 28px;
+}
+
+form label {
+  color: #dfe6ff;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+form .form-input {
+  min-height: 56px;
+  border: 1px solid rgba(157, 174, 226, 0.25);
+  border-radius: 14px;
+  color: #f5f7ff;
+  background: rgba(7, 12, 29, 0.76);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+form .form-input:focus,
+form .form-input:focus-visible {
+  border-color: #9b83ff;
+  outline: 3px solid rgba(133, 111, 255, 0.2);
+  outline-offset: 1px;
+  background: rgba(9, 15, 35, 0.96);
+  box-shadow: 0 0 0 1px rgba(133, 111, 255, 0.3), 0 0 28px rgba(106, 87, 255, 0.18);
+}
+
+form .form-input::placeholder {
+  color: #8592b5;
+}
+
+#submit-btn {
+  min-height: 58px;
+  border: 1px solid rgba(210, 211, 255, 0.18);
+  border-radius: 15px;
+  color: #ffffff;
+  background: linear-gradient(105deg, #7658f6 0%, #5268f4 52%, #347fe9 100%);
+  box-shadow: 0 12px 28px rgba(62, 77, 209, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+#submit-btn:hover:not(:disabled) {
+  opacity: 1;
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(62, 77, 209, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+#submit-btn:focus-visible {
+  outline: 3px solid rgba(164, 147, 255, 0.55);
+  outline-offset: 3px;
+}
+
+#submit-btn:disabled {
+  filter: saturate(0.55);
+}
+
+#submit-hint {
+  color: #9cadd4;
+  line-height: 1.6;
+}
+
+#submitted-form .form-header h1 {
+  font-size: clamp(28px, 6vw, 40px);
+  letter-spacing: 0.04em;
+  padding-left: 0;
+}
+
+#submitted-content {
+  color: #d5def9;
+  font-size: 15px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.error-show,
+#submit-error.error-show {
+  color: #ff9cad;
+}
+
+@media only screen and (max-width: 600px) {
+  .container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  .card,
+  #submitted-form {
+    margin-bottom: 0;
+    padding: 26px 21px;
+    border: 1px solid rgba(164, 180, 255, 0.2);
+    border-radius: 21px;
+  }
+
+  .form-header h1 {
+    font-size: clamp(38px, 12vw, 54px);
+  }
+
+  .inputs-wrapper {
+    padding-top: 28px;
+    padding-bottom: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
