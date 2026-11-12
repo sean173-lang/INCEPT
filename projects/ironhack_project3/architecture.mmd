@@ -1,0 +1,12 @@
+flowchart TD
+  U[Lawyer: company name and optional register ID] --> W[Authenticated n8n webhook]
+  W --> V[Validate request and exact identity]
+  V --> O[OpenRegister search and company details]
+  O --> T[Tavily public web search]
+  T --> R[Local RAG: source and diligence guidance]
+  R --> A[OpenAI Responses API: source selection and questions]
+  A --> C[Validate source IDs; render exact source excerpts]
+  C --> M[Markdown report and run metadata]
+  O -. failure or no exact match .-> E[Stage-specific failure response]
+  T -. failure .-> E
+  A -. incomplete response or provider error .-> E
