@@ -42,6 +42,8 @@
 html,
 body {
   min-height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -71,12 +73,26 @@ body {
   backdrop-filter: blur(22px);
 }
 
+.form-header {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
 .form-header h1 {
-  font-size: clamp(42px, 8vw, 64px);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-align: center;
+  font-size: clamp(1.5rem, 7vw, 3rem);
   font-weight: 750;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.035em;
   line-height: 1.08;
-  padding-left: 0.2em;
+  padding-left: 0;
   color: #c8c5ff;
   background: linear-gradient(100deg, #f7f8ff 4%, #bcb3ff 48%, #83b7ff 100%);
   background-clip: text;
@@ -163,7 +179,7 @@ form .form-input::placeholder {
 }
 
 #submitted-form .form-header h1 {
-  font-size: clamp(28px, 6vw, 40px);
+  font-size: clamp(1.35rem, 5.5vw, 2.25rem);
   letter-spacing: 0.04em;
   padding-left: 0;
 }
@@ -196,7 +212,8 @@ form .form-input::placeholder {
   }
 
   .form-header h1 {
-    font-size: clamp(38px, 12vw, 54px);
+    font-size: clamp(1.5rem, 8vw, 2.4rem);
+    letter-spacing: 0.025em;
   }
 
   .inputs-wrapper {

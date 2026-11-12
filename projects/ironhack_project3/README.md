@@ -98,7 +98,7 @@ Run commands from the repository root. Keep API keys in the ignored root `.env`;
 
 5. Use the browser form while the workflow is active:
 
-   - **Production form URL:** `http://localhost:5678/form/incept-company-research` (use the Production URL; the test URL is only for n8n editor testing)
+   - **Production form URL:** `http://localhost:5678/form/incept-company-research`. Use the Production URL shown on the active Form Trigger. The `/form-test/` URL is for editor testing and displays n8n's test-mode banner.
    - Sign in to the n8n instance with a user that can execute this workflow, then enter a company name and submit. The required company-name field and optional register-number field map to the shared input. A unique exact OpenRegister match continues automatically. When exact matching fails but plausible registry candidates are present, the form returns a numbered list with registered name, register number, and court. Restart with the exact registered name; if the name is duplicated, provide its register number. Candidate suggestions are never selected automatically. No matching candidates produces a clear not-found response.
    - The form requires n8n user authentication and workflow execute permission, so an unauthenticated visitor cannot trigger paid research.
 
