@@ -11,19 +11,20 @@ The output is **not a legal opinion**, conflict check, sanctions screen, solvenc
 ```mermaid
 flowchart TD
   U[Lawyer: company name and optional register ID] --> W[Authenticated n8n webhook]
-  W --> V[Validate request and exact identity]
+  D[Manual Trigger + demo input] --> V[Normalize and validate input]
+  W --> V
   V --> O[OpenRegister search and company details]
   O --> T[Tavily public web search]
   T --> R[Local RAG: source and diligence guidance]
   R --> A[OpenAI Responses API: source selection and questions]
   A --> C[Validate source IDs; render exact source excerpts]
-  C --> M[Markdown report and run metadata]
+  C --> M[Save Markdown report and return result]
   O -. failure / no exact match .-> E[Stage-specific failure response]
   T -. failure .-> E
   A -. incomplete / refusal / request failure .-> E
 ```
 
-The n8n workflow is the only orchestrator. One permanent active workflow, **INCEPT — Company Research Agent**, serves all runs through `POST /webhook/ironhack-company-research`. Provider calls have automatic retries disabled. The response reports a failed stage instead of substituting mock or demo data.
+The n8n workflow is the only orchestrator. One permanent active workflow, **INCEPT — Company Research Agent** (ID `61tsMgiWvpjit2st`), serves both manual runs and `POST /webhook/ironhack-company-research`. The Manual Trigger and webhook feed the same input normalizer and research pipeline. Provider calls have automatic retries disabled. The response reports a failed stage instead of substituting mock or demo data.
 
 OpenAI selects relevant source IDs and produces neutral uncertainty/follow-up questions. The workflow renders company facts as text copied from the OpenRegister record or Tavily result. It rejects unknown source IDs and does not let the model create factual report passages. Every web result is labeled an unverified lead; registry data and web leads remain separate.
 
@@ -66,22 +67,32 @@ Run commands from the repository root. Keep API keys in the ignored root `.env`;
 
    The n8n API key must be allowed to create credentials and workflows. The deployment script adds `PROJECT3_WEBHOOK_TOKEN` and `PROJECT3_WORKFLOW_ID` locally. It creates new n8n credentials named `Ironhack Project 3 …`, limited to the three provider hosts, and does not modify existing credentials.
 
-3. Start the existing n8n installation, then create/update and activate the single workflow:
+3. Start the existing n8n installation with access restricted to its normal files folder and this project's report folder, then create/update and activate the single workflow:
 
    ```sh
+   N8N_RESTRICT_FILE_ACCESS_TO="~/.n8n-files;$PWD/projects/ironhack_project3/reports" n8n start
    python projects/ironhack_project3/deploy_workflow.py
    ```
 
+   If n8n is already running, stop that same process before starting it with the additional reports-folder allowance. The workflow's disk-write node can write only under the explicitly allowed reports folder.
+
    This is an administrative setup command. It updates the same exact-name workflow on later runs rather than creating a new workflow.
 
-4. Run a company research request:
+4. Run research manually in n8n:
+
+   - Open `http://localhost:5678/workflow/61tsMgiWvpjit2st`.
+   - Click **Execute workflow**. The Manual Trigger starts the shared pipeline with the default company **SAP SE**; the optional register identifier is blank so exact-name matching can resolve its registry record.
+   - To change the demonstration company, open **Set Demo Company** and edit `company_name` and, when known, `register_identifier`.
+   - On success, inspect the **Report Output** node for the structured result and Markdown; the workflow also writes the file to `projects/ironhack_project3/reports/INCEPT-<company>-<execution-id>.md` on the n8n host. On failure, inspect the terminal `Error: …` node and the execution log for the precise stage/code.
+
+5. Run through the existing authenticated webhook (no workflow is created per request):
 
    ```sh
    python projects/ironhack_project3/run_research.py "SAP SE" --register-identifier "HRB 719915"
    python projects/ironhack_project3/run_research.py "Siemens Healthineers AG" --register-identifier "HRB 237558"
    ```
 
-   Each request executes the active webhook workflow. The Markdown report and credential-free `.meta.json` are saved under `projects/ironhack_project3/reports/`. A failed step is reported without automatic retry; no partial output is represented as a complete report.
+   Each request executes the active webhook workflow. The runner saves a timestamped Markdown report and credential-free `.meta.json` under `projects/ironhack_project3/reports/`. A failed step is reported without automatic retry; no partial output is represented as a complete report.
 
 The deploy script exports `workflow.json` without credential values or credential references. Importing that sanitized export alone is not sufficient to run it; use the deploy script to bind n8n credentials.
 
@@ -95,6 +106,8 @@ The workflow deployed in the current local n8n workspace has ID `61tsMgiWvpjit2s
 | Siemens Healthineers AG | 273 | `gpt-4o-mini-2024-07-18` | completed | 3,263 input / 178 output tokens | source validation passed |
 
 The reports are [SAP SE](reports/20261112T080627Z-sap-se.md) and [Siemens Healthineers AG](reports/20261112T080643Z-siemens-healthineers-ag.md). Their `.meta.json` files contain the execution ID, model usage, source URLs, and validation result. A separate missing-company test returned execution 274 with `exact_company_match_not_found`; it stopped before Tavily and OpenAI.
+
+The Manual Trigger was verified with SAP SE on execution 277: `gpt-4o-mini-2024-07-18` completed with 2,241 input and 123 output tokens, and source validation passed. Its report-save step initially hit n8n's file-access restriction; execution 278 resumed from that failed save node only and completed the report output without repeating any provider request. The generated file is [INCEPT-SAP-SE-277.md](reports/INCEPT-SAP-SE-277.md). Authenticated webhook execution 279 returned `invalid_company_name` for a deliberately invalid short input, confirming that the preserved webhook responds through the new last-node response mode without calling any provider.
 
 Company facts in the reports are exact excerpts from the selected registry or web evidence, with source IDs shown beside them. Public web snippets are not independently verified, and the search is not exhaustive. One early output draft was superseded after finding a register-field mapping issue; only the corrected SAP report is included.
 
