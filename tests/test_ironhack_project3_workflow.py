@@ -34,10 +34,13 @@ class Project3WorkflowTests(unittest.TestCase):
         self.assertEqual(form["parameters"]["responseMode"], "lastNode")
         self.assertEqual(form["parameters"]["authentication"], "n8nUserAuth")
         self.assertTrue(form["parameters"]["requireExecuteAccess"])
-        field, = form["parameters"]["formFields"]["values"]
+        fields = form["parameters"]["formFields"]["values"]
+        field = next(field for field in fields if field["fieldName"] == "company_name")
         self.assertEqual(field["fieldLabel"], "Company name")
         self.assertEqual(field["fieldName"], "company_name")
         self.assertTrue(field["requiredField"])
+        register_field = next(field for field in fields if field["fieldName"] == "register_identifier")
+        self.assertFalse(register_field["requiredField"])
         self.assertEqual(self.workflow["connections"]["Company Research Form"]["main"][0][0]["node"], "Normalize Input")
         self.assertIn("raw.formMode", self.nodes["Normalize Input"]["parameters"]["jsCode"])
         self.assertIn("Normalize Input", self.nodes["OpenRegister Search"]["parameters"]["url"])
@@ -50,7 +53,7 @@ class Project3WorkflowTests(unittest.TestCase):
         self.assertEqual(false_branch, "Error: Entity")
         selection = self.nodes["Select Exact Entity"]["parameters"]["jsCode"]
         error = self.nodes["Error: Entity"]["parameters"]["jsCode"]
-        self.assertIn("No exact company match was returned", selection)
+        self.assertIn("No exact or plausible OpenRegister company match", selection)
         self.assertIn("entrypoint", error)
         self.assertEqual(self.workflow["connections"]["Error: Entity"]["main"][0][0]["node"], "Form Error?")
 

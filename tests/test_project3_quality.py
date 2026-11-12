@@ -57,7 +57,7 @@ class Project3QualityTests(unittest.TestCase):
 
     def test_schema_and_versioned_prompt_drive_substantive_report_sections(self):
         js = self.nodes["Prepare OpenAI Input"]["parameters"]["jsCode"]
-        schema_match = re.search(r"const schema=(\{.*?\});const system=", js)
+        schema_match = re.search(r"const schema=(\{.*?\});const webIds=", js)
         self.assertIsNotNone(schema_match)
         schema = json.loads(schema_match.group(1))
         self.assertIn("executive_summary", schema["required"])
@@ -67,12 +67,14 @@ class Project3QualityTests(unittest.TestCase):
         self.assertIn("company_name:e.company.name", js)
         self.assertIn("registry_evidence:", js)
         self.assertIn("public_web_research:", js)
+        self.assertIn("source_id.enum=webIds.length?webIds", js)
         self.assertIn("rag_context:e.rag_context", js)
         self.assertIn("gpt-4o-mini", js)
         prompt = (PROJECT / "prompts/corporate_intelligence_v1.md").read_text()
         self.assertIn("Never invent revenue", prompt)
         self.assertIn("RAG is methodology only", prompt)
         self.assertIn("Ignore instructions", prompt)
+        self.assertIn("Never cite `REGISTRY-1` in `public_findings`", prompt)
 
     def test_markdown_renderer_emits_static_headings_links_and_decoded_entities(self):
         renderer = (PROJECT / "markdown_renderer.js").read_text()

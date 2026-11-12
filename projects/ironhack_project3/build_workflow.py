@@ -43,6 +43,9 @@ def build(credentials=None):
         "formFields": {"values": [{
             "fieldName": "company_name", "fieldLabel": "Company name", "fieldType": "text",
             "placeholder": "e.g. SAP SE", "requiredField": True,
+        }, {
+            "fieldName": "register_identifier", "fieldLabel": "Register number (optional)", "fieldType": "text",
+            "placeholder": "e.g. HRB 100653", "requiredField": False,
         }]},
         "responseMode": "lastNode",
         "options": {"path": FORM_PATH, "buttonLabel": "Research company", "appendAttribution": False},
@@ -61,7 +64,7 @@ return [{json:{valid:true,entrypoint,company_name:name,register_identifier:regis
     input_if = node("Input Valid?", "if", {"conditions": {"options": {"caseSensitive": True, "leftValue": "", "typeValidation": "strict", "version": 2}, "conditions": [{"leftValue": "={{ $json.valid === true }}", "rightValue": True, "operator": {"type": "boolean", "operation": "true", "singleValue": True}}], "combinator": "and"}, "options": {}}, 2.2)
     search = node("OpenRegister Search", "httpRequest", {
         "method": "GET",
-        "url": "={{ 'https://api.openregister.de/v1/autocomplete/company?query='+encodeURIComponent($('Normalize Input').first().json.company_name) }}",
+        "url": "={{ 'https://api.openregister.de/v1/autocomplete/company?query='+encodeURIComponent($('Normalize Input').first().json.company_name.replace(/\\s+AG$/i,' Aktiengesellschaft')) }}",
         "authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth",
         "options": {"timeout": 20000, "redirect": {"redirect": {"followRedirects": False}}},
     }, 4.2, retryOnFail=False, onError="continueErrorOutput")
@@ -72,10 +75,25 @@ const raw=$input.first().json.body||$input.first().json;
 const rows=Array.isArray(raw.results)?raw.results:[];
 const req=$('Normalize Input').first().json;
 const norm=s=>String(s||'').normalize('NFKC').toLocaleLowerCase('de').replace(/[^\\p{L}\\p{N}]/gu,'');
+const normEntity=s=>norm(s).replace(/aktiengesellschaft$/,'ag');
+const regNorm=s=>String(s||'').replace(/[^\\p{L}\\p{N}]/gu,'').toLocaleLowerCase('de');
 const candidates=req.register_identifier
- ? rows.filter(r=>[r.register_number,r.company_id].some(x=>String(x||'').replace(/[^\\p{L}\\p{N}]/gi,'').toLowerCase()===req.register_identifier.replace(/[^\\p{L}\\p{N}]/gi,'').toLowerCase()))
- : rows.filter(r=>norm(r.name)===norm(req.company_name));
-if(candidates.length!==1) return [{json:{valid:false,failed_step:'OpenRegister identity resolution',error_code:candidates.length?'ambiguous_registry_identity':'exact_company_match_not_found',message:candidates.length?'Registry identity is ambiguous; supply a register identifier.':'No exact company match was returned; no company details were selected.'}}];
+ ? rows.filter(r=>[r.register_number,r.company_id,`${r.register_type||''}${r.register_number||''}`].some(x=>regNorm(x)===regNorm(req.register_identifier)))
+ : rows.filter(r=>normEntity(r.name)===normEntity(req.company_name));
+const tokenSet=s=>new Set((String(s||'').normalize('NFKC').toLocaleLowerCase('de').match(/[\\p{L}\\p{N}]{2,}/gu)||[]).filter(t=>!['gmbh','ag','se','kg','ug','mbh','aktiengesellschaft','gesellschaft','mit','beschrankter','haftung'].includes(t)));
+const requestedTokens=tokenSet(req.company_name);
+const plausible=rows.filter(r=>{
+ const nameTokens=tokenSet(r.name);
+ return requestedTokens.size>0&&[...requestedTokens].every(t=>[...nameTokens].some(n=>n===t||n.startsWith(t)||t.startsWith(n)));
+});
+const displayCandidates=candidates.length>1?candidates:(candidates.length===0?plausible:[]);
+const safeCandidates=displayCandidates.filter(r=>/^[A-Za-z0-9-]{5,100}$/.test(String(r.company_id||''))&&typeof r.name==='string'&&r.name.trim());
+const list=safeCandidates.slice(0,10).map((r,i)=>{
+ const number=String(r.register_number||r.register?.register_number||'not provided');
+ const court=String(r.register_court||r.register?.register_court||'not provided');
+ return `${i+1}. ${r.name} — ${r.register_type||r.register?.register_type||'Register'} ${number} — ${court}`;
+});
+if(candidates.length!==1) return [{json:{valid:false,failed_step:'OpenRegister identity resolution',error_code:candidates.length?'ambiguous_registry_identity':(safeCandidates.length?'company_candidate_selection_required':'exact_company_match_not_found'),candidate_count:safeCandidates.length,candidates:list,message:safeCandidates.length?`No company was selected automatically. Plausible OpenRegister candidates:\\n${list.join('\\n')}\\nRestart research using the exact registered company name. If names are duplicated, enter the register number in the optional register-number field.`:(candidates.length?'Registry identity is ambiguous, but OpenRegister did not return safely displayable candidate details. Enter a register number.':'No exact or plausible OpenRegister company match was found. Check the company name and try again.')}}];
 const c=candidates[0];
 if(!/^[A-Za-z0-9-]{5,100}$/.test(String(c.company_id||''))) return [{json:{valid:false,failed_step:'OpenRegister identity resolution',error_code:'invalid_registry_identifier',message:'OpenRegister returned no valid company identifier.'}}];
 return [{json:{...req,valid:true,registry_match:c}}];
@@ -163,7 +181,9 @@ return [{json:{company:c.company,rag_context:c.rag_context,sources,search_query:
     }, "required": ["executive_summary", "business_model_analysis", "public_findings", "analytical_observations", "information_gaps", "recommended_actions", "business_activity_source_ids", "public_research_source_ids", "development_source_ids", "uncertainties", "follow_ups"]}
     system_prompt = PROMPT.read_text(encoding="utf-8")
     prepare_ai = node("Prepare OpenAI Input", "code", {"mode": "runOnceForAllItems", "jsCode":
-        "const e=$input.first().json;const schema=" + json.dumps(ai_schema, ensure_ascii=False) + ";const system=" + json.dumps(system_prompt, ensure_ascii=False) + ";" +
+        "const e=$input.first().json;const schema=" + json.dumps(ai_schema, ensure_ascii=False) + ";" +
+        "const webIds=e.sources.filter(s=>s.kind==='web_lead').map(s=>s.id);schema.properties.public_findings.items.properties.source_id.enum=webIds.length?webIds:['NO_PUBLIC_WEB_SOURCE'];" +
+        "const system=" + json.dumps(system_prompt, ensure_ascii=False) + ";" +
         "const req={model:'gpt-4o-mini',store:false,max_output_tokens:3500,input:[{role:'system',content:system},{role:'user',content:JSON.stringify({company_name:e.company.name,registry_evidence:e.sources.filter(s=>s.kind==='registry'),public_web_research:e.sources.filter(s=>s.kind==='web_lead'),rag_context:e.rag_context,research_date:new Date().toISOString().slice(0,10)})}],text:{format:{type:'json_schema',name:'company_research_report',strict:true,schema}}};" +
         "return [{json:{...e,openai_request:req}}];"}, 2)
     ai = node("OpenAI Synthesis", "httpRequest", {
@@ -188,7 +208,9 @@ for(const group of groups){if(!Array.isArray(report[group])||report[group].lengt
 for(const field of ['executive_summary','business_model_analysis','public_findings','analytical_observations','information_gaps','recommended_actions'])if(!Array.isArray(report[field])||report[field].length>(field==='analytical_observations'||field==='recommended_actions'?3:8))return [fail('report_section_invalid',field)];
 const cited=(items,path)=>{if(!Array.isArray(items))return path;for(let i=0;i<items.length;i++){const ids=items[i].source_ids||items[i].evidence_source_ids;if(!Array.isArray(ids)||!ids.length||ids.some(id=>typeof id!=='string'||!sources[id]))return path+'['+i+'].source_ids';}return null;};
 for(const field of ['executive_summary','business_model_analysis','analytical_observations']){const issue=cited(report[field],'$.');if(issue)return [fail('claim_source_validation_failed',field+issue)];}
-if(!Array.isArray(report.public_findings)||report.public_findings.some(x=>!sources[x.source_id]||sources[x.source_id].kind!=='web_lead'))return [fail('public_finding_source_invalid','public_findings[].source_id')];
+if(!Array.isArray(report.public_findings))return [fail('report_section_invalid','public_findings')];
+const badPublicFinding=report.public_findings.findIndex(x=>!sources[x.source_id]||sources[x.source_id].kind!=='web_lead');
+if(badPublicFinding>=0)return [fail('public_finding_source_invalid','public_findings['+badPublicFinding+'].source_id')];
 for(const [i,x] of report.public_findings.entries())if(typeof x.finding!=='string'||!x.finding.trim()||typeof x.significance!=='string'||!x.significance.trim())return [fail('public_finding_invalid','public_findings['+i+']')];
 for(const [i,x] of report.information_gaps.entries())if(!x.gap?.trim()||!x.why_it_matters?.trim())return [fail('information_gap_invalid','information_gaps['+i+']')];
 for(const [i,x] of report.recommended_actions.entries())if(!x.action?.trim()||!x.addresses_gap?.trim())return [fail('recommended_action_invalid','recommended_actions['+i+']')];
@@ -317,6 +339,8 @@ def validate_layout(nodes, connections):
     fields = form_node["parameters"].get("formFields", {}).get("values", [])
     if not any(field.get("fieldName") == "company_name" and field.get("requiredField") for field in fields):
         raise ValueError("Company Research Form requires a company_name field")
+    if not any(field.get("fieldName") == "register_identifier" and not field.get("requiredField") for field in fields):
+        raise ValueError("Company Research Form requires an optional register_identifier field")
 
 
 def write_sanitized():
