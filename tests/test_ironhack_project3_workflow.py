@@ -27,12 +27,41 @@ class Project3WorkflowTests(unittest.TestCase):
         self.assertEqual(self.nodes["Webhook Trigger"]["parameters"]["responseMode"], "lastNode")
         self.assertFalse(any(node["type"].endswith("respondToWebhook") for node in self.nodes.values()))
 
+    def test_browser_form_is_required_and_joins_the_shared_pipeline(self):
+        form = self.nodes["Company Research Form"]
+        self.assertEqual(form["type"], "n8n-nodes-base.formTrigger")
+        self.assertEqual(form["parameters"]["options"]["path"], "incept-company-research")
+        self.assertEqual(form["parameters"]["responseMode"], "lastNode")
+        self.assertEqual(form["parameters"]["authentication"], "n8nUserAuth")
+        self.assertTrue(form["parameters"]["requireExecuteAccess"])
+        field, = form["parameters"]["formFields"]["values"]
+        self.assertEqual(field["fieldLabel"], "Company name")
+        self.assertEqual(field["fieldName"], "company_name")
+        self.assertTrue(field["requiredField"])
+        self.assertEqual(self.workflow["connections"]["Company Research Form"]["main"][0][0]["node"], "Normalize Input")
+        self.assertIn("raw.formMode", self.nodes["Normalize Input"]["parameters"]["jsCode"])
+        self.assertIn("Normalize Input", self.nodes["OpenRegister Search"]["parameters"]["url"])
+        self.assertIn("company_name", self.nodes["OpenRegister Search"]["parameters"]["url"])
+        self.assertEqual(self.nodes["Form Result"]["parameters"]["operation"], "completion")
+        self.assertIn("$json.report_file", self.nodes["Form Result"]["parameters"]["completionMessage"])
+
+    def test_unknown_company_has_a_clear_failure_branch(self):
+        false_branch = self.workflow["connections"]["Entity Match?"]["main"][1][0]["node"]
+        self.assertEqual(false_branch, "Error: Entity")
+        selection = self.nodes["Select Exact Entity"]["parameters"]["jsCode"]
+        error = self.nodes["Error: Entity"]["parameters"]["jsCode"]
+        self.assertIn("No exact company match was returned", selection)
+        self.assertIn("entrypoint", error)
+        self.assertEqual(self.workflow["connections"]["Error: Entity"]["main"][0][0]["node"], "Form Error?")
+
     def test_success_path_validates_then_saves_and_returns_report(self):
         edges = self.workflow["connections"]
         self.assertEqual(edges["OpenAI Synthesis"]["main"][0][0]["node"], "Validate & Render Report")
         self.assertEqual(edges["Validation Passed?"]["main"][0][0]["node"], "Convert Report to File")
         self.assertEqual(edges["Convert Report to File"]["main"][0][0]["node"], "Save Markdown Report")
         self.assertEqual(edges["Save Markdown Report"]["main"][0][0]["node"], "Report Output")
+        self.assertEqual(edges["Report Output"]["main"][0][0]["node"], "Form Success?")
+        self.assertEqual(edges["Form Success?"]["main"][0][0]["node"], "Form Result")
 
     def test_layout_and_all_connection_references_are_valid(self):
         validate_layout(self.workflow["nodes"], self.workflow["connections"])

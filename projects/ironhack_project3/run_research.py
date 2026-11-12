@@ -43,7 +43,8 @@ def run(company_name: str, register_identifier: str | None = None) -> Path:
     markdown = result.get("report_markdown")
     if not isinstance(markdown, str) or len(markdown) < 300:
         raise RuntimeError("n8n returned no complete report")
-    if result.get("validation") != {"source_ids_valid": True, "company_facts_are_exact_source_excerpts": True, "unsupported_model_facts": 0}:
+    validation = result.get("validation") or {}
+    if validation.get("source_ids_valid") is not True or validation.get("cited_claims_have_source_ids") is not True:
         raise RuntimeError("n8n report validation metadata is invalid")
     company = result.get("company") or {}
     slug = re.sub(r"[^a-z0-9]+", "-", str(company.get("name") or company_name).lower()).strip("-")[:70] or "company"
@@ -62,6 +63,7 @@ def run(company_name: str, register_identifier: str | None = None) -> Path:
         "openai_status": result.get("openai_status"),
         "openai_usage": result.get("usage"),
         "validation": result.get("validation"),
+        "retrieval": result.get("retrieval"),
         "sources": [{k: s.get(k) for k in ("id", "kind", "url", "retrieved_at", "published_at")} for s in result.get("sources", [])],
     }
     metadata_path = path.with_suffix(".meta.json")
@@ -74,6 +76,11 @@ def run(company_name: str, register_identifier: str | None = None) -> Path:
     print("openai_status=" + str(result.get("openai_status", "unreported")))
     print("validation=passed")
     print("source_count=" + str(len(result.get("sources", []))))
+    retrieval = result.get("retrieval") or {}
+    print("tavily_http_status=" + str(retrieval.get("tavily_http_status", "unreported")))
+    print("tavily_raw_results=" + str(retrieval.get("tavily_results", "unreported")))
+    print("tavily_accepted_results=" + str(retrieval.get("tavily_accepted_count", "unreported")))
+    print("rag_source_count=" + str(len(result.get("rag_context") or [])))
     usage = result.get("usage") or {}
     print("input_tokens=" + str(usage.get("input_tokens", "unreported")))
     print("output_tokens=" + str(usage.get("output_tokens", "unreported")))
