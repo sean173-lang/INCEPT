@@ -12,6 +12,7 @@ PROMPT = Path(__file__).resolve().parent / "prompts" / "corporate_intelligence_v
 FORM_THEME = Path(__file__).resolve().parent / "form_theme.css"
 TAVILY_PARSER = Path(__file__).resolve().parent / "tavily_parser.js"
 MARKDOWN_RENDERER = Path(__file__).resolve().parent / "markdown_renderer.js"
+FORM_REPORT_RENDERER = Path(__file__).resolve().parent / "form_report_renderer.js"
 PATH = "ironhack-company-research"
 FORM_PATH = "incept-company-research"
 
@@ -227,11 +228,14 @@ return [{json:{ok:true,n8n_execution_id:String($execution.id),entrypoint: $('Nor
     report_output = node("Report Output", "code", {"mode": "runOnceForAllItems", "jsCode": "const report=$('Validate & Render Report').first().json;return [{json:{...report,report_file:$('Save Markdown Report').first().json.fileName}}];"}, 2)
     form_success_if = node("Form Success?", "if", {"conditions": {"options": {"caseSensitive": True, "leftValue": "", "typeValidation": "strict", "version": 2}, "conditions": [{"leftValue": "={{ $json.entrypoint === 'form' }}", "rightValue": True, "operator": {"type": "boolean", "operation": "true", "singleValue": True}}], "combinator": "and"}, "options": {}}, 2.2)
     form_error_if = node("Form Error?", "if", {"conditions": {"options": {"caseSensitive": True, "leftValue": "", "typeValidation": "strict", "version": 2}, "conditions": [{"leftValue": "={{ $json.entrypoint === 'form' }}", "rightValue": True, "operator": {"type": "boolean", "operation": "true", "singleValue": True}}], "combinator": "and"}, "options": {}}, 2.2)
+    render_form_result = node("Render Form Result", "code", {
+        "mode": "runOnceForAllItems",
+        "jsCode": FORM_REPORT_RENDERER.read_text(encoding="utf-8") + "\nconst companyScopeCss=" + json.dumps(FORM_THEME.read_text(encoding="utf-8").strip(), ensure_ascii=False) + ";\nconst item=$input.first().json||{};return [{json:{...item,form_html:renderCompanyScopeResult(item,companyScopeCss)}}];",
+    }, 2)
     form_completion = node("Form Result", "form", {
-        "operation": "completion", "respondWith": "text",
-        "completionTitle": "={{ $json.ok ? 'CompanyScope — Report complete' : 'CompanyScope — Report not completed' }}",
-        "completionMessage": "={{ $json.ok ? ('Research for '+$json.company.name+' is complete. Report: '+$json.report_file) : ('Research failed: '+($json.message||$json.error_code||'Unknown error')) }}",
-        "options": {"appendAttribution": False, "customCss": FORM_THEME.read_text(encoding="utf-8").strip()},
+        "operation": "completion", "respondWith": "showText",
+        "responseText": "={{ $json.form_html }}",
+        "options": {"appendAttribution": False},
     }, 2.5)
     return_report = node("Return Report", "code", {"mode": "runOnceForAllItems", "jsCode": "return [{json:$input.first().json}];"}, 2)
     return_error = node("Return Error", "code", {"mode": "runOnceForAllItems", "jsCode": "return [{json:$input.first().json}];"}, 2)
@@ -246,7 +250,7 @@ return [{json:{ok:true,n8n_execution_id:String($execution.id),entrypoint: $('Nor
     identity_error = node("Error: Entity", "code", {"mode": "runOnceForAllItems", "jsCode": "const j=$input.first().json||{};return [{json:{ok:false,n8n_execution_id:String($execution.id),entrypoint:$('Normalize Input').first().json.entrypoint,failed_step:j.failed_step||'OpenRegister identity resolution',error_code:j.error_code||'exact_company_match_not_found',message:j.message||'No company details were selected.'}}];"}, 2)
     input_error = node("Error: Input", "code", {"mode": "runOnceForAllItems", "jsCode": "const j=$input.first().json||{};return [{json:{ok:false,n8n_execution_id:String($execution.id),entrypoint:j.entrypoint,failed_step:'Request validation',error_code:j.error_code||'invalid_request',message:j.message||'Company research request is invalid.'}}];"}, 2)
 
-    nodes = [webhook, manual, demo_input, form, validate, input_if, search, choose, identity_if, details, prep_research, tavily, rag, prep_tavily, prepare_ai, ai, validate_report, validation_if, convert_report, save_report, report_output, form_success_if, form_error_if, form_completion, return_report, return_error, *failures, identity_error, input_error, validation_error]
+    nodes = [webhook, manual, demo_input, form, validate, input_if, search, choose, identity_if, details, prep_research, tavily, rag, prep_tavily, prepare_ai, ai, validate_report, validation_if, convert_report, save_report, report_output, form_success_if, form_error_if, render_form_result, form_completion, return_report, return_error, *failures, identity_error, input_error, validation_error]
     connections = {webhook["name"]: {"main": [[{"node": validate["name"], "type": "main", "index": 0}]]},
                    manual["name"]: {"main": [[{"node": demo_input["name"], "type": "main", "index": 0}]]},
                    demo_input["name"]: {"main": [[{"node": validate["name"], "type": "main", "index": 0}]]},
@@ -268,10 +272,11 @@ return [{json:{ok:true,n8n_execution_id:String($execution.id),entrypoint: $('Nor
                    convert_report["name"]: {"main": [[{"node": save_report["name"], "type": "main", "index": 0}]]},
                    save_report["name"]: {"main": [[{"node": report_output["name"], "type": "main", "index": 0}]]},
                    report_output["name"]: {"main": [[{"node": form_success_if["name"], "type": "main", "index": 0}]]},
-                   form_success_if["name"]: {"main": [[{"node": form_completion["name"], "type": "main", "index": 0}], [{"node": return_report["name"], "type": "main", "index": 0}]]}}
+                   form_success_if["name"]: {"main": [[{"node": render_form_result["name"], "type": "main", "index": 0}], [{"node": return_report["name"], "type": "main", "index": 0}]]},
+                   render_form_result["name"]: {"main": [[{"node": form_completion["name"], "type": "main", "index": 0}]]}}
     for failure in failures + [identity_error, input_error, validation_error]:
         connections[failure["name"]] = {"main": [[{"node": form_error_if["name"], "type": "main", "index": 0}]]}
-    connections[form_error_if["name"]] = {"main": [[{"node": form_completion["name"], "type": "main", "index": 0}], [{"node": return_error["name"], "type": "main", "index": 0}]]}
+    connections[form_error_if["name"]] = {"main": [[{"node": render_form_result["name"], "type": "main", "index": 0}], [{"node": return_error["name"], "type": "main", "index": 0}]]}
     positions = {
         "Webhook Trigger": [0, 360], "Manual Trigger": [0, 0], "Set Demo Company": [320, 0],
         "Company Research Form": [0, 720],
@@ -282,7 +287,7 @@ return [{json:{ok:true,n8n_execution_id:String($execution.id),entrypoint: $('Nor
         "Prepare OpenAI Input": [4080, 180], "OpenAI Synthesis": [4420, 180],
         "Validate & Render Report": [4760, 180], "Validation Passed?": [5100, 180],
         "Convert Report to File": [5440, 180], "Save Markdown Report": [5780, 180], "Report Output": [6120, 180],
-        "Form Success?": [6460, 180], "Return Report": [6800, 180], "Form Result": [7160, 180],
+        "Form Success?": [6460, 180], "Return Report": [6800, 180], "Render Form Result": [6800, 420], "Form Result": [7160, 420],
         "Form Error?": [6460, 620], "Return Error": [6800, 620],
         "Error: Registry Search": [1360, 620], "Error: Registry Details": [2380, 620],
         "Error: Tavily": [3060, 620], "Error: OpenAI": [4420, 620],

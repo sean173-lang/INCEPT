@@ -31,6 +31,8 @@ flowchart TD
 
 The user-facing product is CompanyScope. Its existing n8n workflow remains **INCEPT — Company Research Agent** (ID `61tsMgiWvpjit2st`) as the stable technical workflow name and identifier. That one permanent active workflow serves manual runs, the CompanyScope production form, and `POST /webhook/ironhack-company-research`. All three inputs feed the same normalizer and research pipeline. Provider calls have automatic retries disabled. The response reports a failed stage instead of substituting mock or demo data.
 
+After successful form research, the Form Ending node uses **Show Text** to display the complete validated Markdown report as a responsive CompanyScope HTML report page. In n8n 2.47.3, this mode inserts response HTML raw, while the Form node’s Custom Form Styling option is only offered for other response modes. The workflow therefore embeds the repository-controlled static theme in its HTML response instead of relying on that option. A small allowlist renderer escapes report text, permits only safe HTTP(S) links, and emits fixed formatting tags. Failed or ambiguous runs show an error page and are never labeled complete. Manual Trigger and authenticated webhook responses continue through their existing JSON return nodes without the HTML renderer.
+
 OpenAI uses a versioned corporate-intelligence prompt and strict Structured Outputs schema to produce cited company analysis, public findings, analytical observations, information gaps, and research actions. The report renderer builds fixed Markdown headings and validates that every model claim has a known evidence ID. Registry facts are rendered from OpenRegister; web findings remain explicitly labeled unverified leads. Source-ID validation cannot automatically prove that every cited source semantically supports every sentence, so the report says that professional review is required.
 
 ### Research quality and report structure
@@ -126,7 +128,7 @@ The reports are [SAP SE](reports/20261112T080627Z-sap-se.md) and [Siemens Health
 
 The Manual Trigger was verified with SAP SE on execution 277: `gpt-4o-mini-2024-07-18` completed with 2,241 input and 123 output tokens, and source validation passed. Its report-save step initially hit n8n's file-access restriction; execution 278 resumed from that failed save node only and completed the report output without repeating any provider request. The generated file is [INCEPT-SAP-SE-277.md](reports/INCEPT-SAP-SE-277.md). Authenticated webhook execution 279 returned `invalid_company_name` for a deliberately invalid short input, confirming that the preserved webhook responds through the new last-node response mode without calling any provider.
 
-The production company form is `http://localhost:5678/form/incept-company-research`. Its field mapping, shared-pipeline route, report/error completions, candidate fallback, and layout are covered by offline tests. Unauthenticated production-form GET redirected to n8n sign-in and unauthenticated multipart POST returned HTTP 401 without creating an execution. A signed-in browser submission was not tested in this environment.
+The production company form is `http://localhost:5678/form/incept-company-research`. Its field mapping, shared-pipeline route, report/error completions, candidate fallback, and layout are covered by offline tests. The report renderer was tested against saved report `INCEPT-Sanit-tshaus-MKC-GmbH-Mitte-Kompetenz-Center-292.md`; no provider was called. Unauthenticated production-form GET redirected to n8n sign-in and unauthenticated multipart POST returned HTTP 401 without creating an execution. A signed-in browser submission and browser rendering were not tested in this environment.
 
 The quality-upgrade run for Shapesty GmbH used the same workflow ID and produced n8n execution **283**. OpenRegister selected the exact company name, Tavily returned HTTP 200 with 8 raw results and the parser retained 5 public-web candidates, and Local RAG supplied 3 methodology cards. OpenAI `gpt-4o-mini-2024-07-18` completed (3,908 input / 877 output tokens). The live execution stopped at the legacy `uncertainties` question-mark check, so it did not save a report. After removing that obsolete punctuation condition while retaining text bounds and citation-ID checks, the saved execution #283 response was replayed locally through the current validator and renderer: it passed source-ID/citation-presence validation with 6 sources and rendered the fixed Markdown sections. This offline replay is not a second live run; no new report is presented as a production-generated artifact. Semantic entailment remains a lawyer review responsibility.
 
@@ -145,6 +147,7 @@ Company facts in the reports are exact excerpts from the selected registry or we
 
 - `workflow.json` — sanitized n8n export.
 - `build_workflow.py` — deterministic workflow and export builder.
+- `form_report_renderer.js` — safe Markdown-to-HTML renderer for form completion results.
 - `deploy_workflow.py` — explicit, idempotent workflow/credential setup.
 - `run_research.py` — authenticated invocation and local report saving.
 - `reference_corpus.json` — small static RAG corpus.

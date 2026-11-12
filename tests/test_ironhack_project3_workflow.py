@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -56,10 +57,12 @@ class Project3WorkflowTests(unittest.TestCase):
         self.assertIn("Normalize Input", self.nodes["OpenRegister Search"]["parameters"]["url"])
         self.assertIn("company_name", self.nodes["OpenRegister Search"]["parameters"]["url"])
         self.assertEqual(self.nodes["Form Result"]["parameters"]["operation"], "completion")
-        self.assertIn("$json.report_file", self.nodes["Form Result"]["parameters"]["completionMessage"])
-        self.assertIn("$json.message", self.nodes["Form Result"]["parameters"]["completionMessage"])
-        self.assertTrue(self.nodes["Form Result"]["parameters"]["options"]["customCss"])
-        self.assertIn("CompanyScope", self.nodes["Form Result"]["parameters"]["completionTitle"])
+        self.assertEqual(self.nodes["Form Result"]["parameters"]["respondWith"], "showText")
+        self.assertIn("$json.form_html", self.nodes["Form Result"]["parameters"]["responseText"])
+        self.assertNotIn("customCss", self.nodes["Form Result"]["parameters"]["options"])
+        self.assertIn("const companyScopeCss=", self.nodes["Render Form Result"]["parameters"]["jsCode"])
+        self.assertIn(".cs-report-shell", self.nodes["Render Form Result"]["parameters"]["jsCode"])
+        self.assertIn("CompanyScope", self.nodes["Render Form Result"]["parameters"]["jsCode"])
 
     def test_premium_theme_is_css_only_responsive_and_uses_existing_form_selectors(self):
         css = self.nodes["Company Research Form"]["parameters"]["options"]["customCss"]
@@ -80,8 +83,10 @@ class Project3WorkflowTests(unittest.TestCase):
         self.assertNotRegex(css, r"(?i)<\s*/?\s*(?:script|style|form|input|button)")
         self.assertNotRegex(css, r"(?i)@import|javascript:|url\s*\(")
         self.assertNotRegex(css, r"(?is)\.test-notice\s*\{[^}]*display\s*:\s*none")
-        self.assertEqual(css, self.nodes["Form Result"]["parameters"]["options"]["customCss"])
-        self.assertEqual(len(self.workflow["nodes"]), 33)
+        self.assertIn(".cs-report-shell", css)
+        self.assertIn(".cs-report-section", css)
+        self.assertIn("@media only screen and (max-width: 600px)", css)
+        self.assertEqual(len(self.workflow["nodes"]), 34)
 
     def test_unknown_company_has_a_clear_failure_branch(self):
         false_branch = self.workflow["connections"]["Entity Match?"]["main"][1][0]["node"]
@@ -99,7 +104,39 @@ class Project3WorkflowTests(unittest.TestCase):
         self.assertEqual(edges["Convert Report to File"]["main"][0][0]["node"], "Save Markdown Report")
         self.assertEqual(edges["Save Markdown Report"]["main"][0][0]["node"], "Report Output")
         self.assertEqual(edges["Report Output"]["main"][0][0]["node"], "Form Success?")
-        self.assertEqual(edges["Form Success?"]["main"][0][0]["node"], "Form Result")
+        self.assertEqual(edges["Form Success?"]["main"][0][0]["node"], "Render Form Result")
+        self.assertEqual(edges["Form Error?"]["main"][0][0]["node"], "Render Form Result")
+        self.assertEqual(edges["Render Form Result"]["main"][0][0]["node"], "Form Result")
+
+    def test_report_renderer_outputs_safe_html_and_truthful_failure_page(self):
+        renderer = Path(__file__).resolve().parents[1] / "projects/ironhack_project3/form_report_renderer.js"
+        theme = Path(__file__).resolve().parents[1] / "projects/ironhack_project3/form_theme.css"
+        script = "const r=require(" + json.dumps(str(renderer)) + ");const fs=require('fs');const x=JSON.parse(process.argv[1]);const css=fs.readFileSync(" + json.dumps(str(theme)) + ", 'utf8');process.stdout.write(JSON.stringify(r.renderCompanyScopeResult(x,css)));"
+        report = {
+            "ok": True,
+            "company": {"name": "Müller & Söhne GmbH"},
+            "report_file": "report.md",
+            "validation": {"source_ids_valid": True},
+            "report_markdown": "# Bericht\n\n## Zusammenfassung\n\nPrüfung für Müller & Söhne. <script>alert(1)</script> **Wichtig**\n\n## Quellen\n\n- [Gesetz](https://example.de/law)\n- [gefälscht](javascript:alert(1))",
+        }
+        rendered = json.loads(subprocess.run(["node", "-e", script, json.dumps(report, ensure_ascii=False)], check=True, capture_output=True, text=True).stdout)
+        self.assertIn("<h2>Zusammenfassung</h2>", rendered)
+        self.assertIn("Müller &amp; Söhne", rendered)
+        self.assertIn("<strong>Wichtig</strong>", rendered)
+        self.assertIn("<style>", rendered)
+        self.assertIn(".cs-report-section", rendered)
+        self.assertIn("class=\"cs-report-section\"", rendered)
+        self.assertNotIn("<script>", rendered)
+        self.assertIn("href=\"https://example.de/law\"", rendered)
+        self.assertIn(">Gesetz</a>", rendered)
+        self.assertNotIn(">https://example.de/law</a>", rendered)
+        self.assertNotIn("href=\"javascript:", rendered)
+        self.assertIn("Markdown report saved", rendered)
+
+        failure = {"ok": False, "error_code": "exact_company_match_not_found", "message": "No verified match"}
+        error_html = json.loads(subprocess.run(["node", "-e", script, json.dumps(failure)], check=True, capture_output=True, text=True).stdout)
+        self.assertIn("Research not completed", error_html)
+        self.assertNotIn("Research complete", error_html)
 
     def test_layout_and_all_connection_references_are_valid(self):
         validate_layout(self.workflow["nodes"], self.workflow["connections"])
